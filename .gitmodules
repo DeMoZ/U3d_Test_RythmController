@@ -1,0 +1,10 @@
+
+[submodule "Assets/SimpleMaterials"]
+	path = Assets/SimpleMaterials
+	url = git@github.com:DeMoZ/U3d_SimpleMaterials.git
+[submodule "Assets/DMZ"]
+	path = Assets/DMZ
+	url = git@github.com:DeMoZ/U3d_DMZ.git
+[submodule "Assets/DMZ_External"]
+	path = Assets/DMZ_External
+	url = git@github.com:DeMoZ/U3d_DMZExternal.git
