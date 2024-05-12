@@ -8,3 +8,6 @@
 [submodule "Assets/DMZ_External"]
 	path = Assets/DMZ_External
 	url = git@github.com:DeMoZ/U3d_DMZExternal.git
+[submodule "Assets/DMZ_AttackController"]
+	path = Assets/DMZ_AttackController
+	url = git@github.com:DeMoZ/DMZ_AttackController.git
