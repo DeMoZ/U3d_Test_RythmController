@@ -1,0 +1,94 @@
+{
+    "name": "InputConfig",
+    "maps": [
+        {
+            "name": "Mobile",
+            "id": "3e9501b9-7579-42b7-a9e4-58697a995e5b",
+            "actions": [
+                {
+                    "name": "AttackL",
+                    "type": "Button",
+                    "id": "0b6788ac-f836-4e2e-8513-826a3eb52884",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AttackR",
+                    "type": "Button",
+                    "id": "b9f81d14-6f56-42ce-9564-2b1b62878aba",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AttackU",
+                    "type": "Button",
+                    "id": "05f50f7d-4245-4c55-902e-d381f1b0a83b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AttackD",
+                    "type": "Button",
+                    "id": "4bb9780e-a249-4b41-96fa-d52c374db5d4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "2b372e49-b1d9-4378-98f2-9acdbf79751e",
+                    "path": "<Keyboard>/l",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AttackL",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d291db8d-d621-4f02-825b-d448f552fcb7",
+                    "path": "<Keyboard>/quote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AttackR",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "972b404d-aaca-4f7b-aa11-68e2571aa743",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AttackU",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "97aecc88-d8a7-40ba-ad1e-eec32bc0da2e",
+                    "path": "<Keyboard>/semicolon",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AttackD",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
