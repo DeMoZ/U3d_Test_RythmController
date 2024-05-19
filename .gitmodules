@@ -1,7 +1,3 @@
-
-[submodule "Assets/SimpleMaterials"]
-	path = Assets/SimpleMaterials
-	url = git@github.com:DeMoZ/U3d_SimpleMaterials.git
 [submodule "Assets/DMZ"]
 	path = Assets/DMZ
 	url = git@github.com:DeMoZ/U3d_DMZ.git
@@ -11,3 +7,9 @@
 [submodule "Assets/DMZ_AttackController"]
 	path = Assets/DMZ_AttackController
 	url = git@github.com:DeMoZ/DMZ_AttackController.git
+[submodule "Assets/Props/Characters/DMZ_Skeleton"]
+	path = Assets/Props/Characters/DMZ_Skeleton
+	url = git@github.com:DeMoZ/DMZ_Skeleton.git
+[submodule "Assets/Props/Materials/DMZ_SimpleMaterials"]
+	path = Assets/Props/Materials/DMZ_SimpleMaterials
+	url = git@github.com:DeMoZ/DMZ_SimpleMaterials.git
