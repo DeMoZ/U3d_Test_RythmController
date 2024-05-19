@@ -13,3 +13,6 @@
 [submodule "Assets/Props/Materials/DMZ_SimpleMaterials"]
 	path = Assets/Props/Materials/DMZ_SimpleMaterials
 	url = git@github.com:DeMoZ/DMZ_SimpleMaterials.git
+[submodule "Assets/Props/Animations/DMZ_Animations"]
+	path = Assets/Props/Animations/DMZ_Animations
+	url = git@github.com:DeMoZ/DMZ_Animations.git
