@@ -400,7 +400,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8292ed4740e402c46afee9e89e7707ef, type: 2}
+  - {fileID: 2100000, guid: 1a38cff1c8f8841b89b2d803a91d9242, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -716,7 +716,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 632fe7daa9846e54b9228d012ae15feb, type: 2}
+  - {fileID: 2100000, guid: aaa98feea88364b11a2eddc2a9f1fd51, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -841,6 +841,7 @@ GameObject:
   - component: {fileID: 1739526144}
   - component: {fileID: 1739526143}
   - component: {fileID: 1739526146}
+  - component: {fileID: 1739526147}
   m_Layer: 0
   m_Name: SceneContext
   m_TagString: Untagged
@@ -861,7 +862,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackConfig: {fileID: 11400000, guid: 55b9258bb8cd348bdbe7ba621a3c7cff, type: 2}
-  inputActionAsset: {fileID: -944628639613478452, guid: 20ac8d8d0905f47b9a478a5aff0c3748, type: 3}
 --- !u!114 &1739526144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -878,6 +878,7 @@ MonoBehaviour:
   _monoInstallers:
   - {fileID: 1739526143}
   - {fileID: 1739526146}
+  - {fileID: 1739526147}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -923,6 +924,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputActionAsset: {fileID: -944628639613478452, guid: 20ac8d8d0905f47b9a478a5aff0c3748, type: 3}
+--- !u!114 &1739526147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739526142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2d1ec4fbe384702ac693e9ef9126df1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 3104115389494638411, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+  characterSpawnPoint: {fileID: 1745011247}
+--- !u!1 &1745011247
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1745011248}
+  m_Layer: 0
+  m_Name: CharacterSpawnPoint
+  m_TagString: PlayerSpawnPoint
+  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1745011248
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745011247}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1, y: 0, z: -2.81}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!222 &263991331248374955
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1662,6 +1708,63 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1001 &4087529302067943911
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4737286002913453728, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4737286002913453728, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4737286002913453728, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4737286002913453728, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4737286002913453728, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4737286002913453728, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4737286002913453728, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4737286002913453728, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4737286002913453728, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4737286002913453728, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5401478593604123674, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
+      propertyPath: m_Name
+      value: SkeletonHumanoid
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 35f1cfca5b129439592aaf12afcfd22f, type: 3}
 --- !u!114 &4367871229492194596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2792,3 +2895,5 @@ SceneRoots:
   - {fileID: 783139058}
   - {fileID: 4974981525747928488}
   - {fileID: 558518371}
+  - {fileID: 1745011248}
+  - {fileID: 4087529302067943911}
