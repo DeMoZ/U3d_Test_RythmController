@@ -77,6 +77,7 @@ public class CharacterAnimator : ICharacterAnimator
         }
     }
 
+    // todo roman this method is completely wrong in a way to get a clip name from state. 
     private AnimationClip GetAttackAnimationNameFromState(Animator animator, string stateName, int layerIndex = 0)
     {
         var parameters = animator.parameters;

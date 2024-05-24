@@ -47,7 +47,7 @@
                     "name": "",
                     "id": "2b372e49-b1d9-4378-98f2-9acdbf79751e",
                     "path": "<Keyboard>/l",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "processors": "",
                     "groups": "",
                     "action": "AttackL",
