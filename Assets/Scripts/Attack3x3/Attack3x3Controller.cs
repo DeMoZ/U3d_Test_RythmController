@@ -10,14 +10,10 @@ public class Attack3x3Controller : Attack.IAttackController
     private readonly Attack3x3PlayerData _attackPlayerData;
     private readonly Attack3x3Repository _attackRepository;
 
-    private CancellationTokenSource _attackTokenSource;
+    private CancellationTokenSource _attackTokenSource; // todo roman remove after creaning the class
     private CancellationTokenSource _horizontalTokenSource;
 
     private bool _isFailed;
-
-    private float _touchStartTime;
-    private float _touchEndTime;
-    private float _touchLength;
     private bool _isTouchTimerRunning;
 
     public Attack3x3Controller(Attack3x3Bus inputBus,
@@ -35,6 +31,7 @@ public class Attack3x3Controller : Attack.IAttackController
     {
         _inputBus.OnAttackTouchStarted -= OnTouchStarted;
         _inputBus.OnAttackTouchEnded -= OnTouchEnded;
+        _horizontalTokenSource?.Cancel();
         _attackTokenSource?.Cancel();
     }
 
@@ -42,7 +39,6 @@ public class Attack3x3Controller : Attack.IAttackController
     {
         Debug.Log($"player fightSequenceState is {_attackPlayerData.AttackSequenceState.Value}");
 
-        _touchStartTime = Time.time;
         _isTouchTimerRunning = true;
 
         switch (_attackPlayerData.AttackSequenceState.Value)
@@ -53,7 +49,7 @@ public class Attack3x3Controller : Attack.IAttackController
                 break;
             case Attack3x3State.Idle:
                 _horizontalTokenSource = new CancellationTokenSource();
-                HorizontalSequencing((0, 0), _horizontalTokenSource.Token);
+                HorizontalSequencingRecursive((0, 0), _horizontalTokenSource.Token);
                 break;
             case Attack3x3State.Pre:
 
@@ -62,8 +58,9 @@ public class Attack3x3Controller : Attack.IAttackController
                 //SetFail();
                 break;
             case Attack3x3State.After:
+                _horizontalTokenSource.Cancel();
                 _attackTokenSource.Cancel();
-                //EvaluateSequence();
+                VerticalSequencing();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -77,27 +74,17 @@ public class Attack3x3Controller : Attack.IAttackController
 
         _horizontalTokenSource?.Cancel();
         _isTouchTimerRunning = false;
-        _touchEndTime = Time.time;
-        _touchLength = _touchEndTime - _touchStartTime;
 
         Debug.Log($"player fightSequenceState is {_attackPlayerData.AttackSequenceState.Value}");
 
         if (_attackPlayerData.AttackSequenceState.Value is not Attack3x3State.Pre)
             return;
-        //     _attackPlayerData.AttackSequenceState.Value = Attack3x3State.Attack;
 
         _attackTokenSource = new CancellationTokenSource();
         await AttackAsync();
     }
 
-    private void SetPre()
-    {
-        // preattack state is also depends on the attack type. The trigger can be the same
-        // todo roman _attackPlayerData.CurrentSequenceKey = SetAttackKey
-        _attackPlayerData.AttackSequenceState.Value = Attack3x3State.Pre;
-    }
-
-    private async void HorizontalSequencing((int, int) newCode, CancellationToken token)
+    private async void HorizontalSequencingRecursive((int, int) newCode, CancellationToken token)
     {
         if (!_attackRepository.IsSequenceExists(newCode))
             return;
@@ -112,38 +99,25 @@ public class Attack3x3Controller : Attack.IAttackController
 
         Debug.Log($"HorizontalSequencing evaluate");
 
-        // await Pre time and if it ends, try run (x, ++)
         newCode.Item2++;
-        HorizontalSequencing(newCode, token);
+        HorizontalSequencingRecursive(newCode, token);
     }
 
-    private void EvaluateSequence()
+    private void VerticalSequencing()
     {
-        // var currentCode = _attackPlayerData.CurrentSequenceCode;
-        // var newDirection = _newDirection.ToString();
-        // var newCode = currentCode + newDirection;
-        //
-        // if (_attackRepository.TryGetSequence(newCode, out var element))
-        // {
-        //     Debug.Log($"EvaluateSequence success {_attackPlayerData.CurrentSequenceCode} > {newCode}");
-        //     _attackPlayerData.CurrentSequenceCode = newCode;
-        //     _attackPlayerData.CurrentSequenceElement = element;
-        //     SetAttack();
-        // }
-        // else if (_attackRepository.TryGetSequence(newDirection, out element))
-        // {
-        //     Debug.Log($"EvaluateSequence success as new {_attackPlayerData.CurrentSequenceCode} > {newDirection}"
-        //         .Yellow());
-        //     _attackPlayerData.CurrentSequenceCode = newDirection;
-        //     _attackPlayerData.CurrentSequenceElement = element;
-        //     SetAttack();
-        // }
-        // else
-        // {
-        //     Debug.Log($"EvaluateSequence fail  {_attackPlayerData.CurrentSequenceCode} > {newCode}");
-        //     SetIdle();
-        // }
+        Debug.Log($"VerticalSequencing evaluate");
+
+        var newCode = _attackPlayerData.CurrentSequenceKey;
+        newCode.Item1++;
+        newCode.Item2 = 0;
+
+        if (!_attackRepository.IsSequenceExists(newCode))
+            newCode = (0, 0);
+
+        _horizontalTokenSource = new CancellationTokenSource();
+        HorizontalSequencingRecursive(newCode, _horizontalTokenSource.Token);
     }
+
 
     private void SetFail()
     {
@@ -166,17 +140,8 @@ public class Attack3x3Controller : Attack.IAttackController
             if (_attackTokenSource.IsCancellationRequested)
                 return;
 
-            //     if (_isFailed)
-            //     {
-            //         time = _attackRepository.GetFailTime(_attackPlayerData.CurrentSequenceCode);
-            //         await SequenceAsync(AttackState.SequenceFail, time, _attackTokenSource.Token, onFinal: SetIdle);
-            //         _isFailed = false;
-            //     }
-            //     else
-            //     {
             time = _attackRepository.GetPostAttackTime(_attackPlayerData.CurrentSequenceKey);
             await SequenceAsync(Attack3x3State.After, time, _attackTokenSource.Token, onEnd: SetIdle);
-            //     }
         }
         catch (TaskCanceledException)
         {
@@ -189,14 +154,14 @@ public class Attack3x3Controller : Attack.IAttackController
         _attackPlayerData.AttackSequenceState.Value = state;
         try
         {
-            await TimerProcessAsync(time, token, null);
-            // progress =>
-            // {
-            //     var progress01 = Mathf.Clamp01(progress / time);
-            //     _attackPlayerData.AttackProgress.Value = new AttackProgressData(state, _newDirection, progress,
-            //         progress01);
-            // }, state.ToString());
-            //
+            await TimerProcessAsync(time, token,
+                progress =>
+                {
+                    var progress01 = Mathf.Clamp01(progress / time);
+                    _attackPlayerData.AttackProgress.Value =
+                        new Attack3x3PlayerData.AttackProgressData(state, _attackPlayerData.CurrentSequenceKey, progress, progress01);
+                }, state.ToString());
+
             if (token.IsCancellationRequested)
                 return;
 
@@ -214,19 +179,9 @@ public class Attack3x3Controller : Attack.IAttackController
 
     private void SetIdle()
     {
-        // _attackPlayerData.CurrentSequenceCode = default;
-        // _attackPlayerData.CurrentSequenceElement = default;
-        // _attackPlayerData.AttackSequenceState.Value = AttackState.Idle;
-        // _attackPlayerData.AttackProgress.Value = new AttackProgressData(AttackState.Idle, _newDirection, 0, 0);
         _attackPlayerData.AttackSequenceState.Value = Attack3x3State.Idle;
         _attackPlayerData.CurrentSequenceKey = (-1, -1);
     }
-
-    // private async void SetAttack()
-    // {
-    //     _attackTokenSource = new CancellationTokenSource();
-    //     await AttackAsync();
-    // }
 
     private async Task TimerProcessAsync(float time, CancellationToken cancellationToken, Action<float> progress,
         string description = null)
