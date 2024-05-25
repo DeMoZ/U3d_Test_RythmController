@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,8 +13,6 @@ using System.Linq;
 public class Attack3x3Repository //: IAttackRepository
 {
     private Attack3x3Config _config;
-
-    //public List<List<AttackElement>> sequences = new() { new List<AttackElement>() };
     private Dictionary<(int, int), AttackElement> _attacks;
 
     public Attack3x3Repository(Attack3x3Config config)
@@ -40,15 +37,14 @@ public class Attack3x3Repository //: IAttackRepository
     private float GetDefaultPostAttackTime() => _config.PostAttackTime;
     private float GetDefaultFailTime() => _config.FailTime;
 
+    public bool IsSequenceExists((int, int) code)
+    {
+        return _attacks.TryGetValue(code, out var element);
+    }
+    
     public bool TryGetSequence((int, int) code, out AttackElement element)
     {
-        element = new AttackElement();
-
-        if (!_attacks.TryGetValue(code, out var value))
-            return false;
-
-        element = value;
-        return true;
+        return _attacks.TryGetValue(code, out element);
     }
 
     public float GetPreAttackTime((int, int) code)

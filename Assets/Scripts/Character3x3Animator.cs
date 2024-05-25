@@ -7,7 +7,6 @@ using Debug = DMZ.DebugSystem.DMZLogger;
 public class Character3x3Animator : ICharacterAnimator
 {
     private static string IdleState = "Idle Walk Run Blend";
-    private static string AttackParameter = "Attack";
     private static string StateAttackPrefix = "Attack"; // pre attack state
     private static string AttackSuffix = "A"; // attack state
     private static string PostAttackSuffix = "P"; // post attack state
@@ -24,8 +23,7 @@ public class Character3x3Animator : ICharacterAnimator
     private readonly Character _character;
     private readonly Attack3x3Repository _attackRepository;
 
-    private Dictionary<string, AnimatorClipInfo> _cashedAnimationsInfos;
-    private Dictionary<string, (string, float)> _cashedAnimationsDatas;
+    private Dictionary<string, (string, float)> _animationsCash;
 
     public Character3x3Animator(Attack3x3PlayerData attackPlayerData, Character character,
         Attack3x3Repository attackRepository)
@@ -46,8 +44,7 @@ public class Character3x3Animator : ICharacterAnimator
 
     private void CashAnimations()
     {
-        _cashedAnimationsInfos = new Dictionary<string, AnimatorClipInfo>();
-        _cashedAnimationsDatas = new Dictionary<string, (string, float)>();
+        _animationsCash = new Dictionary<string, (string, float)>();
 
         _attackRepository.GetSequencesKeys().ForEach(key =>
         {
@@ -70,9 +67,8 @@ public class Character3x3Animator : ICharacterAnimator
             if (!TryGetAnimationInfo(stateName, out var clipInfo))
                 return;
 
-            Debug.Log($"clipname {clipInfo.clip.name}");
-            _cashedAnimationsInfos[stateName] = clipInfo;
-            _cashedAnimationsDatas[stateName] = (clipInfo.clip.name, clipInfo.clip.length);
+            Debug.Log($"clipName {clipInfo.clip.name}");
+            _animationsCash[stateName] = (clipInfo.clip.name, clipInfo.clip.length);
         }
     }
 
@@ -120,18 +116,18 @@ public class Character3x3Animator : ICharacterAnimator
     private void TriggerPreAttackAnimation()
     {
         var stateName = $"{StateAttackPrefix}{TupleToString(_attackPlayerData.CurrentSequenceKey)}";
-        Debug.Log("TriggerPreAttackAnimation".Yellow() + $" {_cashedAnimationsDatas[stateName].Item1}");
-        var length = _cashedAnimationsDatas[stateName].Item2;
+        Debug.Log("TriggerPreAttackAnimation".Yellow() + $" {_animationsCash[stateName].Item1}");
+        var length = _animationsCash[stateName].Item2;
         var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey);
-        _character.Animator.SetFloat(AttackSpeed, length / time);
+        _character.Animator.SetFloat(PreAttackSpeed, length / time);
         _character.Animator.Play(stateName);
     }
 
     private void TriggerAttackAnimation()
     {
         var stateName = $"{StateAttackPrefix}{TupleToString(_attackPlayerData.CurrentSequenceKey)}{AttackSuffix}";
-        Debug.Log("TriggerAttackAnimation".Yellow() + $" {_cashedAnimationsDatas[stateName].Item1}");
-        var length = _cashedAnimationsDatas[stateName].Item2;
+        Debug.Log("TriggerAttackAnimation".Yellow() + $" {_animationsCash[stateName].Item1}");
+        var length = _animationsCash[stateName].Item2;
         var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey);
         _character.Animator.SetFloat(AttackSpeed, length / time);
         _character.Animator.SetTrigger(AttackTrigger);
@@ -140,8 +136,8 @@ public class Character3x3Animator : ICharacterAnimator
     private void TriggerPostAttackAnimation()
     {
         var stateName = $"{StateAttackPrefix}{TupleToString(_attackPlayerData.CurrentSequenceKey)}{PostAttackSuffix}";
-        Debug.Log("TriggerPostAttackAnimation".Yellow() + $" {_cashedAnimationsDatas[stateName].Item1}");
-        var length = _cashedAnimationsDatas[stateName].Item2;
+        Debug.Log("TriggerPostAttackAnimation".Yellow() + $" {_animationsCash[stateName].Item1}");
+        var length = _animationsCash[stateName].Item2;
         var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey);
         _character.Animator.SetFloat(PostAttackSpeed, length / time);
         _character.Animator.SetTrigger(PostAttackTrigger);
