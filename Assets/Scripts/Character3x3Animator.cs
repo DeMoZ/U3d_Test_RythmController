@@ -6,7 +6,7 @@ using Debug = DMZ.DebugSystem.DMZLogger;
 
 public class Character3x3Animator : ICharacterAnimator
 {
-    private static string IdleState = "Idle Walk Run Blend";
+    private static string IdleState = "Default";
     private static string StateAttackPrefix = "Attack"; // pre attack state
     private static string AttackSuffix = "A"; // attack state
     private static string PostAttackSuffix = "P"; // post attack state
@@ -16,14 +16,15 @@ public class Character3x3Animator : ICharacterAnimator
 
     private static string AttackTrigger = "Attack"; // Attack trigger
     private static string PostAttackTrigger = "PostAttack";
-
-    private static int AttackLayer = 0;
+    private static string AttackLayer = "AttackLayer";
+    private static float PreAttackTransitionTime = 0.3f;
 
     private readonly Attack3x3PlayerData _attackPlayerData;
     private readonly Character _character;
     private readonly Attack3x3Repository _attackRepository;
 
     private Dictionary<string, (string, float)> _animationsCash;
+    private int _attackLayerIndex;
 
     public Character3x3Animator(Attack3x3PlayerData attackPlayerData, Character character,
         Attack3x3Repository attackRepository)
@@ -32,6 +33,7 @@ public class Character3x3Animator : ICharacterAnimator
         _character = character;
         _attackRepository = attackRepository;
         _attackPlayerData.AttackSequenceState.Subscribe(OnAttackSequenceStateChanged);
+        _attackLayerIndex = _character.Animator.GetLayerIndex(AttackLayer);
         CashAnimations();
     }
 
@@ -79,7 +81,7 @@ public class Character3x3Animator : ICharacterAnimator
         _character.Animator.Play(stateName);
         _character.Animator.Update(0);
 
-        var clips = _character.Animator.GetCurrentAnimatorClipInfo(AttackLayer);
+        var clips = _character.Animator.GetCurrentAnimatorClipInfo(_attackLayerIndex);
         if (clips.Length == 0)
             return false;
 
@@ -120,7 +122,8 @@ public class Character3x3Animator : ICharacterAnimator
         var length = _animationsCash[stateName].Item2;
         var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey);
         _character.Animator.SetFloat(PreAttackSpeed, length / time);
-        _character.Animator.Play(stateName);
+        _character.Animator.CrossFade(stateName, PreAttackTransitionTime);
+       // _character.Animator.Play(stateName);
     }
 
     private void TriggerAttackAnimation()
