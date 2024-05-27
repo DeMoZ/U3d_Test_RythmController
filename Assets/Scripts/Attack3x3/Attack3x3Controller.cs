@@ -10,11 +10,11 @@ public class Attack3x3Controller : Attack.IAttackController
     private readonly Attack3x3PlayerData _attackPlayerData;
     private readonly Attack3x3Repository _attackRepository;
 
-    private CancellationTokenSource _attackTokenSource; // todo roman remove after creaning the class
+    private CancellationTokenSource _attackTokenSource;
     private CancellationTokenSource _horizontalTokenSource;
 
     private bool _isFailed;
-    private bool _isTouchTimerRunning;
+    private bool _isTouching;
 
     public Attack3x3Controller(Attack3x3Bus inputBus,
         Attack3x3PlayerData attackPlayerData,
@@ -39,7 +39,7 @@ public class Attack3x3Controller : Attack.IAttackController
     {
         Debug.Log($"player fightSequenceState is {_attackPlayerData.AttackSequenceState.Value}");
 
-        _isTouchTimerRunning = true;
+        _isTouching = true;
 
         switch (_attackPlayerData.AttackSequenceState.Value)
         {
@@ -69,11 +69,11 @@ public class Attack3x3Controller : Attack.IAttackController
 
     private async void OnTouchEnded()
     {
-        if (!_isTouchTimerRunning || _isFailed)
+        if (!_isTouching || _isFailed)
             return;
 
         _horizontalTokenSource?.Cancel();
-        _isTouchTimerRunning = false;
+        _isTouching = false;
 
         Debug.Log($"player fightSequenceState is {_attackPlayerData.AttackSequenceState.Value}");
 
