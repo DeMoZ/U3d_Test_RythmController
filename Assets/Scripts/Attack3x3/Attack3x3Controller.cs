@@ -90,8 +90,8 @@ public class Attack3x3Controller : Attack.IAttackController
             return;
 
         Debug.Log($"HorizontalSequencing ({newCode.Item1},{newCode.Item2})");
-        _attackPlayerData.CurrentSequenceKey = newCode;
-        _attackPlayerData.AttackSequenceState.SetValueAndForceNotify(Attack3x3State.Pre);
+        _attackPlayerData.CurrentSequenceKey.Value = newCode;
+        _attackPlayerData.AttackSequenceState.SetAndForceNotify(Attack3x3State.Pre);
 
         await TimerProcessAsync(_attackRepository.GetPreAttackTime(newCode), token, null);
         if (token.IsCancellationRequested)
@@ -107,7 +107,7 @@ public class Attack3x3Controller : Attack.IAttackController
     {
         Debug.Log($"VerticalSequencing evaluate");
 
-        var newCode = _attackPlayerData.CurrentSequenceKey;
+        var newCode = _attackPlayerData.CurrentSequenceKey.Value;
         newCode.Item1++;
         newCode.Item2 = 0;
 
@@ -132,7 +132,7 @@ public class Attack3x3Controller : Attack.IAttackController
 
     private async Task AttackAsync()
     {
-        var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey);
+        var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey.Value);
         try
         {
             await SequenceAsync(Attack3x3State.Attack, time, _attackTokenSource.Token);
@@ -140,7 +140,7 @@ public class Attack3x3Controller : Attack.IAttackController
             if (_attackTokenSource.IsCancellationRequested)
                 return;
 
-            time = _attackRepository.GetPostAttackTime(_attackPlayerData.CurrentSequenceKey);
+            time = _attackRepository.GetPostAttackTime(_attackPlayerData.CurrentSequenceKey.Value);
             await SequenceAsync(Attack3x3State.After, time, _attackTokenSource.Token, onEnd: SetIdle);
         }
         catch (TaskCanceledException)
@@ -159,7 +159,7 @@ public class Attack3x3Controller : Attack.IAttackController
                 {
                     var progress01 = Mathf.Clamp01(progress / time);
                     _attackPlayerData.AttackProgress.Value =
-                        new Attack3x3PlayerData.AttackProgressData(state, _attackPlayerData.CurrentSequenceKey, progress, progress01);
+                        new Attack3x3PlayerData.AttackProgressData(state, _attackPlayerData.CurrentSequenceKey.Value, progress, progress01);
                 }, state.ToString());
 
             if (token.IsCancellationRequested)
@@ -180,7 +180,7 @@ public class Attack3x3Controller : Attack.IAttackController
     private void SetIdle()
     {
         _attackPlayerData.AttackSequenceState.Value = Attack3x3State.Idle;
-        _attackPlayerData.CurrentSequenceKey = (-1, -1);
+        _attackPlayerData.CurrentSequenceKey.Value = (-1, -1);
     }
 
     private async Task TimerProcessAsync(float time, CancellationToken cancellationToken, Action<float> progress,

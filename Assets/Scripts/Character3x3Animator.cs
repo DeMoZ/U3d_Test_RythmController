@@ -17,7 +17,7 @@ public class Character3x3Animator : ICharacterAnimator
             Length = length;
         }
     }
-    
+
     private static string IdleState = "Default";
     private static string StateAttackPrefix = "Attack"; // pre attack state
     private static string AttackSuffix = "A"; // attack state
@@ -30,6 +30,7 @@ public class Character3x3Animator : ICharacterAnimator
     private static string PostAttackTrigger = "PostAttack";
     private static string AttackLayer = "CombatLayer";
     private static float PreAttackTransitionTime = 0.15f;
+    private static float PreAttackTransitionTimeSequence = 1f;
 
     private readonly Attack3x3PlayerData _attackPlayerData;
     private readonly Character _character;
@@ -37,7 +38,7 @@ public class Character3x3Animator : ICharacterAnimator
 
     private Dictionary<string, AnimInfo> _animationsCash;
     private int _attackLayerIndex;
-    
+
     public Character3x3Animator(Attack3x3PlayerData attackPlayerData, Character character,
         Attack3x3Repository attackRepository)
     {
@@ -129,38 +130,36 @@ public class Character3x3Animator : ICharacterAnimator
 
     private void TriggerPreAttackAnimation()
     {
-        var stateName = $"{StateAttackPrefix}{TupleToString(_attackPlayerData.CurrentSequenceKey)}";
+        var stateName = $"{StateAttackPrefix}{TupleToString(_attackPlayerData.CurrentSequenceKey.Value)}";
         Debug.Log("TriggerPreAttackAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
         var length = _animationsCash[stateName].Length;
-        var configTime = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey);
+        var configTime = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey.Value);
         var time = length > configTime ? length / configTime : 1;
+        var transitionTime = _attackPlayerData.CurrentSequenceKey.PreviousValue == (-1, -1)
+            ? PreAttackTransitionTime
+            : PreAttackTransitionTimeSequence;
+        _character.Animator.CrossFade(stateName, transitionTime);
         _character.Animator.SetFloat(PreAttackSpeed, time);
-        _character.Animator.CrossFade(stateName, PreAttackTransitionTime); // todo roman in sequens this time is short (0)
-        
-        if (_character.Animator.IsInTransition(_attackLayerIndex))
-        {
-            //_character.Animator.sto
-        }
-        
         // _character.Animator.Play(stateName);
     }
 
     private void TriggerAttackAnimation()
     {
-        var stateName = $"{StateAttackPrefix}{TupleToString(_attackPlayerData.CurrentSequenceKey)}{AttackSuffix}";
+        var stateName = $"{StateAttackPrefix}{TupleToString(_attackPlayerData.CurrentSequenceKey.Value)}{AttackSuffix}";
         Debug.Log("TriggerAttackAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
         var length = _animationsCash[stateName].Length;
-        var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey);
+        var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey.Value);
         _character.Animator.SetFloat(AttackSpeed, length / time);
         _character.Animator.SetTrigger(AttackTrigger);
     }
 
     private void TriggerPostAttackAnimation()
     {
-        var stateName = $"{StateAttackPrefix}{TupleToString(_attackPlayerData.CurrentSequenceKey)}{PostAttackSuffix}";
+        var stateName =
+            $"{StateAttackPrefix}{TupleToString(_attackPlayerData.CurrentSequenceKey.Value)}{PostAttackSuffix}";
         Debug.Log("TriggerPostAttackAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
         var length = _animationsCash[stateName].Length;
-        var configTime = _attackRepository.GetPostAttackTime(_attackPlayerData.CurrentSequenceKey);
+        var configTime = _attackRepository.GetPostAttackTime(_attackPlayerData.CurrentSequenceKey.Value);
         var time = length > configTime ? length / configTime : 1;
         _character.Animator.SetFloat(PostAttackSpeed, time);
         _character.Animator.SetTrigger(PostAttackTrigger);
