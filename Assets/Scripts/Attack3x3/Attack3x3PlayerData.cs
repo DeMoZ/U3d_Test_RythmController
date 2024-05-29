@@ -1,6 +1,6 @@
 using DMZ.Events;
 
-public class Attack3x3PlayerData : Attack.IAttackPlayerData
+public class Attack3x3PlayerData
 {
     public readonly DMZState<Attack3x3State> AttackSequenceState = new(Attack3x3State.Idle);
     public readonly DMZState<AttackProgressData> AttackProgress = new();

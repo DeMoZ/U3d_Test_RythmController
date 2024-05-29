@@ -9,9 +9,25 @@ public interface ICharacterAnimator : IDisposable
 
 public class CharacterAnimator : ICharacterAnimator
 {
+    private class AnimInfo
+    {
+        public readonly string Name;
+        public readonly float Length;
+
+        public AnimInfo(string name, float length)
+        {
+            Name = name;
+            Length = length;
+        }
+    }
+    
+    private static string IdleState = "Idle Walk Run Blend";
+    private static string AttackLayer = "Base Layer";
+    
     private static string StatePrefix = "Attack";
 
-    private Dictionary<string, AnimationClip> _cashedStateAnimations;
+    private Dictionary<string, AnimInfo> _animationsCash;
+    private int _attackLayerIndex;
 
     private readonly AttackPlayerData _attackPlayerData;
     private readonly Character _character;
@@ -22,8 +38,9 @@ public class CharacterAnimator : ICharacterAnimator
         _attackPlayerData = attackPlayerData;
         _character = character;
         _attackRepository = attackRepository;
-        CashStateAnimations();
         _attackPlayerData.AttackSequenceState.Subscribe(OnAttackSequenceStateChanged);
+        _attackLayerIndex = _character.Animator.GetLayerIndex(AttackLayer);
+        CashStateAnimations();
     }
 
     public void Dispose()
@@ -55,45 +72,52 @@ public class CharacterAnimator : ICharacterAnimator
     {
         var stateName = $"{StatePrefix}{_attackPlayerData.CurrentSequenceCode}";
 
-        var clip = _cashedStateAnimations[stateName];
+        var clip = _animationsCash[stateName];
         if (clip == default)
             return;
 
         _character.Animator.Play(stateName: stateName, normalizedTime: 0f, layer: -1);
 
-        var length = clip.length;
+        var length = clip.Length;
         var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceCode);
         _character.Animator.speed = length / (time + time * 1.02f); // todo roman reset animator speed to 1 after animation
     }
 
     private void CashStateAnimations()
     {
-        _cashedStateAnimations = new();
+        _animationsCash = new Dictionary<string, AnimInfo>();
 
-        foreach (var key in _attackRepository.GetSequencesKeys())
+        _attackRepository.GetSequencesKeys().ForEach(key =>
         {
             var stateName = $"{StatePrefix}{key}";
-            _cashedStateAnimations[stateName] = GetAttackAnimationNameFromState(_character.Animator, stateName);
+            CashAnimation(stateName);
+        });
+
+        _character.Animator.Play(IdleState);
+        
+        return;
+        void CashAnimation(string stateName)
+        {
+            if (!TryGetAnimationInfo(stateName, out var clipInfo))
+                return;
+
+            Debug.Log($"clipName {clipInfo.clip.name}");
+            _animationsCash[stateName] = new AnimInfo(clipInfo.clip.name, clipInfo.clip.length);
         }
     }
-
-    // todo roman this method is completely wrong in a way to get a clip name from state. 
-    private AnimationClip GetAttackAnimationNameFromState(Animator animator, string stateName, int layerIndex = 0)
+    
+    private bool TryGetAnimationInfo(string stateName, out AnimatorClipInfo clipInfo)
     {
-        var parameters = animator.parameters;
-        foreach (var parameter in parameters)
-        {
-            if (parameter.name != stateName)
-                continue;
+        clipInfo = default;
+        Debug.Log($"CASH ANIMATIONS. SWITCH STATES. set state name {stateName}");
+        _character.Animator.Play(stateName);
+        _character.Animator.Update(0);
 
-            var clipInfos = animator.GetCurrentAnimatorClipInfo(layerIndex);
+        var clips = _character.Animator.GetCurrentAnimatorClipInfo(_attackLayerIndex);
+        if (clips.Length == 0)
+            return false;
 
-            if (clipInfos.Length <= 0 || !clipInfos[0].clip)
-                continue;
-
-            return clipInfos[0].clip;
-        }
-
-        return default;
+        clipInfo = clips[0];
+        return clipInfo.clip != default;
     }
 }
