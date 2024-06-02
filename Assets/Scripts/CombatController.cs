@@ -4,60 +4,59 @@ using System.Threading.Tasks;
 using DMZ.Extensions;
 using UnityEngine;
 
-public class Attack3x3Controller : Attack.IAttackController
+public class CombatController
 {
-    private readonly Attack3x3Bus _inputBus;
-    private readonly Attack3x3PlayerData _attackPlayerData;
-    private readonly Attack3x3Repository _attackRepository;
-
+    private readonly InputModel _inputModel;
+    private readonly CombatModel _combatModel;
+    private readonly CombatRepository _combatRepository;
+    
     private CancellationTokenSource _attackTokenSource;
     private CancellationTokenSource _horizontalTokenSource;
 
     private bool _isFailed;
     private bool _isTouching;
 
-    public Attack3x3Controller(Attack3x3Bus inputBus,
-        Attack3x3PlayerData attackPlayerData,
-        Attack3x3Repository attackRepository)
+    public CombatController(InputModel inputModel, CombatModel combatModel, CombatRepository combatRepository)
     {
-        _inputBus = inputBus;
-        _attackPlayerData = attackPlayerData;
-        _attackRepository = attackRepository;
-        _inputBus.OnAttackTouchStarted += OnTouchStarted;
-        _inputBus.OnAttackTouchEnded += OnTouchEnded;
+        _inputModel = inputModel;
+        _combatModel = combatModel;
+        _combatRepository = combatRepository;
+
+        _inputModel.OnAttackTouchStarted += OnTouchStarted;
+        _inputModel.OnAttackTouchEnded += OnTouchEnded;
     }
 
     public void Dispose()
     {
-        _inputBus.OnAttackTouchStarted -= OnTouchStarted;
-        _inputBus.OnAttackTouchEnded -= OnTouchEnded;
+        _inputModel.OnAttackTouchStarted -= OnTouchStarted;
+        _inputModel.OnAttackTouchEnded -= OnTouchEnded;
         _horizontalTokenSource?.Cancel();
         _attackTokenSource?.Cancel();
     }
 
     private void OnTouchStarted()
     {
-        Debug.Log($"player fightSequenceState is {_attackPlayerData.AttackSequenceState.Value}");
+        Debug.Log($"player fightSequenceState is {_combatModel.AttackSequenceState.Value}");
 
         _isTouching = true;
 
-        switch (_attackPlayerData.AttackSequenceState.Value)
+        switch (_combatModel.AttackSequenceState.Value)
         {
-            case Attack3x3State.None:
-            case Attack3x3State.Fail:
+            case CombatState.None:
+            case CombatState.Fail:
                 Debug.Log("Attacking not available");
                 break;
-            case Attack3x3State.Idle:
+            case CombatState.Idle:
                 _horizontalTokenSource = new CancellationTokenSource();
                 HorizontalSequencingRecursive((0, 0), _horizontalTokenSource.Token);
                 break;
-            case Attack3x3State.Pre:
+            case CombatState.Pre:
 
                 break;
-            case Attack3x3State.Attack:
+            case CombatState.Attack:
                 //SetFail();
                 break;
-            case Attack3x3State.After:
+            case CombatState.After:
                 _horizontalTokenSource.Cancel();
                 _attackTokenSource.Cancel();
                 VerticalSequencing();
@@ -75,25 +74,25 @@ public class Attack3x3Controller : Attack.IAttackController
         _horizontalTokenSource?.Cancel();
         _isTouching = false;
 
-        Debug.Log($"player fightSequenceState is {_attackPlayerData.AttackSequenceState.Value}");
+        Debug.Log($"player fightSequenceState is {_combatModel.AttackSequenceState.Value}");
 
-        if (_attackPlayerData.AttackSequenceState.Value is not Attack3x3State.Pre)
+        if (_combatModel.AttackSequenceState.Value is not CombatState.Pre)
             return;
 
         _attackTokenSource = new CancellationTokenSource();
-        await AttackAsync();
+        await AttackAsync(_attackTokenSource.Token);
     }
 
     private async void HorizontalSequencingRecursive((int, int) newCode, CancellationToken token)
     {
-        if (!_attackRepository.IsSequenceExists(newCode))
+        if (token.IsCancellationRequested || !_combatRepository.IsSequenceExists(newCode))
             return;
 
         Debug.Log($"HorizontalSequencing ({newCode.Item1},{newCode.Item2})");
-        _attackPlayerData.CurrentSequenceKey.Value = newCode;
-        _attackPlayerData.AttackSequenceState.SetAndForceNotify(Attack3x3State.Pre);
+        _combatModel.CurrentSequenceKey.Value = newCode;
+        _combatModel.AttackSequenceState.SetAndForceNotify(CombatState.Pre);
 
-        await TimerProcessAsync(_attackRepository.GetPreAttackTime(newCode), token, null);
+        await TimerProcessAsync(_combatRepository.GetPreAttackTime(newCode), token, null);
         if (token.IsCancellationRequested)
             return;
 
@@ -107,11 +106,11 @@ public class Attack3x3Controller : Attack.IAttackController
     {
         Debug.Log($"VerticalSequencing evaluate");
 
-        var newCode = _attackPlayerData.CurrentSequenceKey.Value;
+        var newCode = _combatModel.CurrentSequenceKey.Value;
         newCode.Item1++;
         newCode.Item2 = 0;
 
-        if (!_attackRepository.IsSequenceExists(newCode))
+        if (!_combatRepository.IsSequenceExists(newCode))
             newCode = (0, 0);
 
         _horizontalTokenSource = new CancellationTokenSource();
@@ -130,36 +129,40 @@ public class Attack3x3Controller : Attack.IAttackController
         throw new NotImplementedException();
     }
 
-    private async Task AttackAsync()
+    private async Task AttackAsync(CancellationToken cancellationToken)
     {
-        var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey.Value);
+        var time = _combatRepository.GetAttackTime(_combatModel.CurrentSequenceKey.Value);
         try
         {
-            await SequenceAsync(Attack3x3State.Attack, time, _attackTokenSource.Token);
+            await SequenceAsync(CombatState.Attack, time, cancellationToken);
 
-            if (_attackTokenSource.IsCancellationRequested)
+            if (cancellationToken.IsCancellationRequested)
                 return;
 
-            time = _attackRepository.GetPostAttackTime(_attackPlayerData.CurrentSequenceKey.Value);
-            await SequenceAsync(Attack3x3State.After, time, _attackTokenSource.Token, onEnd: SetIdle);
+            time = _combatRepository.GetPostAttackTime(_combatModel.CurrentSequenceKey.Value);
+            await SequenceAsync(CombatState.After, time, cancellationToken, onEnd: SetIdle);
         }
         catch (TaskCanceledException)
         {
         }
     }
 
-    private async Task SequenceAsync(Attack3x3State state, float time, CancellationToken token,
+    private async Task SequenceAsync(CombatState state, float time, CancellationToken token,
         Action onCancel = null, Action onEnd = null, Action onFinal = null)
     {
-        _attackPlayerData.AttackSequenceState.Value = state;
+        if (token.IsCancellationRequested)
+            return;
+        
+        _combatModel.AttackSequenceState.Value = state;
+        
         try
         {
             await TimerProcessAsync(time, token,
                 progress =>
                 {
                     var progress01 = Mathf.Clamp01(progress / time);
-                    _attackPlayerData.AttackProgress.Value =
-                        new Attack3x3PlayerData.AttackProgressData(state, _attackPlayerData.CurrentSequenceKey.Value, progress, progress01);
+                    _combatModel.AttackProgress.Value =
+                        new CombatProgressModel(state, _combatModel.CurrentSequenceKey.Value, progress, progress01);
                 }, state.ToString());
 
             if (token.IsCancellationRequested)
@@ -179,8 +182,8 @@ public class Attack3x3Controller : Attack.IAttackController
 
     private void SetIdle()
     {
-        _attackPlayerData.AttackSequenceState.Value = Attack3x3State.Idle;
-        _attackPlayerData.CurrentSequenceKey.Value = (-1, -1);
+        _combatModel.AttackSequenceState.Value = CombatState.Idle;
+        _combatModel.CurrentSequenceKey.Value = (-1, -1);
     }
 
     private async Task TimerProcessAsync(float time, CancellationToken cancellationToken, Action<float> progress,

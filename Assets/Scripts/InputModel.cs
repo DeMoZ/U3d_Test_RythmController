@@ -1,8 +1,7 @@
 using System;
 
-public class Attack3x3Bus
+public class InputModel
 {
     public Action OnAttackTouchStarted;
     public Action OnAttackTouchEnded;
 }
-

@@ -2,18 +2,16 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Attack3x3/" + nameof(Attack3x3Config), fileName = nameof(Attack3x3Config))]
-public class Attack3x3Config : SerializedScriptableObject
+[CreateAssetMenu(menuName = "Combat/" + nameof(CombatConfig), fileName = nameof(CombatConfig))]
+public class CombatConfig : SerializedScriptableObject
 {
-    [Header("Default timings")] 
-    public float PreAttackTime = 0.2f;
+    [Header("Default timings")] public float PreAttackTime = 0.2f;
     public float AttackTime = 0.4f;
     public float PostAttackTime = 0.4f;
     public float FailTime = 1f;
 
     public List<List<AttackElement>> Sequences;
 }
-
 
 public class AttackElement
 {

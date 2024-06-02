@@ -1,4 +1,4 @@
-public enum Attack3x3State
+public enum CombatState
 {
     None,
     Idle,
