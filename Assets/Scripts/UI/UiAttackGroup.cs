@@ -14,12 +14,15 @@ namespace Ui
 
         private void OnInteract(OnScreenControlButton controlButton, float value)
         {
-            if (false) // todo roman check some game state 
+            if (CheckInteractionAllowed()) 
                 return;
 
             controlButton.SendValue(value);
-        }
+            return;
 
+            bool CheckInteractionAllowed() => false;
+        }
+        
         private void OnDestroy()
         {
             foreach (var button in attackButtons)

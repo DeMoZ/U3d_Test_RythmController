@@ -22,12 +22,8 @@ public class CombatLayerAnimator
     private const string AttackSuffix = "A"; // attack state
     private const string PostAttackSuffix = "P"; // post attack state
 
-    // pre attack is not triggered, but played by command Play
     private const string AttackTrigger = "Attack"; // Attack trigger
     private const string PostAttackTrigger = "PostAttack";
-
-    private const float PreAttackTransitionTime = 0.15f;
-    private const float PreAttackTransitionTimeSequence = 1f;
 
     private readonly int _layerIndex;
     private Dictionary<string, AnimInfo> _animationsCash;
@@ -36,13 +32,13 @@ public class CombatLayerAnimator
     protected virtual string PreAttackSpeed => "PreSpeed";
     protected virtual string AttackSpeed => "AttackSpeed";
     protected virtual string PostAttackSpeed => "PostSpeed";
-    
+
     private static string TupleToString((int, int) tuple) => $"{tuple.Item1}{tuple.Item2}";
 
     private readonly CombatModel _combatModel;
     private readonly Animator _animator;
     private readonly CombatRepository _combatRepository;
-    
+
     private static readonly int PostAttackTriggerCashed = Animator.StringToHash(PostAttackTrigger);
     private static readonly int AttackTriggerCashed = Animator.StringToHash(AttackTrigger);
 
@@ -52,7 +48,7 @@ public class CombatLayerAnimator
         _animator = animator;
         _combatRepository = combatRepository;
         _layerIndex = _animator.GetLayerIndex(Layer);
-        
+
         CashAnimations();
     }
 
@@ -72,7 +68,7 @@ public class CombatLayerAnimator
             CashAnimation(stateName);
         });
 
-        _animator.Play(DefaultState);
+        _animator.Play(DefaultState, _layerIndex);
         return;
 
         void CashAnimation(string stateName)
@@ -105,14 +101,9 @@ public class CombatLayerAnimator
         var stateName = $"{CombatStatePrefix}{TupleToString(_combatModel.CurrentSequenceKey.Value)}";
         Debug.Log("TriggerPreAttackAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
         var length = _animationsCash[stateName].Length;
-        var configTime = _combatRepository.GetAttackTime(_combatModel.CurrentSequenceKey.Value);
-        var time = length > configTime ? length / configTime : 1;
-        var transitionTime = _combatModel.CurrentSequenceKey.PreviousValue == (-1, -1)
-            ? PreAttackTransitionTime
-            : PreAttackTransitionTimeSequence;
-        _animator.CrossFade(stateName, transitionTime, _layerIndex);
-        _animator.SetFloat(PreAttackSpeed, time);
-        // _character.Animator.Play(stateName);
+        var time = _combatRepository.GetAttackTime(_combatModel.CurrentSequenceKey.Value);
+        _animator.SetFloat(PreAttackSpeed, length / time);
+        _animator.SetTrigger(stateName);
     }
 
     public void TriggerAttackAnimation()
@@ -124,15 +115,14 @@ public class CombatLayerAnimator
         _animator.SetFloat(AttackSpeed, length / time);
         _animator.SetTrigger(AttackTriggerCashed);
     }
-    
+
     public void TriggerPostAttackAnimation()
     {
         var stateName = $"{CombatStatePrefix}{TupleToString(_combatModel.CurrentSequenceKey.Value)}{PostAttackSuffix}";
         Debug.Log("TriggerPostAttackAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
         var length = _animationsCash[stateName].Length;
-        var configTime = _combatRepository.GetPostAttackTime(_combatModel.CurrentSequenceKey.Value);
-        var time = length > configTime ? length / configTime : 1;
-        _animator.SetFloat(PostAttackSpeed, time);
+        var time = _combatRepository.GetAttackTime(_combatModel.CurrentSequenceKey.Value);
+        _animator.SetFloat(PostAttackSpeed, length / time);
         _animator.SetTrigger(PostAttackTriggerCashed);
     }
 }
