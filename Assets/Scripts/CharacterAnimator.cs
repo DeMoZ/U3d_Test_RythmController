@@ -7,6 +7,7 @@ using Debug = DMZ.DebugSystem.DMZLogger;
 public class CharacterAnimator : IDisposable
 {
     private readonly CharacterModel _characterModel;
+    private int _baseLayerId;
 
     private readonly CombatLayerAnimator _combatLayerAnimator;
     private readonly CombatLayerAnimator _legsLayerAnimator;
@@ -21,6 +22,9 @@ public class CharacterAnimator : IDisposable
         _characterModel.AttackSequenceState.Subscribe(OnCombatSequenceStateChanged);
 
         _moveAnimator = new MoveAnimator(characterModel, animator);
+
+        _baseLayerId = animator.GetLayerIndex(AnimatorConstants.BaseLayer);
+        animator.Play(AnimatorConstants.DefaultStateOnBaseLayer, _baseLayerId);
     }
 
     public void Dispose()
