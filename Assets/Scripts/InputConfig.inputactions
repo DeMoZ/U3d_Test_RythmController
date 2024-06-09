@@ -6,6 +6,15 @@
             "id": "3e9501b9-7579-42b7-a9e4-58697a995e5b",
             "actions": [
                 {
+                    "name": "MoveDigital",
+                    "type": "Button",
+                    "id": "d3afba72-2be2-4068-aa56-506be9059f5a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "AttackL",
                     "type": "Button",
                     "id": "0b6788ac-f836-4e2e-8513-826a3eb52884",
@@ -45,17 +54,6 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "2b372e49-b1d9-4378-98f2-9acdbf79751e",
-                    "path": "<Keyboard>/l",
-                    "interactions": "Press(behavior=2)",
-                    "processors": "",
-                    "groups": "",
-                    "action": "AttackL",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "d291db8d-d621-4f02-825b-d448f552fcb7",
                     "path": "<Keyboard>/quote",
                     "interactions": "",
@@ -86,6 +84,116 @@
                     "action": "AttackD",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2b372e49-b1d9-4378-98f2-9acdbf79751e",
+                    "path": "<Keyboard>/l",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AttackL",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "WASD",
+                    "id": "cd5783c8-d046-431c-a8aa-f5f8eb4bd3a7",
+                    "path": "2DVector(mode=1)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveDigital",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "30bcf4e5-23fb-4c1c-bf60-2a14366dcb42",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveDigital",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "520a61c0-446b-4f56-ae8e-d101131673cd",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveDigital",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "89606c15-224c-4b3d-acdb-9d4f496dc017",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveDigital",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "a4a628c8-2a62-459e-8024-29b4fd4e9126",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveDigital",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "up",
+                    "id": "281f13fc-3233-451a-8a26-5bd26977abf4",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveDigital",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "d1e3adf3-8154-4980-b781-bb3905976f1d",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveDigital",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "bdc6486e-a8f4-4383-9de3-3d89e3f8ddc9",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveDigital",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "1078c7e9-ecfc-4c8e-941f-2ed7e56e5b16",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveDigital",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }

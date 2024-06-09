@@ -1,28 +1,31 @@
-using System;
 using UnityEngine;
 
 public class Character : MonoBehaviour
 {
     [SerializeField] private Animator animator;
-
+    [SerializeField] private CharacterController characterController;
+    [SerializeField] private MoveController moveController;
     private IInputStrategy _inputStrategy;
 
-    private CombatModel _combatModel;
+    private CharacterModel _characterModel;
     private CharacterAnimator _characterAnimator;
     private CombatController _combatController;
+    private InputModel _inputModel;
 
     public void Init(IInputStrategy inputStrategy,
-        CombatModel combatModel,
-        CombatRepository combatRepository)
+        CharacterModel characterModel,
+        CombatRepository combatRepository,
+        Camera mainCamera)
     {
         _inputStrategy = inputStrategy;
-        _combatModel = combatModel;
+        _characterModel = characterModel;
 
-        var inputModel = new InputModel();
-        _characterAnimator = new CharacterAnimator(_combatModel, animator, combatRepository);
-        _combatController = new CombatController(inputModel, combatModel, combatRepository);
+        _inputModel = new InputModel();
+        _characterAnimator = new CharacterAnimator(_characterModel, animator, combatRepository);
+        _combatController = new CombatController(_inputModel, _characterModel, combatRepository);
+        moveController.Init(_inputModel, _characterModel, characterController, mainCamera.transform);
 
-        _inputStrategy.Init(inputModel);
+        _inputStrategy.Init(_inputModel);
     }
 
     private void OnDestroy()
@@ -30,5 +33,6 @@ public class Character : MonoBehaviour
         _characterAnimator.Dispose();
         _combatController.Dispose();
         _inputStrategy.Dispose();
+        _inputModel.Dispose();
     }
 }

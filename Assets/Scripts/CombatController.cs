@@ -1,50 +1,61 @@
+//#define LOGGER_ON
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using DMZ.Extensions;
 using UnityEngine;
+using Debug = DMZ.DebugSystem.DMZLogger;
 
 public class CombatController
 {
     private readonly InputModel _inputModel;
-    private readonly CombatModel _combatModel;
+    private readonly CharacterModel _characterModel;
     private readonly CombatRepository _combatRepository;
-    
+
     private CancellationTokenSource _attackTokenSource;
     private CancellationTokenSource _horizontalTokenSource;
 
     private bool _isFailed;
     private bool _isTouching;
 
-    public CombatController(InputModel inputModel, CombatModel combatModel, CombatRepository combatRepository)
+    public CombatController(InputModel inputModel, CharacterModel characterModel, CombatRepository combatRepository)
     {
         _inputModel = inputModel;
-        _combatModel = combatModel;
+        _characterModel = characterModel;
         _combatRepository = combatRepository;
 
-        _inputModel.OnAttackTouchStarted += OnTouchStarted;
-        _inputModel.OnAttackTouchEnded += OnTouchEnded;
+        _inputModel.OnAttack += OnAttack;
     }
 
     public void Dispose()
     {
-        _inputModel.OnAttackTouchStarted -= OnTouchStarted;
-        _inputModel.OnAttackTouchEnded -= OnTouchEnded;
+        _inputModel.OnAttack -= OnAttack;
         _horizontalTokenSource?.Cancel();
         _attackTokenSource?.Cancel();
     }
 
+    private void OnAttack(bool isStarted)
+    {
+        if (isStarted)
+            OnTouchStarted();
+        else
+            OnTouchEnded();
+    }
+
     private void OnTouchStarted()
     {
-        Debug.Log($"player fightSequenceState is {_combatModel.AttackSequenceState.Value}");
-
+#if LOGGER_ON
+        Debug.Log($"player fightSequenceState is {_characterModel.AttackSequenceState.Value}");
+#endif
         _isTouching = true;
 
-        switch (_combatModel.AttackSequenceState.Value)
+        switch (_characterModel.AttackSequenceState.Value)
         {
             case CombatState.None:
             case CombatState.Fail:
+#if LOGGER_ON
                 Debug.Log("Attacking not available");
+#endif                
                 break;
             case CombatState.Idle:
                 _horizontalTokenSource = new CancellationTokenSource();
@@ -73,10 +84,10 @@ public class CombatController
 
         _horizontalTokenSource?.Cancel();
         _isTouching = false;
-
-        Debug.Log($"player fightSequenceState is {_combatModel.AttackSequenceState.Value}");
-
-        if (_combatModel.AttackSequenceState.Value is not CombatState.Pre)
+#if LOGGER_ON
+        Debug.Log($"player fightSequenceState is {_characterModel.AttackSequenceState.Value}");
+#endif
+        if (_characterModel.AttackSequenceState.Value is not CombatState.Pre)
             return;
 
         _attackTokenSource = new CancellationTokenSource();
@@ -88,25 +99,28 @@ public class CombatController
         if (token.IsCancellationRequested || !_combatRepository.IsSequenceExists(newCode))
             return;
 
+#if LOGGER_ON
         Debug.Log($"HorizontalSequencing ({newCode.Item1},{newCode.Item2})");
-        _combatModel.CurrentSequenceKey.Value = newCode;
-        _combatModel.AttackSequenceState.SetAndForceNotify(CombatState.Pre);
+#endif        
+        _characterModel.CurrentSequenceKey.Value = newCode;
+        _characterModel.AttackSequenceState.SetAndForceNotify(CombatState.Pre);
 
         await TimerProcessAsync(_combatRepository.GetPreAttackTime(newCode), token, null);
         if (token.IsCancellationRequested)
             return;
-
+#if LOGGER_ON
         Debug.Log($"HorizontalSequencing evaluate");
-
+#endif
         newCode.Item2++;
         HorizontalSequencingRecursive(newCode, token);
     }
 
     private void VerticalSequencing()
     {
+#if LOGGER_ON        
         Debug.Log($"VerticalSequencing evaluate");
-
-        var newCode = _combatModel.CurrentSequenceKey.Value;
+#endif
+        var newCode = _characterModel.CurrentSequenceKey.Value;
         newCode.Item1++;
         newCode.Item2 = 0;
 
@@ -121,7 +135,9 @@ public class CombatController
     private void SetFail()
     {
         _isFailed = true;
+#if LOGGER_ON
         Debug.Log($"_isFailed: {_isFailed}");
+#endif        
     }
 
     private void OnBrake()
@@ -131,7 +147,7 @@ public class CombatController
 
     private async Task AttackAsync(CancellationToken cancellationToken)
     {
-        var time = _combatRepository.GetAttackTime(_combatModel.CurrentSequenceKey.Value);
+        var time = _combatRepository.GetAttackTime(_characterModel.CurrentSequenceKey.Value);
         try
         {
             await SequenceAsync(CombatState.Attack, time, cancellationToken);
@@ -139,7 +155,7 @@ public class CombatController
             if (cancellationToken.IsCancellationRequested)
                 return;
 
-            time = _combatRepository.GetPostAttackTime(_combatModel.CurrentSequenceKey.Value);
+            time = _combatRepository.GetPostAttackTime(_characterModel.CurrentSequenceKey.Value);
             await SequenceAsync(CombatState.After, time, cancellationToken, onEnd: SetIdle);
         }
         catch (TaskCanceledException)
@@ -152,17 +168,17 @@ public class CombatController
     {
         if (token.IsCancellationRequested)
             return;
-        
-        _combatModel.AttackSequenceState.Value = state;
-        
+
+        _characterModel.AttackSequenceState.Value = state;
+
         try
         {
             await TimerProcessAsync(time, token,
                 progress =>
                 {
                     var progress01 = Mathf.Clamp01(progress / time);
-                    _combatModel.AttackProgress.Value =
-                        new CombatProgressModel(state, _combatModel.CurrentSequenceKey.Value, progress, progress01);
+                    _characterModel.AttackProgress.Value =
+                        new CombatProgressModel(state, _characterModel.CurrentSequenceKey.Value, progress, progress01);
                 }, state.ToString());
 
             if (token.IsCancellationRequested)
@@ -174,7 +190,9 @@ public class CombatController
         {
             if (onCancel != null)
             {
+#if LOGGER_ON
                 Debug.Log($"Canceled {state}");
+#endif                
                 onCancel?.Invoke();
             }
         }
@@ -182,8 +200,8 @@ public class CombatController
 
     private void SetIdle()
     {
-        _combatModel.AttackSequenceState.Value = CombatState.Idle;
-        _combatModel.CurrentSequenceKey.Value = (-1, -1);
+        _characterModel.AttackSequenceState.Value = CombatState.Idle;
+        _characterModel.CurrentSequenceKey.Value = (-1, -1);
     }
 
     private async Task TimerProcessAsync(float time, CancellationToken cancellationToken, Action<float> progress,
@@ -194,8 +212,9 @@ public class CombatController
         try
         {
             var startTime = Time.time;
+#if LOGGER_ON
             Debug.Log($"Timer started. {time} {description}");
-
+#endif
             while (elapsedTime < time)
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -210,7 +229,9 @@ public class CombatController
             }
 
             progress?.Invoke(time);
+#if LOGGER_ON
             Debug.Log($"Timer elapsed. {time} {description}; count {Time.time - startTime}".Green());
+#endif            
         }
         catch (TaskCanceledException)
         {
@@ -221,7 +242,9 @@ public class CombatController
 
         void OnTimerCancel()
         {
+#if LOGGER_ON
             Debug.Log($"Timer cancelled.  {elapsedTime}/{time} {description}".Yellow());
+#endif
         }
     }
 }

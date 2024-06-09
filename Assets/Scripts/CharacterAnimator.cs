@@ -1,3 +1,4 @@
+//#define LOGGER_ON
 using System;
 using DMZ.Extensions;
 using UnityEngine;
@@ -5,30 +6,33 @@ using Debug = DMZ.DebugSystem.DMZLogger;
 
 public class CharacterAnimator : IDisposable
 {
-    private readonly CombatModel _combatModel;
+    private readonly CharacterModel _characterModel;
 
     private readonly CombatLayerAnimator _combatLayerAnimator;
     private readonly CombatLayerAnimator _legsLayerAnimator;
+    private readonly MoveAnimator _moveAnimator;
 
-    public CharacterAnimator(CombatModel combatModel, Animator animator, CombatRepository combatRepository)
+    public CharacterAnimator(CharacterModel characterModel, Animator animator, CombatRepository combatRepository)
     {
-        _combatModel = combatModel;
+        _characterModel = characterModel;
 
-        _combatLayerAnimator = new CombatLayerAnimator(combatModel, animator, combatRepository);
-        _legsLayerAnimator = new CombatLegsLayerAnimator(combatModel, animator, combatRepository);
+        _combatLayerAnimator = new CombatLayerAnimator(characterModel, animator, combatRepository);
+        _legsLayerAnimator = new CombatLegsLayerAnimator(characterModel, animator, combatRepository);
+        _characterModel.AttackSequenceState.Subscribe(OnCombatSequenceStateChanged);
 
-        _combatModel.AttackSequenceState.Subscribe(OnAttackSequenceStateChanged);
+        _moveAnimator = new MoveAnimator(characterModel, animator);
     }
 
     public void Dispose()
     {
-        _combatModel.AttackSequenceState.Unsubscribe(OnAttackSequenceStateChanged);
+        _characterModel.AttackSequenceState.Unsubscribe(OnCombatSequenceStateChanged);
     }
 
-    private void OnAttackSequenceStateChanged(CombatState attackState)
+    private void OnCombatSequenceStateChanged(CombatState attackState)
     {
+#if LOGGER_ON
         Debug.Log("OnAttackSequenceStateChanged".Yellow());
-
+#endif
         switch (attackState)
         {
             case CombatState.None:

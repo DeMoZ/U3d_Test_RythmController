@@ -1,7 +1,14 @@
 using System;
+using DMZ.Events;
+using UnityEngine;
 
-public class InputModel
+public class InputModel : IDisposable
 {
-    public Action OnAttackTouchStarted;
-    public Action OnAttackTouchEnded;
+    public readonly DMZState<Vector3> OnMove = new ();
+    public Action<bool> OnAttack;
+
+    public void Dispose()
+    {
+        OnMove?.Dispose();
+    }
 }

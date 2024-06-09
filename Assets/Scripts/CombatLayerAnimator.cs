@@ -1,3 +1,4 @@
+//#define LOGGER_ON 
 using System.Collections.Generic;
 using DMZ.Extensions;
 using UnityEngine;
@@ -35,16 +36,16 @@ public class CombatLayerAnimator
 
     private static string TupleToString((int, int) tuple) => $"{tuple.Item1}{tuple.Item2}";
 
-    private readonly CombatModel _combatModel;
+    private readonly CharacterModel _characterModel;
     private readonly Animator _animator;
     private readonly CombatRepository _combatRepository;
 
     private static readonly int PostAttackTriggerCashed = Animator.StringToHash(PostAttackTrigger);
     private static readonly int AttackTriggerCashed = Animator.StringToHash(AttackTrigger);
 
-    public CombatLayerAnimator(CombatModel combatModel, Animator animator, CombatRepository combatRepository)
+    public CombatLayerAnimator(CharacterModel characterModel, Animator animator, CombatRepository combatRepository)
     {
-        _combatModel = combatModel;
+        _characterModel = characterModel;
         _animator = animator;
         _combatRepository = combatRepository;
         _layerIndex = _animator.GetLayerIndex(Layer);
@@ -76,7 +77,9 @@ public class CombatLayerAnimator
             if (!TryGetAnimationInfo(stateName, out var clipInfo))
                 return;
 
+#if LOGGER_ON
             Debug.Log($"clipName {clipInfo.clip.name}");
+#endif
             _animationsCash[stateName] = new AnimInfo(clipInfo.clip.name, clipInfo.clip.length);
         }
     }
@@ -84,7 +87,9 @@ public class CombatLayerAnimator
     private bool TryGetAnimationInfo(string stateName, out AnimatorClipInfo clipInfo)
     {
         clipInfo = default;
+#if LOGGER_ON
         Debug.Log($"CASH ANIMATIONS. SWITCH STATES. set state name {stateName}");
+#endif        
         _animator.Play(stateName, _layerIndex);
         _animator.Update(0);
 
@@ -98,30 +103,36 @@ public class CombatLayerAnimator
 
     public void TriggerPreAttackAnimation()
     {
-        var stateName = $"{CombatStatePrefix}{TupleToString(_combatModel.CurrentSequenceKey.Value)}";
+        var stateName = $"{CombatStatePrefix}{TupleToString(_characterModel.CurrentSequenceKey.Value)}";
+#if LOGGER_ON        
         Debug.Log("TriggerPreAttackAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
+#endif
         var length = _animationsCash[stateName].Length;
-        var time = _combatRepository.GetAttackTime(_combatModel.CurrentSequenceKey.Value);
+        var time = _combatRepository.GetAttackTime(_characterModel.CurrentSequenceKey.Value);
         _animator.SetFloat(PreAttackSpeed, length / time);
         _animator.SetTrigger(stateName);
     }
 
     public void TriggerAttackAnimation()
     {
-        var stateName = $"{CombatStatePrefix}{TupleToString(_combatModel.CurrentSequenceKey.Value)}{AttackSuffix}";
+        var stateName = $"{CombatStatePrefix}{TupleToString(_characterModel.CurrentSequenceKey.Value)}{AttackSuffix}";
+#if LOGGER_ON        
         Debug.Log("TriggerAttackAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
+#endif        
         var length = _animationsCash[stateName].Length;
-        var time = _combatRepository.GetAttackTime(_combatModel.CurrentSequenceKey.Value);
+        var time = _combatRepository.GetAttackTime(_characterModel.CurrentSequenceKey.Value);
         _animator.SetFloat(AttackSpeed, length / time);
         _animator.SetTrigger(AttackTriggerCashed);
     }
 
     public void TriggerPostAttackAnimation()
     {
-        var stateName = $"{CombatStatePrefix}{TupleToString(_combatModel.CurrentSequenceKey.Value)}{PostAttackSuffix}";
+        var stateName = $"{CombatStatePrefix}{TupleToString(_characterModel.CurrentSequenceKey.Value)}{PostAttackSuffix}";
+#if LOGGER_ON        
         Debug.Log("TriggerPostAttackAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
+#endif        
         var length = _animationsCash[stateName].Length;
-        var time = _combatRepository.GetAttackTime(_combatModel.CurrentSequenceKey.Value);
+        var time = _combatRepository.GetAttackTime(_characterModel.CurrentSequenceKey.Value);
         _animator.SetFloat(PostAttackSpeed, length / time);
         _animator.SetTrigger(PostAttackTriggerCashed);
     }

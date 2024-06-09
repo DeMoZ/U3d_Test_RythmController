@@ -12,26 +12,27 @@ public class BotInputStrategy : IInputStrategy
     {
         _inputModel = inputModel;
         _cancellationTokenSource = new CancellationTokenSource();
-        RunInputSpamming(_cancellationTokenSource.Token);
+        RunCombatSpamming(_cancellationTokenSource.Token);
+        RunRandomMoving(_cancellationTokenSource.Token);
     }
 
-    private async void RunInputSpamming(CancellationToken token)
+    private async void RunCombatSpamming(CancellationToken token)
     {
         try
         {
-            while (!_cancellationTokenSource.IsCancellationRequested)
+            while (!token.IsCancellationRequested)
             {
-                await Task.Delay((int)(GetRandomTime(3, 6) * 1000), _cancellationTokenSource.Token);
+                await Task.Delay((int)(GetRandomTime(3, 6) * 1000), token);
                 if (_cancellationTokenSource.IsCancellationRequested)
                     return;
 
-                _inputModel.OnAttackTouchStarted?.Invoke();
+                _inputModel.OnAttack?.Invoke(true);
 
-                await Task.Delay((int)(GetRandomTime(0.01f, 3f) * 1000), _cancellationTokenSource.Token);
-                if (_cancellationTokenSource.IsCancellationRequested)
+                await Task.Delay((int)(GetRandomTime(0.01f, 3f) * 1000), token);
+                if (token.IsCancellationRequested)
                     return;
 
-                _inputModel.OnAttackTouchEnded?.Invoke();
+                _inputModel.OnAttack?.Invoke(false);
             }
         }
         catch (TaskCanceledException)
@@ -44,6 +45,20 @@ public class BotInputStrategy : IInputStrategy
         }
     }
 
+    private async void RunRandomMoving(CancellationToken token)
+    {
+        try
+        {
+            while (!token.IsCancellationRequested)
+            {
+                await Task.Delay(1, _cancellationTokenSource.Token);
+            }
+        }
+        catch (TaskCanceledException)
+        {
+        }
+    }
+    
     public void Dispose()
     {
         _cancellationTokenSource.Cancel();

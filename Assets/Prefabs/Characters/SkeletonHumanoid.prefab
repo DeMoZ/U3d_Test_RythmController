@@ -56,10 +56,20 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 5b43e1e549a7c49658b1014fbc924faa, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 5fdd015af01c74c028d4f944ecc17245, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5fdd015af01c74c028d4f944ecc17245, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1484914807792328987}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5fdd015af01c74c028d4f944ecc17245, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 566893635055431507}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5fdd015af01c74c028d4f944ecc17245, type: 3}
       insertIndex: -1
       addedObject: {fileID: -2803199405837371925}
@@ -74,6 +84,49 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5fdd015af01c74c028d4f944ecc17245, type: 3}
   m_PrefabInstance: {fileID: 5058811184764633419}
   m_PrefabAsset: {fileID: 0}
+--- !u!143 &1484914807792328987
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5401478593604123674}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1.9
+  m_Radius: 0.35
+  m_SlopeLimit: 45
+  m_StepOffset: 0.25
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0
+  m_Center: {x: 0, y: 0.94, z: 0}
+--- !u!114 &566893635055431507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5401478593604123674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf87e945aab94cb5bddf8d3949afbdb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speedMod: 10
+  MoveSpeed: 2
+  SprintSpeed: 5.335
+  RotationSmoothTime: 0.12
+  SpeedChangeRate: 10
 --- !u!114 &-2803199405837371925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87,3 +140,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1683805652002798810}
+  characterController: {fileID: 1484914807792328987}
+  moveController: {fileID: 566893635055431507}
