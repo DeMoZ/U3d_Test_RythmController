@@ -12,6 +12,9 @@ public class GameInstaller : MonoInstaller
 
     [SerializeField] private Transform playerSpawnPoint;
     [SerializeField] private Transform[] botSpawnPoints;
+    
+    [Header("UI")]
+    [SerializeField] private UiJoyStick uiJoyStick;
 
     private CombatRepository _combatRepository;
 
@@ -27,7 +30,7 @@ public class GameInstaller : MonoInstaller
     private void SpawnPlayer()
     {
         inputActionAsset.Enable();
-        var playerInputStrategy = new PlayerInputStrategy(inputActionAsset);
+        var playerInputStrategy = new PlayerInputStrategy(inputActionAsset, uiJoyStick);
         var combatModel = new CharacterModel();
         var player = Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
         player.Init(playerInputStrategy, combatModel, _combatRepository, mainCamera);

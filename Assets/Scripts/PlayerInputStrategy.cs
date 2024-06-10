@@ -8,15 +8,18 @@ using Debug = DMZ.DebugSystem.DMZLogger;
 public class PlayerInputStrategy : IInputStrategy
 {
     private readonly InputActionAsset _inputAsset;
+    private readonly UiJoyStick _uiJoyStick;
+
     private InputModel _inputModel;
     private InputAction _attackLAction;
     private InputAction _moveDigitalAction;
 
     private CancellationTokenSource _moveCancellationTokenSource;
 
-    public PlayerInputStrategy(InputActionAsset inputAsset)
+    public PlayerInputStrategy(InputActionAsset inputAsset, UiJoyStick uiJoyStick)
     {
         _inputAsset = inputAsset;
+        _uiJoyStick = uiJoyStick;
         _attackLAction = _inputAsset.FindAction("AttackL");
         _moveDigitalAction = _inputAsset.FindAction("MoveDigital");
     }
@@ -30,6 +33,8 @@ public class PlayerInputStrategy : IInputStrategy
 
         _moveDigitalAction.started += OnMoveDigitalStarted;
         _moveDigitalAction.canceled += OnMoveDigitalStopped;
+
+        _uiJoyStick.OnJoysticOutput += OnJoystickOutput;
     }
 
     private void OnAttackLActionStarted(InputAction.CallbackContext obj)
@@ -60,7 +65,7 @@ public class PlayerInputStrategy : IInputStrategy
 #if LOGGER_ON
                 Debug.Log($"move {value}; mag {value.magnitude}");
 #endif
-                _inputModel.OnMove.Value = new Vector3(value.x, 0 , value.y);
+                _inputModel.OnMove.Value = new Vector3(value.x, 0, value.y);
                 await Task.Yield();
             }
         }
@@ -82,6 +87,11 @@ public class PlayerInputStrategy : IInputStrategy
         _moveCancellationTokenSource?.Cancel();
     }
 
+    private void OnJoystickOutput(Vector2 value)
+    {
+        _inputModel.OnMove.Value = new Vector3(value.x, 0, value.y);
+    }
+
     public void Dispose()
     {
         _attackLAction.started -= OnAttackLActionStarted;
@@ -89,6 +99,8 @@ public class PlayerInputStrategy : IInputStrategy
 
         _moveDigitalAction.started -= OnMoveDigitalStarted;
         _moveDigitalAction.canceled -= OnMoveDigitalStopped;
+
+        _uiJoyStick.OnJoysticOutput -= OnJoystickOutput;
 
         _inputAsset.Disable();
     }
