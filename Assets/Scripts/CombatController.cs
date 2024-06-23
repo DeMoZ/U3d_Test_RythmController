@@ -10,7 +10,7 @@ public class CombatController
 {
     private readonly InputModel _inputModel;
     private readonly CharacterModel _characterModel;
-    private readonly CombatRepository _combatRepository;
+    private readonly ICombatRepository _combatRepository;
 
     private CancellationTokenSource _attackTokenSource;
     private CancellationTokenSource _horizontalTokenSource;
@@ -18,7 +18,7 @@ public class CombatController
     private bool _isFailed;
     private bool _isTouching;
 
-    public CombatController(InputModel inputModel, CharacterModel characterModel, CombatRepository combatRepository)
+    public CombatController(InputModel inputModel, CharacterModel characterModel, ICombatRepository combatRepository)
     {
         _inputModel = inputModel;
         _characterModel = characterModel;

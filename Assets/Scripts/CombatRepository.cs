@@ -1,10 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class CombatRepository
+public interface ICombatRepository
 {
-    private CombatConfig _config;
-    private Dictionary<(int, int), AttackElement> _attacks;
+    List<(int, int)> GetSequencesKeys();
+    float GetPreAttackTime((int, int) code);
+    float GetAttackTime((int, int) code);
+    float GetPostAttackTime((int, int) code);
+    float GetFailTime((int, int) code);
+    bool IsSequenceExists((int, int) code);
+}
+
+public class CombatRepository : ICombatRepository
+{
+    private readonly CombatConfig _config;
+    private readonly Dictionary<(int, int), AttackElement> _attacks;
 
     public CombatRepository(CombatConfig config)
     {
@@ -42,7 +52,6 @@ public class CombatRepository
     {
         if (TryGetSequence(code, out var element))
             return element.PreAttackTime ?? GetDefaultPreAttackTime();
-        ;
 
         throw new System.ArgumentOutOfRangeException();
     }
@@ -51,7 +60,6 @@ public class CombatRepository
     {
         if (TryGetSequence(code, out var element))
             return element.AttackTime ?? GetDefaultAttackTime();
-        ;
 
         throw new System.ArgumentOutOfRangeException();
     }

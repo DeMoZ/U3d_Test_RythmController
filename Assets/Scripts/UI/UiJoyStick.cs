@@ -1,4 +1,4 @@
-#define LOGGER_ON
+// #define LOGGER_ON
 
 using UnityEngine;
 using UnityEngine.EventSystems;

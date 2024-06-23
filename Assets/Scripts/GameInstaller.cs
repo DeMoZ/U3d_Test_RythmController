@@ -2,6 +2,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
 
+public class InstallerConstants
+{
+    public const string PlayerFactoryId = "PlayerFactory";
+    public const string BotFactoryId = "BotFactory";
+}
+
 public class GameInstaller : MonoInstaller
 {
     [SerializeField] private InputActionAsset inputActionAsset;
@@ -12,16 +18,32 @@ public class GameInstaller : MonoInstaller
 
     [SerializeField] private Transform playerSpawnPoint;
     [SerializeField] private Transform[] botSpawnPoints;
-    
+
     [Header("UI")]
     [SerializeField] private UiJoyStick uiJoyStick;
 
-    private CombatRepository _combatRepository;
 
     public override void InstallBindings()
     {
-        _combatRepository = new CombatRepository(combatConfig);
-        Container.Bind<CombatRepository>().FromInstance(_combatRepository);
+        var combatRepository = new CombatRepository(combatConfig);
+        Container.Bind<ICombatRepository>().FromInstance(combatRepository).AsSingle();
+
+        Container.Bind<GameBus>().AsSingle();
+        Container.Bind<Camera>().FromInstance(mainCamera).AsSingle();
+
+        Container.BindFactory<ICombatRepository, Camera, GameBus, Character, Character.Factory>()
+            .WithId(InstallerConstants.PlayerFactoryId)
+            .FromComponentInNewPrefab(playerPrefab);
+
+        Container.BindFactory<ICombatRepository, Camera, GameBus, Character, Character.Factory>()
+            .WithId(InstallerConstants.BotFactoryId)
+            .FromComponentInNewPrefab(botPrefab)
+            .UnderTransformGroup("Bots");
+    }
+
+    public override void Start()
+    {
+        base.Start();
 
         SpawnPlayer();
         SpawnBots();
@@ -29,21 +51,35 @@ public class GameInstaller : MonoInstaller
 
     private void SpawnPlayer()
     {
+        var gameBus = Container.Resolve<GameBus>();
+
+        var playerFactory = Container.ResolveId<Character.Factory>(InstallerConstants.PlayerFactoryId);
+        var character = playerFactory.Create(
+            Container.Resolve<ICombatRepository>(),
+            Container.Resolve<Camera>(),
+            gameBus);
+
+        character.name = $"Player";
+        character.Init(new PlayerInputStrategy(inputActionAsset, uiJoyStick), new CharacterModel());
+        character.Transform.SetPositionAndRotation(playerSpawnPoint.position, playerSpawnPoint.rotation);
+        gameBus.SetPlayer(character);
         inputActionAsset.Enable();
-        var playerInputStrategy = new PlayerInputStrategy(inputActionAsset, uiJoyStick);
-        var combatModel = new CharacterModel();
-        var player = Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
-        player.Init(playerInputStrategy, combatModel, _combatRepository, mainCamera);
     }
 
     private void SpawnBots()
     {
+        var gameBus = Container.Resolve<GameBus>();
+        var botFactory = Container.ResolveId<Character.Factory>(InstallerConstants.BotFactoryId);
+        var combatRepository = Container.Resolve<ICombatRepository>();
+        var camera = Container.Resolve<Camera>();
+
         foreach (var spawnPoint in botSpawnPoints)
         {
-            var botInputStrategy = new BotInputStrategy();
-            var combatModel = new CharacterModel();
-            var bot = Instantiate(botPrefab, spawnPoint.position, spawnPoint.rotation);
-            bot.Init(botInputStrategy, combatModel, _combatRepository, mainCamera);
+            var character = botFactory.Create(combatRepository, camera, gameBus);
+            character.name = $"Bot_{gameBus.Bots.Count}";
+            gameBus.AddBot(character);
+            character.Init(new BotInputStrategy(), new CharacterModel());
+            character.Transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
         }
     }
 }

@@ -13,7 +13,7 @@ public class CharacterAnimator : IDisposable
     private readonly CombatLayerAnimator _legsLayerAnimator;
     private readonly MoveAnimator _moveAnimator;
 
-    public CharacterAnimator(CharacterModel characterModel, Animator animator, CombatRepository combatRepository)
+    public CharacterAnimator(CharacterModel characterModel, Animator animator, ICombatRepository combatRepository)
     {
         _characterModel = characterModel;
 

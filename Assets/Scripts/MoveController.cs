@@ -7,7 +7,7 @@ public class MoveController : MonoBehaviour
 {
     private const float SpeedOffset = 0.1f;
     [SerializeField] private float walkSpeed = 2.0f;
-    [SerializeField] private float sprintSpeed = 5.335f;
+    //[SerializeField] private float sprintSpeed = 5.335f;
 
     [Tooltip("How fast the character turns to face movement direction")]
     [Range(0.0f, 0.3f)]
@@ -40,6 +40,9 @@ public class MoveController : MonoBehaviour
 
     private void Update()
     {
+        if (_inputModel == null)
+            return;
+            
         var axis = _inputModel.OnMove.Value;
         OnMove(axis);
     }

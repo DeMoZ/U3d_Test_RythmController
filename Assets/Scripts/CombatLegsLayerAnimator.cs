@@ -7,7 +7,7 @@ public class CombatLegsLayerAnimator : CombatLayerAnimator
     protected override string AttackSpeed => "LegsAttackSpeed";
     protected override string PostAttackSpeed => "LegsPostSpeed";
 
-    public CombatLegsLayerAnimator(CharacterModel characterModel, Animator animator, CombatRepository combatRepository)
+    public CombatLegsLayerAnimator(CharacterModel characterModel, Animator animator, ICombatRepository combatRepository)
         : base(characterModel, animator, combatRepository)
     {
         

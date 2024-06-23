@@ -31,12 +31,12 @@ namespace Attack3x3
         private Dictionary<string, AnimInfo> _animationsCash;
         private int _attackLayerIndex;
 
-        private readonly AttackPlayerData _attackPlayerData;
+        private readonly Attack3x3PlayerData _attackPlayerData;
         private readonly Character _character;
-        private readonly IAttackRepository _attackRepository;
+        private readonly Attack3x3Repository _attackRepository;
 
-        public CharacterAnimator(AttackPlayerData attackPlayerData, Character character,
-            IAttackRepository attackRepository)
+        public CharacterAnimator(Attack3x3PlayerData attackPlayerData, Character character,
+            Attack3x3Repository attackRepository)
         {
             _attackPlayerData = attackPlayerData;
             _character = character;
@@ -51,20 +51,20 @@ namespace Attack3x3
             _attackPlayerData.AttackSequenceState.Unsubscribe(OnAttackSequenceStateChanged);
         }
 
-        private void OnAttackSequenceStateChanged(AttackState combatState)
+        private void OnAttackSequenceStateChanged(Attack3x3State combatState)
         {
             switch (combatState)
             {
-                case AttackState.None:
+                case Attack3x3State.None:
                     break;
-                case AttackState.Idle:
+                case Attack3x3State.Idle:
                     break;
-                case AttackState.Attack:
+                case Attack3x3State.Attack:
                     TriggerAttackAnimation();
                     break;
-                case AttackState.SequenceReady:
+                case Attack3x3State.After:
                     break;
-                case AttackState.SequenceFail:
+                case Attack3x3State.Fail:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(combatState), combatState, null);
@@ -73,7 +73,7 @@ namespace Attack3x3
 
         private void TriggerAttackAnimation()
         {
-            var stateName = $"{StatePrefix}{_attackPlayerData.CurrentSequenceCode}";
+            var stateName = $"{StatePrefix}{_attackPlayerData.CurrentSequenceKey.Value}";
 
             var clip = _animationsCash[stateName];
             if (clip == default)
@@ -82,7 +82,7 @@ namespace Attack3x3
             _character.Animator.Play(stateName: stateName, normalizedTime: 0f, layer: -1);
 
             var length = clip.Length;
-            var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceCode);
+            var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey.Value);
             _character.Animator.speed =
                 length / (time + time * 1.02f); // todo roman reset animator speed to 1 after animation
         }

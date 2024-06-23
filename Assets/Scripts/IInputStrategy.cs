@@ -5,5 +5,5 @@ using System;
 /// </summary>
 public interface IInputStrategy : IDisposable
 {
-    void Init(InputModel inputModel);
+    void Init(InputModel inputModel,  Character character, GameBus gameBus);
 }

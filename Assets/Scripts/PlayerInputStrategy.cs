@@ -24,7 +24,7 @@ public class PlayerInputStrategy : IInputStrategy
         _moveDigitalAction = _inputAsset.FindAction("MoveDigital");
     }
 
-    public void Init(InputModel inputModel)
+    public void Init(InputModel inputModel, Character character, GameBus gameBus)
     {
         _inputModel = inputModel;
 
@@ -35,6 +35,19 @@ public class PlayerInputStrategy : IInputStrategy
         _moveDigitalAction.canceled += OnMoveDigitalStopped;
 
         _uiJoyStick.OnJoysticOutput += OnJoystickOutput;
+    }
+
+    public void Dispose()
+    {
+        _attackLAction.started -= OnAttackLActionStarted;
+        _attackLAction.canceled -= OnAttackLActionCanceled;
+
+        _moveDigitalAction.started -= OnMoveDigitalStarted;
+        _moveDigitalAction.canceled -= OnMoveDigitalStopped;
+
+        _uiJoyStick.OnJoysticOutput -= OnJoystickOutput;
+
+        _inputAsset.Disable();
     }
 
     private void OnAttackLActionStarted(InputAction.CallbackContext obj)
@@ -90,18 +103,5 @@ public class PlayerInputStrategy : IInputStrategy
     private void OnJoystickOutput(Vector2 value)
     {
         _inputModel.OnMove.Value = new Vector3(value.x, 0, value.y);
-    }
-
-    public void Dispose()
-    {
-        _attackLAction.started -= OnAttackLActionStarted;
-        _attackLAction.canceled -= OnAttackLActionCanceled;
-
-        _moveDigitalAction.started -= OnMoveDigitalStarted;
-        _moveDigitalAction.canceled -= OnMoveDigitalStopped;
-
-        _uiJoyStick.OnJoysticOutput -= OnJoystickOutput;
-
-        _inputAsset.Disable();
     }
 }

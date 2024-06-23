@@ -38,12 +38,12 @@ public class CombatLayerAnimator
 
     private readonly CharacterModel _characterModel;
     private readonly Animator _animator;
-    private readonly CombatRepository _combatRepository;
+    private readonly ICombatRepository _combatRepository;
 
     private static readonly int PostAttackTriggerCashed = Animator.StringToHash(PostAttackTrigger);
     private static readonly int AttackTriggerCashed = Animator.StringToHash(AttackTrigger);
 
-    public CombatLayerAnimator(CharacterModel characterModel, Animator animator, CombatRepository combatRepository)
+    public CombatLayerAnimator(CharacterModel characterModel, Animator animator, ICombatRepository combatRepository)
     {
         _characterModel = characterModel;
         _animator = animator;
