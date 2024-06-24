@@ -129,6 +129,7 @@ GameObject:
   - component: {fileID: 3831963277256093784}
   - component: {fileID: 8741138877399587775}
   - component: {fileID: 676892165376205030}
+  - component: {fileID: 9064779731601359677}
   m_Layer: 0
   m_Name: Skelet
   m_TagString: Untagged
@@ -169,9 +170,8 @@ MonoBehaviour:
   animator: {fileID: 5960582447729682095}
   characterController: {fileID: 676892165376205030}
   moveController: {fileID: 8741138877399587775}
-  sightRange: 3
-  meleAttackRange: 2
-  stopChaseRange: 4
+  navMeshAgent: {fileID: 9064779731601359677}
+  characterConfig: {fileID: 11400000, guid: 5ee85d356886e48d0934c38ba5738c70, type: 2}
 --- !u!114 &8741138877399587775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,6 +213,28 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0.94, z: 0}
+--- !u!195 &9064779731601359677
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4974591021931216236}
+  m_Enabled: 0
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &5643712114999423266
 GameObject:
   m_ObjectHideFlags: 0

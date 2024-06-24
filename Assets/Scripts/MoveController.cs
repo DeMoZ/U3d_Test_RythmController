@@ -3,19 +3,9 @@ using System;
 using UnityEngine;
 using Debug = DMZ.DebugSystem.DMZLogger;
 
+// todo move to non monoBehaviour class
 public class MoveController : MonoBehaviour
 {
-    private const float SpeedOffset = 0.1f;
-    [SerializeField] private float walkSpeed = 2.0f;
-    //[SerializeField] private float sprintSpeed = 5.335f;
-
-    [Tooltip("How fast the character turns to face movement direction")]
-    [Range(0.0f, 0.3f)]
-    [SerializeField] private float rotationSmoothTime = 0.12f;
-
-    [Tooltip("Acceleration and deceleration")]
-    [SerializeField] private float speedChangeRate = 10.0f;
-
     private float _targetRotation;
     private float _rotationVelocity;
     private float _speed;
@@ -24,16 +14,19 @@ public class MoveController : MonoBehaviour
 
     private CharacterController _controller;
     private Transform _camera;
+    private CharacterConfig _characterConfig;
     private InputModel _inputModel;
     private CharacterModel _characterModel;
 
     public void Init(InputModel inputModel, CharacterModel characterModel,
-        CharacterController characterController, Transform relativeCamera)
+        CharacterController characterController, Transform relativeCamera,
+        CharacterConfig characterConfig)
     {
         _inputModel = inputModel;
         _characterModel = characterModel;
         _controller = characterController;
         _camera = relativeCamera;
+        _characterConfig = characterConfig;
 
         _transform = _controller.transform;
     }
@@ -42,7 +35,7 @@ public class MoveController : MonoBehaviour
     {
         if (_inputModel == null)
             return;
-            
+
         var axis = _inputModel.OnMove.Value;
         OnMove(axis);
     }
@@ -54,7 +47,10 @@ public class MoveController : MonoBehaviour
 
     private void OnMove(Vector3 axis)
     {
-        var targetSpeed = walkSpeed;
+        if (_characterConfig == null)
+            return;
+
+        var targetSpeed = _characterConfig.walkSpeed;
 
         if (axis == Vector3.zero)
             targetSpeed = 0.0f;
@@ -62,9 +58,9 @@ public class MoveController : MonoBehaviour
         var curHorSpeedVel = _controller.velocity;
         var curHorSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
-        if (curHorSpeed < targetSpeed - SpeedOffset || curHorSpeed > targetSpeed + SpeedOffset)
+        if (curHorSpeed < targetSpeed - _characterConfig.SpeedOffset || curHorSpeed > targetSpeed + _characterConfig.SpeedOffset)
         {
-            _speed = Mathf.Lerp(curHorSpeed, targetSpeed, speedChangeRate * Time.deltaTime);
+            _speed = Mathf.Lerp(curHorSpeed, targetSpeed, _characterConfig.speedChangeRate * Time.deltaTime);
             _speed = (float)Math.Round(_speed, 3);
         }
         else
@@ -76,7 +72,7 @@ public class MoveController : MonoBehaviour
         {
             var inputDirection = axis.normalized;
             _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _camera.transform.eulerAngles.y;
-            var rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, rotationSmoothTime);
+            var rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _characterConfig.rotationSmoothTime);
             _transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
         }
 

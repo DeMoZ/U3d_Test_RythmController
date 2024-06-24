@@ -4,14 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using DMZ.Events;
 
-public enum BotStates
-{
-    Idle,
-    Chase,
-    Attack,
-    Return
-}
-
 public abstract class StateMachineBase<T> : IDisposable where T : Enum
 {
     protected DMZState<IState<T>> _currentState = new();
@@ -35,10 +27,18 @@ public abstract class StateMachineBase<T> : IDisposable where T : Enum
         _cancelationTokenSource?.Cancel();
     }
 
-    public void SwitchToNextState(T nextState)
+    private async Task SwitchToNextState(T nextState, CancellationToken token)
     {
         if (_states.TryGetValue(nextState, out var state))
+        {
+            await _currentState.Value.ExitAsync(token);
+
+            if (token.IsCancellationRequested)
+                return;
+
             _currentState.Value = state;
+            await _currentState.Value.EnterAsync(token);
+        }
         else
             throw new ArgumentOutOfRangeException();
     }
@@ -46,60 +46,32 @@ public abstract class StateMachineBase<T> : IDisposable where T : Enum
     public void RunStateMachine()
     {
         _cancelationTokenSource = new CancellationTokenSource();
-        UpdateAsync(_cancelationTokenSource.Token);
+        UpdateLoopAsync(_cancelationTokenSource.Token);
     }
 
-    public void Update()
+    public async Task UpdateAsync(CancellationToken token)
     {
         var nextState = _currentState.Value.Update();
-        SwitchToNextState(nextState);
+
+        if (!nextState.Equals(_currentState.Value.Type))
+            await SwitchToNextState(nextState, token);
+
+        await Task.Delay(1, token);
     }
 
-    private async void UpdateAsync(CancellationToken token)
+    private async void UpdateLoopAsync(CancellationToken token)
     {
         try
         {
             while (!token.IsCancellationRequested)
             {
                 if (_currentState != null)
-                {
-                    Update();
-                    await Task.Delay(1, token);
-                }
+                    await UpdateAsync(token);
             }
         }
         catch (TaskCanceledException)
         {
 
         }
-    }
-}
-
-public class BotBehaviour : StateMachineBase<BotStates>
-{
-    private GameBus _gameBus;
-    private readonly Character _character;
-
-    private BotStates _defaultState => BotStates.Idle;
-
-    public BotBehaviour(Character character, GameBus gameBus, Action<BotStates> stateChangedCallback)
-        : base(stateChangedCallback)
-    {
-        _gameBus = gameBus;
-        _character = character;
-        Init();
-    }
-
-    protected override void Init()
-    {
-        _states = new Dictionary<BotStates, IState<BotStates>>
-        {
-            { BotStates.Idle, new IdleState(_character, _gameBus ) },
-            { BotStates.Chase, new ChaseState(_character, _gameBus ) },
-            { BotStates.Attack, new AttackState(_character, _gameBus ) },
-            { BotStates.Return, new ReturnState(_character, _gameBus ) }
-        };
-
-        _currentState.Value = _states[_defaultState];
     }
 }

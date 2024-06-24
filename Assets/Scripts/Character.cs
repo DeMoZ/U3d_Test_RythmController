@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 using Zenject;
 
 public class Character : MonoBehaviour
@@ -8,13 +9,8 @@ public class Character : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private CharacterController characterController;
     [SerializeField] private MoveController moveController;
-
-    #region TODO Move To Config Settings
-    [SerializeField] private float sightRange = 10;
-    [SerializeField] private float meleAttackRange = 2;
-    [SerializeField] private float stopChaseRange = 12;
-
-    #endregion
+    [SerializeField] private NavMeshAgent navMeshAgent;
+    [SerializeField] private CharacterConfig characterConfig;
 
     private IInputStrategy _inputStrategy;
     private CharacterModel _characterModel;
@@ -27,9 +23,8 @@ public class Character : MonoBehaviour
 
     public Transform Transform { get; private set; }
     public Vector3 SpawnPosition { get; private set; }
-    public float SightRange => sightRange;
-    public float MeleAttackRange => meleAttackRange;
-    public float StopChaseRange => stopChaseRange;
+    public CharacterConfig CharacterConfig => characterConfig;
+    public NavMeshAgent NavMeshAgent => navMeshAgent;
 
     [Inject]
     public void Construct(
@@ -42,10 +37,13 @@ public class Character : MonoBehaviour
         _gameBus = gameBus;
     }
 
-    public void Init(IInputStrategy inputStrategy, CharacterModel characterModel)
+    public void Init(IInputStrategy inputStrategy, CharacterModel characterModel, CharacterConfig characterConfig = null)
     {
         Transform = transform;
         SpawnPosition = Transform.position;
+
+        if (characterConfig != null)
+            this.characterConfig = characterConfig;
 
         _inputStrategy = inputStrategy;
         _characterModel = characterModel;
@@ -54,13 +52,13 @@ public class Character : MonoBehaviour
         _inputModel = new InputModel();
         _characterAnimator = new CharacterAnimator(_characterModel, animator, _combatRepository);
         _combatController = new CombatController(_inputModel, _characterModel, _combatRepository);
-        moveController.Init(_inputModel, _characterModel, characterController, _mainCamera.transform);
+        moveController.Init(_inputModel, _characterModel, characterController, _mainCamera.transform, characterConfig);
         _inputStrategy.Init(_inputModel, this, _gameBus);
     }
 
-    internal void SetStatus(BotStates state)
+    internal void SetStatus(string status)
     {
-        botBehaviourUI.SetStatus(state);
+        botBehaviourUI.SetStatus(status);
     }
 
     private void OnDestroy()

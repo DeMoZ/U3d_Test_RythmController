@@ -16,6 +16,8 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private Character playerPrefab;
     [SerializeField] private Character botPrefab;
 
+
+    [SerializeField] private CharacterConfig playerConfig;
     [SerializeField] private Transform playerSpawnPoint;
     [SerializeField] private Transform[] botSpawnPoints;
 
@@ -60,8 +62,9 @@ public class GameInstaller : MonoInstaller
             gameBus);
 
         character.name = $"Player";
-        character.Init(new PlayerInputStrategy(inputActionAsset, uiJoyStick), new CharacterModel());
+        character.Init(new PlayerInputStrategy(inputActionAsset, uiJoyStick), new CharacterModel(), playerConfig);
         character.Transform.SetPositionAndRotation(playerSpawnPoint.position, playerSpawnPoint.rotation);
+        character.NavMeshAgent.enabled = false;
         gameBus.SetPlayer(character);
         inputActionAsset.Enable();
     }
@@ -75,11 +78,15 @@ public class GameInstaller : MonoInstaller
 
         foreach (var spawnPoint in botSpawnPoints)
         {
+            if (spawnPoint.gameObject.activeSelf == false)
+                continue;
+
             var character = botFactory.Create(combatRepository, camera, gameBus);
             character.name = $"Bot_{gameBus.Bots.Count}";
-            gameBus.AddBot(character);
             character.Init(new BotInputStrategy(), new CharacterModel());
             character.Transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
+            character.NavMeshAgent.enabled = false;
+            gameBus.AddBot(character);
         }
     }
 }

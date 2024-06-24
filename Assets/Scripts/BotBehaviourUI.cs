@@ -15,9 +15,9 @@ public class BotBehaviourUI : MonoBehaviour
         _camTransform = camera.transform;
     }
 
-    public void SetStatus(BotStates state)
+    public void SetStatus(string status)
     {
-        statusText.text = state.ToString();
+        statusText.text = status;
     }
 
     private void Update()
