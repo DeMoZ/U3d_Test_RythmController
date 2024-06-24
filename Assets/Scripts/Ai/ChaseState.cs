@@ -1,22 +1,22 @@
-using System;
 using UnityEngine;
 
-public class ChaseState : StateBase
+public class ChaseState : StateBase<BotStates>
 {
+    public override BotStates Type { get; } = BotStates.Chase;
 
     public ChaseState(Character character, GameBus gameBus) : base(character, gameBus)
     {
     }
 
-    public override Type Update()
+    public override BotStates Update()
     {
         if (InRangeWithPlayer(character.MeleAttackRange))
-            return typeof(AttackState);
+            return BotStates.Attack;
 
         if (!InRangeWithPlayer(character.StopChaseRange))
-            return typeof(ReturnState);
+            return BotStates.Return;
 
-        return GetType();
+        return Type;
     }
 
     private bool InRangeWithPlayer(float distance) =>

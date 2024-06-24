@@ -58,9 +58,9 @@ public class Character : MonoBehaviour
         _inputStrategy.Init(_inputModel, this, _gameBus);
     }
 
-    internal void SetStatus(Type type)
+    internal void SetStatus(BotStates state)
     {
-        botBehaviourUI.SetStatus(type);
+        botBehaviourUI.SetStatus(state);
     }
 
     private void OnDestroy()

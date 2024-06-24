@@ -4,25 +4,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using DMZ.Events;
 
-// public enum BotStates
-// {
-//     Idle,
-//     Chase,
-//     Attack,
-//     Return
-// }
-
-public abstract class StateMachineBase : IDisposable
+public enum BotStates
 {
-    protected DMZState<IState> _currentState = new();
-    protected Dictionary<Type, IState> _states;
+    Idle,
+    Chase,
+    Attack,
+    Return
+}
+
+public abstract class StateMachineBase<T> : IDisposable where T : Enum
+{
+    protected DMZState<IState<T>> _currentState = new();
+    protected Dictionary<T, IState<T>> _states;
     protected CancellationTokenSource _cancelationTokenSource;
 
     protected abstract void Init();
 
-    public StateMachineBase(Action<Type> stateChangedCallback)
+    public StateMachineBase(Action<T> stateChangedCallback)
     {
-        _currentState.Subscribe(stateType => stateChangedCallback?.Invoke(stateType.GetType()));
+        _currentState.Subscribe(stateType => stateChangedCallback?.Invoke(stateType.Type));
     }
 
     public void Dispose()
@@ -35,7 +35,7 @@ public abstract class StateMachineBase : IDisposable
         _cancelationTokenSource?.Cancel();
     }
 
-    public void SwitchToNextState(Type nextState)
+    public void SwitchToNextState(T nextState)
     {
         if (_states.TryGetValue(nextState, out var state))
             _currentState.Value = state;
@@ -51,7 +51,7 @@ public abstract class StateMachineBase : IDisposable
 
     public void Update()
     {
-        Type nextState = _currentState.Value?.Update();
+        var nextState = _currentState.Value.Update();
         SwitchToNextState(nextState);
     }
 
@@ -75,14 +75,14 @@ public abstract class StateMachineBase : IDisposable
     }
 }
 
-public class BotBehaviour : StateMachineBase
+public class BotBehaviour : StateMachineBase<BotStates>
 {
     private GameBus _gameBus;
     private readonly Character _character;
 
-    private Type _defaultState => typeof(IdleState);
+    private BotStates _defaultState => BotStates.Idle;
 
-    public BotBehaviour(Character character, GameBus gameBus, Action<Type> stateChangedCallback)
+    public BotBehaviour(Character character, GameBus gameBus, Action<BotStates> stateChangedCallback)
         : base(stateChangedCallback)
     {
         _gameBus = gameBus;
@@ -92,12 +92,12 @@ public class BotBehaviour : StateMachineBase
 
     protected override void Init()
     {
-        _states = new Dictionary<Type, IState>
+        _states = new Dictionary<BotStates, IState<BotStates>>
         {
-            { typeof(IdleState), new IdleState(_character, _gameBus ) },
-            { typeof(ChaseState), new ChaseState(_character, _gameBus ) },
-            { typeof(AttackState), new AttackState(_character, _gameBus ) },
-            { typeof(ReturnState), new ReturnState(_character, _gameBus ) }
+            { BotStates.Idle, new IdleState(_character, _gameBus ) },
+            { BotStates.Chase, new ChaseState(_character, _gameBus ) },
+            { BotStates.Attack, new AttackState(_character, _gameBus ) },
+            { BotStates.Return, new ReturnState(_character, _gameBus ) }
         };
 
         _currentState.Value = _states[_defaultState];

@@ -1,18 +1,20 @@
 using System;
 using UnityEngine;
 
-public class IdleState : StateBase
+public class IdleState : StateBase<BotStates>
 {
+    public override BotStates Type { get; } = BotStates.Idle;
+
     public IdleState(Character character, GameBus gameBus) : base(character, gameBus)
     {
     }
 
-    public override Type Update()
+    public override BotStates Update()
     {
         if (CanSeePlayer())
-            return typeof(ChaseState);
+            return BotStates.Chase;
 
-        return GetType();
+        return Type;
     }
 
     private bool CanSeePlayer()

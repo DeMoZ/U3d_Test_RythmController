@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -16,16 +15,16 @@ public class BotBehaviourUI : MonoBehaviour
         _camTransform = camera.transform;
     }
 
-    public void SetStatus(Type status)
+    public void SetStatus(BotStates state)
     {
-        statusText.text = status.ToString();
+        statusText.text = state.ToString();
     }
 
     private void Update()
     {
         if(_transform == null || _camTransform == null)
             return;
-            
+
         _transform.LookAt(_transform.position + _camTransform.rotation * Vector3.forward, _camTransform.rotation * Vector3.up);
     }
 }

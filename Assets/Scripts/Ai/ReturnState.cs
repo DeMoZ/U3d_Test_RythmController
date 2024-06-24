@@ -1,18 +1,19 @@
-using System;
 using UnityEngine;
 
-public class ReturnState : StateBase
+public class ReturnState : StateBase<BotStates>
 {
+    public override BotStates Type { get; } = BotStates.Return;
+
     public ReturnState(Character character, GameBus gameBus) : base(character, gameBus)
     {
     }
 
-    public override Type Update()
+    public override BotStates Update()
     {
         if (InRangeWith(0.1f))
-            return typeof(IdleState);
+            return BotStates.Idle;
 
-        return GetType();
+        return Type;
     }
 
     private bool InRangeWith(float distance) =>

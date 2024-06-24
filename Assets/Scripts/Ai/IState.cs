@@ -1,7 +1,6 @@
-using System;
-
-public interface IState
+public interface IState<T>
 {
+    T Type { get; }
     void Enter();
-    Type Update();
+    T Update();
 }
