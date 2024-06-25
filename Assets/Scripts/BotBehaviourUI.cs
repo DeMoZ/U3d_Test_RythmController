@@ -1,10 +1,9 @@
-using TMPro;
 using UnityEngine;
 
 public class BotBehaviourUI : MonoBehaviour
 {
     [SerializeField] private Canvas canvas;
-    [SerializeField] private TMP_Text statusText;
+    [SerializeField] private UiLogger uiLogger;
     private Transform _transform;
     private Transform _camTransform;
 
@@ -15,9 +14,9 @@ public class BotBehaviourUI : MonoBehaviour
         _camTransform = camera.transform;
     }
 
-    public void SetStatus(string status)
+    public void ShowLog(int index, string status)
     {
-        statusText.text = status;
+        uiLogger.ShowLog(index, status);
     }
 
     private void Update()

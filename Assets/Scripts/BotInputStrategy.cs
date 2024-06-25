@@ -39,7 +39,7 @@ public class BotInputStrategy : IInputStrategy
 
     private void OnStateSchanged(BotStates state)
     {
-        _character.SetStatus(state.ToString());
+        _character.ShowLog(0, state.ToString());
 
         // it is probably just for outside messages
 

@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
+using Debug = DMZ.DebugSystem.DMZLogger;
 
 public class ChaseState : StateBase<BotStates>
 {
@@ -30,7 +31,7 @@ public class ChaseState : StateBase<BotStates>
 
     public override async Task EnterAsync(CancellationToken token)
     {
-        Debug.Log($"{GetType()} Enter");
+        Debug.Log($"Enter");
         _navMeshAgent.enabled = true;
         await Task.Yield();
     }
@@ -39,7 +40,8 @@ public class ChaseState : StateBase<BotStates>
     {
         _navMeshAgent.enabled = false;
         _inputModel.OnMove.Value = Vector3.zero;
-        Debug.Log($"{GetType()} Exit");
+        Debug.Log($"Exit");
+        await Task.Yield();
     }
 
     private void GetInput()
@@ -51,7 +53,7 @@ public class ChaseState : StateBase<BotStates>
             var desiredMovement = _navMeshAgent.desiredVelocity;
             desiredMovement.y = 0;
 
-            _character.SetStatus($"{GetType()} {desiredMovement}");
+            _character.ShowLog(1, $"{desiredMovement}");
             _inputModel.OnMove.Value = new Vector3(Mathf.Clamp(desiredMovement.x, -1f, 1f), 0, Mathf.Clamp(desiredMovement.z, -1f, 1f));
         }
     }
