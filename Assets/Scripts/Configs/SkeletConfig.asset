@@ -27,5 +27,5 @@ MonoBehaviour:
   rotationSmoothTime: 0.12
   speedChangeRate: 10
   meleAttackRange: 1.5
-  chaseRange: 3
-  chaseStopRange: 4
+  chaseRange: 4
+  chaseStopRange: 5

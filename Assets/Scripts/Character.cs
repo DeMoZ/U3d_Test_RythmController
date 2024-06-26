@@ -52,7 +52,7 @@ public class Character : MonoBehaviour
         _inputModel = new InputModel();
         _characterAnimator = new CharacterAnimator(_characterModel, animator, _combatRepository);
         _combatController = new CombatController(_inputModel, _characterModel, _combatRepository);
-        moveController.Init(_inputModel, _characterModel, characterController, _mainCamera.transform, characterConfig);
+        moveController.Init(_inputModel, _characterModel, characterController, _mainCamera.transform, this.characterConfig);
         _inputStrategy.Init(_inputModel, this, _gameBus);
     }
 
