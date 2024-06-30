@@ -5,6 +5,6 @@ public interface IState<T>
 {
     T Type { get; }
     Task EnterAsync(CancellationToken token);
-    T Update(); // todo probably Task too
+    T Update(float deltaTime);
     Task ExitAsync(CancellationToken token);
 }

@@ -10,9 +10,9 @@ public class NavMeshState : StateBase<BotStates>
     protected readonly NavMeshAgent _navMeshAgent;
     protected NavMeshPath _navMeshPath;
 
-    public NavMeshState(Character character, GameBus gameBus, InputModel inputModel) : base(character, gameBus)
+    public NavMeshState(Character character, GameBus gameBus) : base(character, gameBus)
     {
-        _inputModel = inputModel;
+        _inputModel = character.InputModel;
         _navMeshAgent = _character.NavMeshAgent;
     }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using DMZ.Events;
@@ -10,10 +11,13 @@ public abstract class StateMachineBase<T> : IDisposable where T : Enum
     protected Dictionary<T, IState<T>> _states;
     protected CancellationTokenSource _cancelationTokenSource;
 
+    private Stopwatch _stopwatch;
+
     protected abstract void Init();
 
     public StateMachineBase(Action<T> stateChangedCallback)
     {
+        _stopwatch = new Stopwatch();
         _currentState.Subscribe(stateType => stateChangedCallback?.Invoke(stateType.Type));
     }
 
@@ -46,12 +50,17 @@ public abstract class StateMachineBase<T> : IDisposable where T : Enum
     public void RunStateMachine()
     {
         _cancelationTokenSource = new CancellationTokenSource();
+        _stopwatch.Start();
         UpdateLoopAsync(_cancelationTokenSource.Token);
     }
 
+    // todo remove update loop  and replase with Update mathod striked from outside with deltatime
     public async Task UpdateAsync(CancellationToken token)
     {
-        var nextState = _currentState.Value.Update();
+        var deltaTime = (float)_stopwatch.Elapsed.TotalSeconds;
+        _stopwatch.Restart();
+
+        var nextState = _currentState.Value.Update(deltaTime);
 
         if (!nextState.Equals(_currentState.Value.Type))
             await SwitchToNextState(nextState, token);

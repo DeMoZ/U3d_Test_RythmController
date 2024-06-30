@@ -62,7 +62,7 @@ public class GameInstaller : MonoInstaller
             gameBus);
 
         character.name = $"Player";
-        character.Init(new PlayerInputStrategy(inputActionAsset, uiJoyStick), new CharacterModel(), playerConfig);
+        character.Init(new PlayerInputStrategy(inputActionAsset, uiJoyStick), playerConfig);
         character.Transform.SetPositionAndRotation(playerSpawnPoint.position, playerSpawnPoint.rotation);
         character.NavMeshAgent.enabled = false;
         gameBus.SetPlayer(character);
@@ -83,7 +83,7 @@ public class GameInstaller : MonoInstaller
 
             var character = botFactory.Create(combatRepository, camera, gameBus);
             character.name = $"Bot_{gameBus.Bots.Count}";
-            character.Init(new BotInputStrategy(), new CharacterModel());
+            character.Init(new BotInputStrategy());
             character.Transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
             character.NavMeshAgent.enabled = false;
             gameBus.AddBot(character);

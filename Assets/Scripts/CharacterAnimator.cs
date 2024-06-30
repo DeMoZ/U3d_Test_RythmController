@@ -32,30 +32,30 @@ public class CharacterAnimator : IDisposable
         _characterModel.AttackSequenceState.Unsubscribe(OnCombatSequenceStateChanged);
     }
 
-    private void OnCombatSequenceStateChanged(CombatState attackState)
+    private void OnCombatSequenceStateChanged(CombatPhase attackState)
     {
 #if LOGGER_ON
         Debug.Log("OnAttackSequenceStateChanged".Yellow());
 #endif
         switch (attackState)
         {
-            case CombatState.None:
+            case CombatPhase.None:
                 break;
-            case CombatState.Idle:
+            case CombatPhase.Idle:
                 break;
-            case CombatState.Pre:
+            case CombatPhase.Pre:
                 _combatLayerAnimator.TriggerPreAttackAnimation();
                 _legsLayerAnimator.TriggerPreAttackAnimation();
                 break;
-            case CombatState.Attack:
+            case CombatPhase.Attack:
                 _combatLayerAnimator.TriggerAttackAnimation();
                 _legsLayerAnimator.TriggerAttackAnimation();
                 break;
-            case CombatState.After:
+            case CombatPhase.After:
                 _combatLayerAnimator.TriggerPostAttackAnimation();
                 _legsLayerAnimator.TriggerPostAttackAnimation();
                 break;
-            case CombatState.Fail:
+            case CombatPhase.Fail:
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(attackState), attackState, null);

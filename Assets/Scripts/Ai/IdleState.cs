@@ -6,9 +6,9 @@ public class IdleState : StateBase<BotStates>
     {
     }
 
-    public override BotStates Update()
+    public override BotStates Update(float deltaTime)
     {
-        if (IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.chaseRange))
+        if (IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.ChaseRange))
             return BotStates.Chase;
 
         return Type;

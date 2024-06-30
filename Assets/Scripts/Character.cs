@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
@@ -13,18 +12,18 @@ public class Character : MonoBehaviour
     [SerializeField] private CharacterConfig characterConfig;
 
     private IInputStrategy _inputStrategy;
-    private CharacterModel _characterModel;
     private ICombatRepository _combatRepository;
     private Camera _mainCamera;
     private GameBus _gameBus;
     private CharacterAnimator _characterAnimator;
     private CombatController _combatController;
-    private InputModel _inputModel;
 
     public Transform Transform { get; private set; }
     public Vector3 SpawnPosition { get; private set; }
     public CharacterConfig CharacterConfig => characterConfig;
     public NavMeshAgent NavMeshAgent => navMeshAgent;
+    public CharacterModel CharacterModel { get; private set; }
+    public InputModel InputModel { get; private set; }
 
     [Inject]
     public void Construct(
@@ -37,7 +36,7 @@ public class Character : MonoBehaviour
         _gameBus = gameBus;
     }
 
-    public void Init(IInputStrategy inputStrategy, CharacterModel characterModel, CharacterConfig characterConfig = null)
+    public void Init(IInputStrategy inputStrategy, CharacterConfig characterConfig = null)
     {
         Transform = transform;
         SpawnPosition = Transform.position;
@@ -46,14 +45,15 @@ public class Character : MonoBehaviour
             this.characterConfig = characterConfig;
 
         _inputStrategy = inputStrategy;
-        _characterModel = characterModel;
         botBehaviourUI.Init(_mainCamera);
 
-        _inputModel = new InputModel();
-        _characterAnimator = new CharacterAnimator(_characterModel, animator, _combatRepository);
-        _combatController = new CombatController(_inputModel, _characterModel, _combatRepository);
-        moveController.Init(_inputModel, _characterModel, characterController, _mainCamera.transform, this.characterConfig);
-        _inputStrategy.Init(_inputModel, this, _gameBus);
+        CharacterModel = new CharacterModel();
+        InputModel = new InputModel();
+
+        _characterAnimator = new CharacterAnimator(CharacterModel, animator, _combatRepository);
+        _combatController = new CombatController(InputModel, CharacterModel, _combatRepository);
+        moveController.Init(InputModel, CharacterModel, characterController, _mainCamera.transform, this.characterConfig);
+        _inputStrategy.Init(InputModel, this, _gameBus);
     }
 
     internal void ShowLog(int index, string status)
@@ -66,8 +66,8 @@ public class Character : MonoBehaviour
         _characterAnimator?.Dispose();
         _combatController?.Dispose();
         _inputStrategy?.Dispose();
-        _inputModel?.Dispose();
-        _characterModel?.Dispose();
+        InputModel?.Dispose();
+        CharacterModel?.Dispose();
     }
 
     public class Factory : PlaceholderFactory<ICombatRepository, Camera, GameBus, Character>

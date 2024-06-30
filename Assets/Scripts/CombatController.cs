@@ -51,23 +51,23 @@ public class CombatController
 
         switch (_characterModel.AttackSequenceState.Value)
         {
-            case CombatState.None:
-            case CombatState.Fail:
+            case CombatPhase.None:
+            case CombatPhase.Fail:
 #if LOGGER_ON
                 Debug.Log("Attacking not available");
 #endif                
                 break;
-            case CombatState.Idle:
+            case CombatPhase.Idle:
                 _horizontalTokenSource = new CancellationTokenSource();
                 HorizontalSequencingRecursive((0, 0), _horizontalTokenSource.Token);
                 break;
-            case CombatState.Pre:
+            case CombatPhase.Pre:
 
                 break;
-            case CombatState.Attack:
+            case CombatPhase.Attack:
                 //SetFail();
                 break;
-            case CombatState.After:
+            case CombatPhase.After:
                 _horizontalTokenSource.Cancel();
                 _attackTokenSource.Cancel();
                 VerticalSequencing();
@@ -87,7 +87,7 @@ public class CombatController
 #if LOGGER_ON
         Debug.Log($"player fightSequenceState is {_characterModel.AttackSequenceState.Value}");
 #endif
-        if (_characterModel.AttackSequenceState.Value is not CombatState.Pre)
+        if (_characterModel.AttackSequenceState.Value is not CombatPhase.Pre)
             return;
 
         _attackTokenSource = new CancellationTokenSource();
@@ -103,7 +103,7 @@ public class CombatController
         Debug.Log($"HorizontalSequencing ({newCode.Item1},{newCode.Item2})");
 #endif        
         _characterModel.CurrentSequenceKey.Value = newCode;
-        _characterModel.AttackSequenceState.SetAndForceNotify(CombatState.Pre);
+        _characterModel.AttackSequenceState.SetAndForceNotify(CombatPhase.Pre);
 
         await TimerProcessAsync(_combatRepository.GetPreAttackTime(newCode), token, null);
         if (token.IsCancellationRequested)
@@ -150,20 +150,20 @@ public class CombatController
         var time = _combatRepository.GetAttackTime(_characterModel.CurrentSequenceKey.Value);
         try
         {
-            await SequenceAsync(CombatState.Attack, time, cancellationToken);
+            await SequenceAsync(CombatPhase.Attack, time, cancellationToken);
 
             if (cancellationToken.IsCancellationRequested)
                 return;
 
             time = _combatRepository.GetPostAttackTime(_characterModel.CurrentSequenceKey.Value);
-            await SequenceAsync(CombatState.After, time, cancellationToken, onEnd: SetIdle);
+            await SequenceAsync(CombatPhase.After, time, cancellationToken, onEnd: SetIdle);
         }
         catch (TaskCanceledException)
         {
         }
     }
 
-    private async Task SequenceAsync(CombatState state, float time, CancellationToken token,
+    private async Task SequenceAsync(CombatPhase state, float time, CancellationToken token,
         Action onCancel = null, Action onEnd = null, Action onFinal = null)
     {
         if (token.IsCancellationRequested)
@@ -200,7 +200,7 @@ public class CombatController
 
     private void SetIdle()
     {
-        _characterModel.AttackSequenceState.Value = CombatState.Idle;
+        _characterModel.AttackSequenceState.Value = CombatPhase.Idle;
         _characterModel.CurrentSequenceKey.Value = (-1, -1);
     }
 

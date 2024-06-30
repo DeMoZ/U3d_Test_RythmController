@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using Debug = DMZ.DebugSystem.DMZLogger;
 
+// todo remove Time.deltatime
 // todo move to non monoBehaviour class
 public class MoveController : MonoBehaviour
 {
@@ -50,17 +51,19 @@ public class MoveController : MonoBehaviour
         if (_characterConfig == null)
             return;
 
-        var targetSpeed = _characterConfig.walkSpeed;
+        Debug.Log($"{gameObject.name} {axis}");
+
+        var targetSpeed = _inputModel.IsRunning.Value ? _characterConfig.SprintSpeed : _characterConfig.WalkSpeed;
 
         if (axis == Vector3.zero)
             targetSpeed = 0.0f;
 
-        var curHorSpeedVel = _controller.velocity;
+        // var curHorSpeedVel = _controller.velocity;
         var curHorSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
         if (curHorSpeed < targetSpeed - _characterConfig.SpeedOffset || curHorSpeed > targetSpeed + _characterConfig.SpeedOffset)
         {
-            _speed = Mathf.Lerp(curHorSpeed, targetSpeed, _characterConfig.speedChangeRate * Time.deltaTime);
+            _speed = Mathf.Lerp(curHorSpeed, targetSpeed, _characterConfig.SpeedChangeRate * Time.deltaTime);
             _speed = (float)Math.Round(_speed, 3);
         }
         else
@@ -72,7 +75,7 @@ public class MoveController : MonoBehaviour
         {
             var inputDirection = axis.normalized;
             _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _camera.transform.eulerAngles.y;
-            var rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _characterConfig.rotationSmoothTime);
+            var rotation = Mathf.SmoothDampAngle(_transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _characterConfig.RotationSmoothTime);
             _transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
         }
 

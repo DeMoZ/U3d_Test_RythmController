@@ -1,4 +1,4 @@
-public enum CombatState
+public enum CombatPhase
 {
     None,
     Idle,

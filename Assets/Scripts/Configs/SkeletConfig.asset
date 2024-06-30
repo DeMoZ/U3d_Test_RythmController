@@ -22,7 +22,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   SpeedOffset: 0.1
-  walkSpeed: 0.1
+  walkSpeed: 1
   sprintSpeed: 2.5
   rotationSmoothTime: 0.12
   speedChangeRate: 10

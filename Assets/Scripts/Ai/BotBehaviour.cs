@@ -23,9 +23,9 @@ public class BotBehaviour : StateMachineBase<BotStates>
         _states = new Dictionary<BotStates, IState<BotStates>>
         {
             { BotStates.Idle, new IdleState(_character, _gameBus ) },
-            { BotStates.Chase, new ChaseState(_character, _gameBus, _inputModel ) },
+            { BotStates.Chase, new ChaseState(_character, _gameBus ) },
             { BotStates.Attack, new AttackState(_character, _gameBus ) },
-            { BotStates.Return, new ReturnState(_character, _gameBus, _inputModel ) }
+            { BotStates.Return, new ReturnState(_character, _gameBus ) }
         };
 
         _currentState.Value = _states[_defaultState];

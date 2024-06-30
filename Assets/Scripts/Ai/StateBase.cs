@@ -10,7 +10,7 @@ public abstract class StateBase<T> : IState<T> where T : Enum
 
     public virtual T Type { get; }
 
-    public virtual T Update() => Type;
+    public virtual T Update(float deltaTime = 0) => Type;
 
     public StateBase(Character character, GameBus gameBus)
     {
