@@ -56,6 +56,15 @@ public class Character : MonoBehaviour
         _inputStrategy.Init(InputModel, this, _gameBus);
     }
 
+    /// <summary>
+    /// The character is in attack phase CombatPhase.Attack, CombatPhase.PreAttack, CombatPhase.AfterAttack
+    /// </summary>
+    /// <returns></returns>
+    public bool IsInAttackPhase()
+    {
+        return CharacterModel.AttackSequenceState.Value is CombatPhase.Attack or CombatPhase.Pre or CombatPhase.After;
+    }
+    
     internal void ShowLog(int index, string status)
     {
         botBehaviourUI.ShowLog(index, status);

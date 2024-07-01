@@ -10,7 +10,6 @@ public class AttackState : StateBase<BotStates>
 
     private float _rotationVelocity;
     private float _sequenceTimer;
-    private CombatPhase _currentState;
     private bool _holdButton;
 
     public override BotStates Type { get; } = BotStates.Attack;
@@ -29,24 +28,16 @@ public class AttackState : StateBase<BotStates>
         await Task.Yield();
     }
 
-    // todo Implement the attacke angle support
-    // _character.CharacterConfig.AttackRotationAngle
+    // todo Move if oponent is in attack phase
+    // possible need to implement substate machine
     public override BotStates Update(float deltaTime)
     {
         var isAttacking = IsAttacking();
         if (!isAttacking && !IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.MeleAttackRange))
             return BotStates.Chase;
 
-        //if (isAttacking)
         UpdateAttack(deltaTime);
 
-        if (CanAttackAngle())
-        {
-            //make attack
-            // important - if
-        }
-
-        // if not perform hit at current time
         if (!isAttacking)
         {
 
@@ -72,11 +63,15 @@ public class AttackState : StateBase<BotStates>
                 _sequenceTimer = GetRandomTime(0.01f, 3f);
                 _inputModel.OnAttack?.Invoke(false);
             }
-            else
+            else if (CanAttackAngle())
             {// to make new hit, press and hold button for short random time
                 _holdButton = true;
                 _sequenceTimer = GetRandomTime(0.01f, 2f);
                 _inputModel.OnAttack?.Invoke(true);
+            }
+            else
+            {// clamp timer
+                _sequenceTimer = 0;
             }
         }
     }
@@ -98,7 +93,7 @@ public class AttackState : StateBase<BotStates>
 
     private bool IsAttacking()
     {
-        return _holdButton || _character.CharacterModel.AttackSequenceState.Value is not CombatPhase.Idle or CombatPhase.None;
+        return _holdButton || _character.IsInAttackPhase();
     }
 
     /*

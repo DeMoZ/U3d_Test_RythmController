@@ -21,11 +21,12 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  SpeedOffset: 0.1
-  walkSpeed: 1
-  sprintSpeed: 2.5
-  rotationSmoothTime: 0.12
-  speedChangeRate: 10
-  meleAttackRange: 1.5
-  chaseRange: 4
-  chaseStopRange: 5
+  <SpeedOffset>k__BackingField: 0.1
+  <WalkSpeed>k__BackingField: 2
+  <SprintSpeed>k__BackingField: 5.335
+  <RotationSmoothTime>k__BackingField: 0.1
+  <SpeedChangeRate>k__BackingField: 10
+  <MeleAttackRange>k__BackingField: 2
+  <ChaseRange>k__BackingField: 4
+  <ChaseStopRange>k__BackingField: 5
+  <AttackRotationAngle>k__BackingField: 10

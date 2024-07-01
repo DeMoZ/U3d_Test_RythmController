@@ -32,6 +32,7 @@ public class NavMeshState : StateBase<BotStates>
         await Task.Yield();
     }
 
+    // todo make Gismos showing where nav mesh wants to move
     protected void GetInput(Vector3 toPoint)
     {
         if (_navMeshAgent.CalculatePath(toPoint, _navMeshPath))
