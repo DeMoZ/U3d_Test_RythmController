@@ -23,6 +23,7 @@ public class AttackState : StateBase<BotStates>
 
     public override async Task EnterAsync(CancellationToken token)
     {
+        _holdButton = false;
         _rotationVelocity = 0;
         _sequenceTimer = GetRandomTime(0.2f, 1);
         await Task.Yield();
@@ -30,9 +31,10 @@ public class AttackState : StateBase<BotStates>
 
     // todo Move if oponent is in attack phase
     // possible need to implement substate machine
+    // todo use deltatime to rorate
     public override BotStates Update(float deltaTime)
     {
-        var isAttacking = IsAttacking();
+        var isAttacking = _character.IsInAttackPhase();
         if (!isAttacking && !IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.MeleAttackRange))
             return BotStates.Chase;
 
@@ -40,10 +42,13 @@ public class AttackState : StateBase<BotStates>
 
         if (!isAttacking)
         {
-
             var direction = _gameBus.Player.Transform.position - _character.Transform.position;
+            direction.y = 0;
             var inputDirection = direction.normalized;
             var targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg;
+
+            // _character.Transform.rotation = Quaternion.RotateTowards(_character.Transform.rotation, Quaternion.Euler(0.0f, targetRotation, 0.0f),
+            //     _character.CharacterConfig.RotationSmoothTime * deltaTime * 10);
             var rotation = Mathf.SmoothDampAngle(_character.Transform.eulerAngles.y, targetRotation, ref _rotationVelocity, _character.CharacterConfig.RotationSmoothTime);
             _character.Transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
         }
@@ -89,11 +94,6 @@ public class AttackState : StateBase<BotStates>
         forward.y = 0;
         var angleDegrees = Vector3.Angle(direction, forward);
         return angleDegrees <= _character.CharacterConfig.AttackRotationAngle;
-    }
-
-    private bool IsAttacking()
-    {
-        return _holdButton || _character.IsInAttackPhase();
     }
 
     /*

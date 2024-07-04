@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
@@ -10,6 +11,7 @@ public class Character : MonoBehaviour
     [SerializeField] private MoveController moveController;
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private CharacterConfig characterConfig;
+    [SerializeField] private List<AreaDrawerBase> areaDrawers;
 
     private IInputStrategy _inputStrategy;
     private ICombatRepository _combatRepository;
@@ -36,13 +38,13 @@ public class Character : MonoBehaviour
         _gameBus = gameBus;
     }
 
-    public void Init(IInputStrategy inputStrategy, CharacterConfig characterConfig = null)
+    public void Init(IInputStrategy inputStrategy, CharacterConfig charConfig = null)
     {
         Transform = transform;
         SpawnPosition = Transform.position;
 
-        if (characterConfig != null)
-            this.characterConfig = characterConfig;
+        if (charConfig != null)
+            characterConfig = charConfig;
 
         _inputStrategy = inputStrategy;
         botBehaviourUI.Init(_mainCamera);
@@ -52,8 +54,19 @@ public class Character : MonoBehaviour
 
         _characterAnimator = new CharacterAnimator(CharacterModel, animator, _combatRepository);
         _combatController = new CombatController(InputModel, CharacterModel, _combatRepository);
-        moveController.Init(InputModel, CharacterModel, characterController, _mainCamera.transform, this.characterConfig);
+        moveController.Init(InputModel, CharacterModel, characterController, _mainCamera.transform, characterConfig);
         _inputStrategy.Init(InputModel, this, _gameBus);
+
+        DrawArea();
+    }
+
+    private void DrawArea()
+    {
+        foreach (var areaDrawer in areaDrawers)
+        {
+            areaDrawer.Init(characterConfig.MeleAttackRange, characterConfig.AttackRotationAngle);
+            areaDrawer.Show();
+        }
     }
 
     /// <summary>
@@ -64,7 +77,7 @@ public class Character : MonoBehaviour
     {
         return CharacterModel.AttackSequenceState.Value is CombatPhase.Attack or CombatPhase.Pre or CombatPhase.After;
     }
-    
+
     internal void ShowLog(int index, string status)
     {
         botBehaviourUI.ShowLog(index, status);
