@@ -16,7 +16,7 @@ public class ReturnState : NavMeshState
         if (IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.ChaseRange))
             return BotStates.Chase;
 
-        GetInput(_character.SpawnPosition);
+        CalculateInput(_character.SpawnPosition);
 
         return Type;
     }

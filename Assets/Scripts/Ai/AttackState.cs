@@ -31,7 +31,7 @@ public class AttackState : StateBase<BotStates>
 
     // todo Move if oponent is in attack phase
     // possible need to implement substate machine
-    // todo use deltatime to rorate
+    // todo use deltatime to rotate
     public override BotStates Update(float deltaTime)
     {
         var isAttacking = _character.IsInAttackPhase();

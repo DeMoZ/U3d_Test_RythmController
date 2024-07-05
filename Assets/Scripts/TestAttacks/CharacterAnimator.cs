@@ -84,7 +84,7 @@ namespace Attack3x3
             var length = clip.Length;
             var time = _attackRepository.GetAttackTime(_attackPlayerData.CurrentSequenceKey.Value);
             _character.Animator.speed =
-                length / (time + time * 1.02f); // todo roman reset animator speed to 1 after animation
+                length / (time + time * 1.02f); // todo reset animator speed to 1 after animation
         }
 
         private void CashStateAnimations()

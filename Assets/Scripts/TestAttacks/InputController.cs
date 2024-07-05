@@ -30,7 +30,7 @@ public class InputController : IInputController
         _attackU = _inputAsset.FindAction("AttackU");
         _attackD = _inputAsset.FindAction("AttackD");
 
-        // _attackL.started += OnLeftAttackStarted; // todo roman for long and repeated clicking?
+        // _attackL.started += OnLeftAttackStarted; // todo for long and repeated clicking?
         _attackL.performed += OnLeftAttackPerformed; // this reacts on downClick, not on upClick
         _attackR.performed += OnRightAttackPerformed;
         _attackU.performed += OnUpAttackPerformed;

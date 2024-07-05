@@ -12,6 +12,7 @@ public class Character : MonoBehaviour
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private CharacterConfig characterConfig;
     [SerializeField] private List<AreaDrawerBase> areaDrawers;
+    [SerializeField] private PathLine pathLine;
 
     private IInputStrategy _inputStrategy;
     private ICombatRepository _combatRepository;
@@ -58,6 +59,8 @@ public class Character : MonoBehaviour
         _inputStrategy.Init(InputModel, this, _gameBus);
 
         DrawArea();
+        CharacterModel.OnMovePath += pathLine.Draw;
+        CharacterModel.OnMovePathEnable += pathLine.Enable;
     }
 
     private void DrawArea()
@@ -89,7 +92,10 @@ public class Character : MonoBehaviour
         _combatController?.Dispose();
         _inputStrategy?.Dispose();
         InputModel?.Dispose();
-        CharacterModel?.Dispose();
+     
+        CharacterModel.OnMovePath -= pathLine.Draw;
+        CharacterModel.OnMovePathEnable -= pathLine.Enable;
+        CharacterModel?.Dispose(); 
     }
 
     public class Factory : PlaceholderFactory<ICombatRepository, Camera, GameBus, Character>

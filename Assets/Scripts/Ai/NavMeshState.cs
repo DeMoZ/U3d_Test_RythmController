@@ -21,6 +21,8 @@ public class NavMeshState : StateBase<BotStates>
         Debug.Log($"{GetType()} Enter");
         _navMeshAgent.enabled = true;
         _navMeshPath = new NavMeshPath();
+        _character.CharacterModel.OnMovePathEnable?.Invoke(true);
+
         await Task.Yield();
     }
 
@@ -28,16 +30,17 @@ public class NavMeshState : StateBase<BotStates>
     {
         _navMeshAgent.enabled = false;
         _inputModel.OnMove.Value = Vector3.zero;
+        _character.CharacterModel.OnMovePathEnable?.Invoke(false);
         Debug.Log($"{GetType()} Exit");
         await Task.Yield();
     }
 
-    // todo make Gismos showing where nav mesh wants to move
-    protected void GetInput(Vector3 toPoint)
+    protected void CalculateInput(Vector3 toPoint)
     {
         if (_navMeshAgent.CalculatePath(toPoint, _navMeshPath))
         {
-            var navMeshInput = CalculateDesiredVelocity(_navMeshAgent, _navMeshPath);
+            _character.CharacterModel.OnMovePath?.Invoke(_navMeshPath.corners);
+            var navMeshInput = CalculateDesiredVelocity(_navMeshAgent, _navMeshPath.corners);
             var clampedInput = new Vector3(Mathf.Clamp(navMeshInput.x, -1f, 1f), 0, Mathf.Clamp(navMeshInput.z, -1f, 1f));
             _inputModel.OnMove.Value = clampedInput;
             _character.ShowLog(1, $"{navMeshInput}");
@@ -45,17 +48,17 @@ public class NavMeshState : StateBase<BotStates>
         }
     }
 
-    private Vector3 CalculateDesiredVelocity(NavMeshAgent agent, NavMeshPath path)
+    private Vector3 CalculateDesiredVelocity(NavMeshAgent agent, Vector3[] corners)
     {
-        if (path.corners.Length < 2)
+        if (corners.Length < 2)
             return Vector3.zero;
 
-        var direction = (path.corners[1] - agent.transform.position).normalized;
+        var direction = (corners[1] - agent.transform.position).normalized;
 
         // var desiredVelocity = direction * agent.speed;
         // return desiredVelocity;
         var desiredVelocity = direction;
 
-        return direction;
+        return desiredVelocity;
     }
 }

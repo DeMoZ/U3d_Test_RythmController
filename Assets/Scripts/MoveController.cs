@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using Debug = DMZ.DebugSystem.DMZLogger;
 
-// todo remove Time.deltatime
+// todo [TIME_DELTATIME] remove Time.deltatime
 // todo move to non monoBehaviour class
 public class MoveController : MonoBehaviour
 {
