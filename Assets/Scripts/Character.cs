@@ -39,10 +39,12 @@ public class Character : MonoBehaviour
         _gameBus = gameBus;
     }
 
-    public void Init(IInputStrategy inputStrategy, CharacterConfig charConfig = null)
+    public void Init(IInputStrategy inputStrategy, CharacterConfig charConfig = null, Vector3? spawnPosition = null)
     {
         Transform = transform;
-        SpawnPosition = Transform.position;
+        
+        if (spawnPosition != null)
+            SpawnPosition = spawnPosition.Value;
 
         if (charConfig != null)
             characterConfig = charConfig;
