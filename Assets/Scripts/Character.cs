@@ -8,13 +8,14 @@ public class Character : MonoBehaviour
     [SerializeField] private BotBehaviourUI botBehaviourUI;
     [SerializeField] private Animator animator;
     [SerializeField] private CharacterController characterController;
-    [SerializeField] private MoveController moveController;
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private CharacterConfig characterConfig;
     [SerializeField] private List<AreaDrawerBase> areaDrawers;
     [SerializeField] private PathLine pathLine;
 
     private IInputStrategy _inputStrategy;
+    private IMoveStrategy _moveStrategy;
+
     private ICombatRepository _combatRepository;
     private Camera _mainCamera;
     private GameBus _gameBus;
@@ -39,10 +40,10 @@ public class Character : MonoBehaviour
         _gameBus = gameBus;
     }
 
-    public void Init(IInputStrategy inputStrategy, CharacterConfig charConfig = null, Vector3? spawnPosition = null)
+    public void Init(IInputStrategy inputStrategy, IMoveStrategy moveStrategy, CharacterConfig charConfig = null, Vector3? spawnPosition = null)
     {
         Transform = transform;
-        
+
         if (spawnPosition != null)
             SpawnPosition = spawnPosition.Value;
 
@@ -50,6 +51,7 @@ public class Character : MonoBehaviour
             characterConfig = charConfig;
 
         _inputStrategy = inputStrategy;
+        _moveStrategy = moveStrategy;
         botBehaviourUI.Init(_mainCamera);
 
         CharacterModel = new CharacterModel();
@@ -57,12 +59,17 @@ public class Character : MonoBehaviour
 
         _characterAnimator = new CharacterAnimator(CharacterModel, animator, _combatRepository);
         _combatController = new CombatController(InputModel, CharacterModel, _combatRepository);
-        moveController.Init(InputModel, CharacterModel, characterController, _mainCamera.transform, characterConfig);
+        _moveStrategy.Init(InputModel, CharacterModel, characterController, characterConfig);
         _inputStrategy.Init(InputModel, this, _gameBus);
 
         DrawArea();
         CharacterModel.OnMovePath += pathLine.Draw;
         CharacterModel.OnMovePathEnable += pathLine.Enable;
+    }
+
+    private void Update()
+    {
+        _moveStrategy?.Update(Time.deltaTime);
     }
 
     private void DrawArea()
@@ -93,11 +100,12 @@ public class Character : MonoBehaviour
         _characterAnimator?.Dispose();
         _combatController?.Dispose();
         _inputStrategy?.Dispose();
+        _moveStrategy?.Dispose();
         InputModel?.Dispose();
-     
+
         CharacterModel.OnMovePath -= pathLine.Draw;
         CharacterModel.OnMovePathEnable -= pathLine.Enable;
-        CharacterModel?.Dispose(); 
+        CharacterModel?.Dispose();
     }
 
     public class Factory : PlaceholderFactory<ICombatRepository, Camera, GameBus, Character>

@@ -711,7 +711,6 @@ GameObject:
   m_Component:
   - component: {fileID: 9153980147459327244}
   - component: {fileID: 3831963277256093784}
-  - component: {fileID: 8741138877399587775}
   - component: {fileID: 676892165376205030}
   - component: {fileID: 9064779731601359677}
   m_Layer: 0
@@ -754,25 +753,12 @@ MonoBehaviour:
   botBehaviourUI: {fileID: 5278686199191368547}
   animator: {fileID: 5960582447729682095}
   characterController: {fileID: 676892165376205030}
-  moveController: {fileID: 8741138877399587775}
   navMeshAgent: {fileID: 9064779731601359677}
   characterConfig: {fileID: 11400000, guid: 5ee85d356886e48d0934c38ba5738c70, type: 2}
   areaDrawers:
   - {fileID: 5295987121477804881}
   - {fileID: 1360320811360653308}
   pathLine: {fileID: 4780697783128544284}
---- !u!114 &8741138877399587775
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4974591021931216236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf87e945aab94cb5bddf8d3949afbdb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!143 &676892165376205030
 CharacterController:
   m_ObjectHideFlags: 0
