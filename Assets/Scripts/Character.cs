@@ -69,7 +69,7 @@ public class Character : MonoBehaviour
 
     private void Update()
     {
-        _moveStrategy?.Update(Time.deltaTime);
+        _moveStrategy?.OnUpdate(Time.deltaTime);
     }
 
     private void DrawArea()

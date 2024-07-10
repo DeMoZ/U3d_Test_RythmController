@@ -6,10 +6,11 @@ public interface IMoveStrategy : IDisposable
 {
     void Init(InputModel inputModel, CharacterModel characterModel, CharacterController characterController,
         CharacterConfig characterConfig);
-    void Update(float deltaTime);
+    void OnUpdate(float deltaTime);
 }
 
-public abstract class MoveStrategyBase : IMoveStrategy{
+public abstract class MoveStrategyBase : IMoveStrategy
+{
     protected float _targetRotation;
     protected float _rotationVelocity;
     protected float _speed;
@@ -25,7 +26,7 @@ public abstract class MoveStrategyBase : IMoveStrategy{
     {
     }
 
-    public void Init(InputModel inputModel, CharacterModel characterModel,CharacterController characterController,
+    public void Init(InputModel inputModel, CharacterModel characterModel, CharacterController characterController,
         CharacterConfig characterConfig)
     {
         _inputModel = inputModel;
@@ -36,7 +37,7 @@ public abstract class MoveStrategyBase : IMoveStrategy{
         _transform = _controller.transform;
     }
 
-    public void Update(float deltaTime)
+    public void OnUpdate(float deltaTime)
     {
         if (_inputModel == null)
             return;

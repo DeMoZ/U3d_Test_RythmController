@@ -54,7 +54,7 @@ public abstract class StateMachineBase<T> : IDisposable where T : Enum
         UpdateLoopAsync(_cancelationTokenSource.Token);
     }
 
-    // todo remove update loop  and replase with Update mathod striked from outside with deltatime
+    // todo remove update loop and replase with Update mathod striked from outside with deltatime
     public async Task UpdateAsync(CancellationToken token)
     {
         var deltaTime = (float)_stopwatch.Elapsed.TotalSeconds;
