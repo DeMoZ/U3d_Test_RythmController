@@ -14,7 +14,8 @@ public abstract class MoveStrategyBase : IMoveStrategy
     protected float _targetRotation;
     protected float _rotationVelocity;
     protected float _speed;
-    protected float _verticalVelocity;
+    protected Vector3 _velocity;
+    protected float _verticalVelocity = -9.8f;
     protected Transform _transform;
 
     protected CharacterController _controller;

@@ -1,12 +1,10 @@
 #define LOGGER_ON
-using System;
 using UnityEngine;
 using Debug = DMZ.DebugSystem.DMZLogger;
 
 public class PlayerMoveStrategy : MoveStrategyBase
 {
     private Transform _cameraTransform;
-    private Vector3 _velocity;
 
     public PlayerMoveStrategy(Camera mainCamera)
     {
@@ -19,9 +17,12 @@ public class PlayerMoveStrategy : MoveStrategyBase
     {
         var configSpeed = _characterConfig.WalkSpeed;
         var targetDirection = Quaternion.Euler(0.0f, _cameraTransform.eulerAngles.y, 0.0f) * axis;
-        _velocity += targetDirection.normalized * (configSpeed * _characterConfig.SpeedChangeRate * Time.deltaTime);
-        _velocity += -_velocity * (_characterConfig.SpeedChangeRate * Time.deltaTime); // friction/resistance
-        _controller.Move(_velocity * Time.deltaTime);
+        _velocity += targetDirection.normalized * (configSpeed * _characterConfig.SpeedChangeRate * deltaTime);
+        _velocity += -_velocity * (_characterConfig.SpeedChangeRate * deltaTime); // friction/resistance
+
+        var horizontalMove = _velocity * deltaTime;
+        var verticalMove = new Vector3(0.0f, _verticalVelocity, 0.0f) * deltaTime;
+        _controller.Move(horizontalMove + verticalMove);
 
         if (axis != Vector3.zero)
         {// rotation
