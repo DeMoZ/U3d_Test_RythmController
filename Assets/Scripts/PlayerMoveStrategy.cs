@@ -15,7 +15,8 @@ public class PlayerMoveStrategy : MoveStrategyBase
     // need to animate
     protected override void OnMove(Vector3 axis, float deltaTime)
     {
-        var configSpeed = _characterConfig.WalkSpeed;
+        // var configSpeed = _characterConfig.WalkSpeed;
+        var configSpeed = _characterConfig.SprintSpeed;
         var targetDirection = Quaternion.Euler(0.0f, _cameraTransform.eulerAngles.y, 0.0f) * axis;
         _velocity += targetDirection.normalized * (configSpeed * _characterConfig.SpeedChangeRate * deltaTime);
         _velocity += -_velocity * (_characterConfig.SpeedChangeRate * deltaTime); // friction/resistance
@@ -32,6 +33,6 @@ public class PlayerMoveStrategy : MoveStrategyBase
             _transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
         }
 
-        _characterModel.MoveSpeed.Value = _speed;
+        _characterModel.MoveSpeed.Value = _velocity.magnitude;
     }
 }

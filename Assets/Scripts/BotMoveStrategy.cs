@@ -9,6 +9,7 @@ public class BotMoveStrategy : MoveStrategyBase
     protected override void OnMove(Vector3 axis, float deltaTime)
     {
         var configSpeed = _characterConfig.WalkSpeed;
+        // var configSpeed = _characterConfig.SprintSpeed;
         var targetDirection = axis;
         _velocity += targetDirection.normalized * (configSpeed * _characterConfig.SpeedChangeRate * deltaTime);
         _velocity += -_velocity * (_characterConfig.SpeedChangeRate * deltaTime); // friction/resistance
@@ -23,5 +24,7 @@ public class BotMoveStrategy : MoveStrategyBase
             var rotation = Mathf.SmoothDampAngle(_transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _characterConfig.RotationSmoothTime);
             _transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
         }
+
+        _characterModel.MoveSpeed.Value = _velocity.magnitude;
     }
 }
