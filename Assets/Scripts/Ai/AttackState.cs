@@ -30,8 +30,7 @@ public class AttackState : StateBase<BotStates>
     }
 
     // todo Move if oponent is in attack phase
-    // possible need to implement substate machine
-    // todo use deltatime to rotate
+    // todo possible need to implement substate machine
     public override BotStates Update(float deltaTime)
     {
         var isAttacking = _character.IsInAttackPhase();
@@ -41,15 +40,12 @@ public class AttackState : StateBase<BotStates>
         UpdateAttack(deltaTime);
 
         if (!isAttacking)
-        {
+        {// rotation
             var direction = _gameBus.Player.Transform.position - _character.Transform.position;
             direction.y = 0;
-            var inputDirection = direction.normalized;
-            var targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg;
-
-            // _character.Transform.rotation = Quaternion.RotateTowards(_character.Transform.rotation, Quaternion.Euler(0.0f, targetRotation, 0.0f),
-            //     _character.CharacterConfig.RotationSmoothTime * deltaTime * 10);
-            var rotation = Mathf.SmoothDampAngle(_character.Transform.eulerAngles.y, targetRotation, ref _rotationVelocity, _character.CharacterConfig.RotationSmoothTime);
+            var axis = direction.normalized;
+            var _targetRotation = Quaternion.LookRotation(axis).eulerAngles.y;
+            var rotation = Mathf.SmoothDampAngle(_character.Transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _character.CharacterConfig.RotationSmoothTime);
             _character.Transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
         }
 
