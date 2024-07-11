@@ -58,7 +58,7 @@ public class AttackState : StateBase<BotStates>
 
     private void UpdateAttack(float deltaTime)
     {
-        _sequenceTimer -= Time.deltaTime;
+        _sequenceTimer -= deltaTime;
 
         if (_sequenceTimer <= 0f)
         {
