@@ -1,18 +1,18 @@
 public class ChaseState : NavMeshState
 {
-    public override BotStates Type { get; } = BotStates.Chase;
+    public override States Type { get; } = States.Chase;
 
     public ChaseState(Character character, GameBus gameBus) : base(character, gameBus)
     {
     }
 
-    public override BotStates Update(float deltaTime)
+    public override States Update(float deltaTime)
     {
         if (IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.MeleAttackRange))
-            return BotStates.Attack;
+            return States.Attack;
 
         if (!IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.ChaseStopRange))
-            return BotStates.Return;
+            return States.Return;
 
         CalculateInput(_gameBus.Player.Transform.position);
         return Type;

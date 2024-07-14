@@ -1,15 +1,15 @@
-public class IdleState : StateBase<BotStates>
+public class IdleState : StateBase<States>
 {
-    public override BotStates Type { get; } = BotStates.Idle;
+    public override States Type { get; } = States.Idle;
 
     public IdleState(Character character, GameBus gameBus) : base(character, gameBus)
     {
     }
 
-    public override BotStates Update(float deltaTime)
+    public override States Update(float deltaTime)
     {
         if (IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.ChaseRange))
-            return BotStates.Chase;
+            return States.Chase;
 
         return Type;
     }

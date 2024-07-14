@@ -22,8 +22,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   <SpeedOffset>k__BackingField: 0.1
-  <WalkSpeed>k__BackingField: 2
-  <SprintSpeed>k__BackingField: 5.335
+  <WalkSpeed>k__BackingField: 1.3
+  <SprintSpeed>k__BackingField: 3
   <RotationSmoothTime>k__BackingField: 0.1
   <SpeedChangeRate>k__BackingField: 10
   <MeleAttackRange>k__BackingField: 2

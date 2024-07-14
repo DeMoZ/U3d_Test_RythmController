@@ -104,4 +104,10 @@ public class PlayerInputStrategy : IInputStrategy
     {
         _inputModel.OnMove.Value = new Vector3(value.x, 0, value.y);
     }
+
+    // todo refactor this. Need to remove empty method and delete from interface
+    // this caused by the bot update requirements for behaviour FSM
+    public void OnUpdate(float deltaTime)
+    {
+    }
 }

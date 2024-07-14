@@ -2,10 +2,9 @@ using System;
 
 public class BotInputStrategy : IInputStrategy
 {
-    private InputModel _inputModel;
     private Character _character;
     private GameBus _gameBus;
-    private StateMachineBase<BotStates> _botBehaviour;
+    private FSMUpdateBase<States> _botBehaviour;
 
     public BotInputStrategy()
     {
@@ -13,15 +12,11 @@ public class BotInputStrategy : IInputStrategy
 
     public void Init(InputModel inputModel, Character character, GameBus gameBus)
     {
-        _inputModel = inputModel;
         _character = character;
         _gameBus = gameBus;
 
-        _botBehaviour = new BotBehaviour(_character, _gameBus, _inputModel, OnStateSchanged);
-        _botBehaviour.RunStateMachine();
-
-        // todo remove
-        _inputModel.IsRunning.Value = false;
+        _botBehaviour = new BotFSM(_character, _gameBus, OnStateSchanged);
+        //_botBehaviour.RunStateMachine();
     }
 
     public void Dispose()
@@ -29,22 +24,27 @@ public class BotInputStrategy : IInputStrategy
         _botBehaviour.Dispose();
     }
 
+    public void OnUpdate(float deltaTime)
+    {
+        _botBehaviour.Update(deltaTime);
+    }
+
     /// <summary>
     /// it is just for outside messages
     /// </summary>
-    private void OnStateSchanged(BotStates state)
+    private void OnStateSchanged(States state)
     {
         _character.ShowLog(0, state.ToString());
 
         switch (state)
         {
-            case BotStates.Idle:
+            case States.Idle:
                 break;
-            case BotStates.Chase:
+            case States.Chase:
                 break;
-            case BotStates.Attack:
+            case States.Attack:
                 break;
-            case BotStates.Return:
+            case States.Return:
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);

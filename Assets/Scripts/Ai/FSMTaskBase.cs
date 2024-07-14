@@ -5,25 +5,37 @@ using System.Threading;
 using System.Threading.Tasks;
 using DMZ.Events;
 
-public abstract class StateMachineBase<T> : IDisposable where T : Enum
+/// <summary>
+/// Finit State Machine with internal update loop in task
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public abstract class FSMTaskBase<T> : IDisposable where T : Enum
 {
+    private Action<T> _onStateChangedCallback;
+    private Stopwatch _stopwatch;
+
     protected DMZState<IState<T>> _currentState = new();
     protected Dictionary<T, IState<T>> _states;
     protected CancellationTokenSource _cancelationTokenSource;
 
-    private Stopwatch _stopwatch;
-
     protected abstract void Init();
 
-    public StateMachineBase(Action<T> stateChangedCallback)
+    public FSMTaskBase(Action<T> stateChangedCallback)
     {
         _stopwatch = new Stopwatch();
-        _currentState.Subscribe(stateType => stateChangedCallback?.Invoke(stateType.Type));
+        _onStateChangedCallback = stateChangedCallback;
+        _currentState.Subscribe(OnStateChanged);
     }
 
     public void Dispose()
     {
+        _currentState.Unsubscribe(OnStateChanged);
         _cancelationTokenSource?.Cancel();
+    }
+
+    private void OnStateChanged(IState<T> state)
+    {
+        _onStateChangedCallback?.Invoke(state.Type);
     }
 
     public void StopStateMachine()
@@ -31,17 +43,17 @@ public abstract class StateMachineBase<T> : IDisposable where T : Enum
         _cancelationTokenSource?.Cancel();
     }
 
-    private async Task SwitchToNextState(T nextState, CancellationToken token)
+    private void SwitchToNextState(T nextState, CancellationToken token)
     {
         if (_states.TryGetValue(nextState, out var state))
         {
-            await _currentState.Value.ExitAsync(token);
+            _currentState.Value.Exit();
 
             if (token.IsCancellationRequested)
                 return;
 
             _currentState.Value = state;
-            await _currentState.Value.EnterAsync(token);
+            _currentState.Value.Enter();
         }
         else
             throw new ArgumentOutOfRangeException();
@@ -54,7 +66,6 @@ public abstract class StateMachineBase<T> : IDisposable where T : Enum
         UpdateLoopAsync(_cancelationTokenSource.Token);
     }
 
-    // todo remove update loop and replase with Update mathod striked from outside with deltatime
     public async Task UpdateAsync(CancellationToken token)
     {
         var deltaTime = (float)_stopwatch.Elapsed.TotalSeconds;
@@ -63,7 +74,7 @@ public abstract class StateMachineBase<T> : IDisposable where T : Enum
         var nextState = _currentState.Value.Update(deltaTime);
 
         if (!nextState.Equals(_currentState.Value.Type))
-            await SwitchToNextState(nextState, token);
+            SwitchToNextState(nextState, token);
 
         await Task.Delay(1, token);
     }

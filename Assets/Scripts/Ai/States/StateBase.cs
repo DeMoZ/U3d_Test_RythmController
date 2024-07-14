@@ -1,7 +1,6 @@
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
+using Debug = DMZ.DebugSystem.DMZLogger;
 
 public abstract class StateBase<T> : IState<T> where T : Enum
 {
@@ -18,18 +17,23 @@ public abstract class StateBase<T> : IState<T> where T : Enum
         _gameBus = gameBus;
     }
 
-    public virtual async Task EnterAsync(CancellationToken token)
+    public virtual void Enter()
     {
-        await Task.Yield();
+        Debug.Log($"{GetType()} Enter");
     }
 
-    public virtual async Task ExitAsync(CancellationToken token)
+    public virtual void Exit()
     {
-        await Task.Yield();
+        Debug.Log($"{GetType()} Exit");
     }
 
     protected bool IsInRange(Vector3 point, float distance)
     {
         return Vector3.Distance(_character.Transform.position, point) <= distance;
+    }
+
+    protected float GetRandomTime(float min, float max)
+    {
+        return UnityEngine.Random.Range(min, max);
     }
 }

@@ -6,4 +6,5 @@ using System;
 public interface IInputStrategy : IDisposable
 {
     void Init(InputModel inputModel,  Character character, GameBus gameBus);
+    void OnUpdate(float deltaTime);
 }

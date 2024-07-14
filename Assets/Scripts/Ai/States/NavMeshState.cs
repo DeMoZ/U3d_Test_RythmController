@@ -1,10 +1,8 @@
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 using Debug = DMZ.DebugSystem.DMZLogger;
 
-public class NavMeshState : StateBase<BotStates>
+public class NavMeshState : StateBase<States>
 {
     protected readonly InputModel _inputModel;
     protected readonly NavMeshAgent _navMeshAgent;
@@ -16,27 +14,32 @@ public class NavMeshState : StateBase<BotStates>
         _navMeshAgent = _character.NavMeshAgent;
     }
 
-    public override async Task EnterAsync(CancellationToken token)
+    public override void Enter()
     {
-        Debug.Log($"{GetType()} Enter");
-        _navMeshAgent.enabled = true;
+        base.Enter();
         _navMeshPath = new NavMeshPath();
         _character.CharacterModel.OnMovePathEnable?.Invoke(true);
-
-        await Task.Yield();
+        // todo nav mesh is not enabled on the first update on spawn. Why?
+        _navMeshAgent.enabled = true;
     }
 
-    public override async Task ExitAsync(CancellationToken token)
+    public override void Exit()
     {
+        base.Exit();
         _navMeshAgent.enabled = false;
         _inputModel.OnMove.Value = Vector3.zero;
         _character.CharacterModel.OnMovePathEnable?.Invoke(false);
-        Debug.Log($"{GetType()} Exit");
-        await Task.Yield();
     }
 
     protected void CalculateInput(Vector3 toPoint)
     {
+        // todo nav mesh is not enabled on the first update on spawn. Why?
+        if (!_navMeshAgent.isActiveAndEnabled)
+        {
+            _navMeshAgent.enabled = true;
+            return;
+        }
+
         if (_navMeshAgent.CalculatePath(toPoint, _navMeshPath))
         {
             _character.CharacterModel.OnMovePath?.Invoke(_navMeshPath.corners);

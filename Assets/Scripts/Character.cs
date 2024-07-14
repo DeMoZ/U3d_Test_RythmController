@@ -69,7 +69,9 @@ public class Character : MonoBehaviour
 
     private void Update()
     {
-        _moveStrategy?.OnUpdate(Time.deltaTime);
+        float deltaTime = Time.deltaTime;
+        _moveStrategy?.OnUpdate(deltaTime);
+        _inputStrategy?.OnUpdate(deltaTime);
     }
 
     private void DrawArea()
