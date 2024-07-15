@@ -8,43 +8,35 @@ using DMZ.Events;
 /// <typeparam name="T"></typeparam>
 public abstract class FSMUpdateBase<T> : IDisposable where T : Enum
 {
-    private Action<T> _onStateChangedCallback;
-
     protected DMZState<IState<T>> _currentState = new();
     protected Dictionary<T, IState<T>> _states;
 
     public virtual T DefaultStateType { get; }
 
     protected abstract void Init();
+
+    public FSMUpdateBase()
+    {
+        _currentState.Subscribe(state => OnStateChanged(state.Type));
+    }
+
     public void OnEnter()
     {
-        _currentState.Unsubscribe(OnStateChanged);
         _currentState.Value = _states[DefaultStateType];
         _currentState.Value.Enter();
     }
 
     public void OnExit()
     {
-        _currentState.Unsubscribe(OnStateChanged);
         _currentState.Value.Exit();
-        _currentState.Value = null;
     }
 
     public IState<T> GetState => _currentState.Value;
 
-    public FSMUpdateBase(Action<T> stateChangedCallback)
-    {
-        _onStateChangedCallback = stateChangedCallback;
-    }
-
     public void Dispose()
     {
+        _currentState.Unsubscribe(state => OnStateChanged(state.Type));
         _currentState?.Dispose();
-    }
-
-    private void OnStateChanged(IState<T> state)
-    {
-        _onStateChangedCallback?.Invoke(state.Type);
     }
 
     public T Update(float deltaTime)
@@ -59,5 +51,9 @@ public abstract class FSMUpdateBase<T> : IDisposable where T : Enum
         }
 
         return _currentState.Value.Type;
+    }
+
+    protected virtual void OnStateChanged(T state)
+    {
     }
 }

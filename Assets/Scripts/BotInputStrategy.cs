@@ -15,7 +15,7 @@ public class BotInputStrategy : IInputStrategy
         _character = character;
         _gameBus = gameBus;
 
-        _botBehaviour = new BotFSM(_character, _gameBus, OnStateSchanged);
+        _botBehaviour = new BotFSM(_character, _gameBus);
         //_botBehaviour.RunStateMachine();
     }
 
@@ -27,27 +27,5 @@ public class BotInputStrategy : IInputStrategy
     public void OnUpdate(float deltaTime)
     {
         _botBehaviour.Update(deltaTime);
-    }
-
-    /// <summary>
-    /// it is just for outside messages
-    /// </summary>
-    private void OnStateSchanged(States state)
-    {
-        _character.ShowLog(0, state.ToString());
-
-        switch (state)
-        {
-            case States.Idle:
-                break;
-            case States.Chase:
-                break;
-            case States.Attack:
-                break;
-            case States.Return:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(state), state, null);
-        }
     }
 }

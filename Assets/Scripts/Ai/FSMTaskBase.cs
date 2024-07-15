@@ -11,7 +11,6 @@ using DMZ.Events;
 /// <typeparam name="T"></typeparam>
 public abstract class FSMTaskBase<T> : IDisposable where T : Enum
 {
-    private Action<T> _onStateChangedCallback;
     private Stopwatch _stopwatch;
 
     protected DMZState<IState<T>> _currentState = new();
@@ -20,10 +19,9 @@ public abstract class FSMTaskBase<T> : IDisposable where T : Enum
 
     protected abstract void Init();
 
-    public FSMTaskBase(Action<T> stateChangedCallback)
+    public FSMTaskBase()
     {
         _stopwatch = new Stopwatch();
-        _onStateChangedCallback = stateChangedCallback;
         _currentState.Subscribe(OnStateChanged);
     }
 
@@ -33,10 +31,7 @@ public abstract class FSMTaskBase<T> : IDisposable where T : Enum
         _cancelationTokenSource?.Cancel();
     }
 
-    private void OnStateChanged(IState<T> state)
-    {
-        _onStateChangedCallback?.Invoke(state.Type);
-    }
+    protected abstract void OnStateChanged(IState<T> state);
 
     public void StopStateMachine()
     {
