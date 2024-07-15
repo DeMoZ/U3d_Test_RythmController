@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -83,15 +84,6 @@ public class Character : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// The character is in attack phase CombatPhase.Attack, CombatPhase.PreAttack, CombatPhase.AfterAttack
-    /// </summary>
-    /// <returns></returns>
-    public bool IsInAttackPhase()
-    {
-        return CharacterModel.AttackSequenceState.Value is CombatPhase.Attack or CombatPhase.Pre or CombatPhase.After;
-    }
-
     internal void ShowLog(int index, string status)
     {
         botBehaviourUI.ShowLog(index, status);
@@ -109,6 +101,8 @@ public class Character : MonoBehaviour
         CharacterModel.OnMovePathEnable -= pathLine.Enable;
         CharacterModel?.Dispose();
     }
+
+    internal bool IsInAttackPhase => CharacterModel.IsInAttackPhase;
 
     public class Factory : PlaceholderFactory<ICombatRepository, Camera, GameBus, Character>
     {

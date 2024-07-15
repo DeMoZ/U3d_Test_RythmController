@@ -21,7 +21,7 @@ public class AttackHitSubState : StateBase<AttackSubStates>
     // todo implement timer
     public override AttackSubStates Update(float deltaTime)
     {
-        var isAttacking = _character.IsInAttackPhase();
+        var isAttacking = _character.IsInAttackPhase;
         if (!isAttacking && !IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.MeleAttackRange))
             return AttackSubStates.Idle;
 

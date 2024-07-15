@@ -12,7 +12,6 @@ public class PlayerMoveStrategy : MoveStrategyBase
     }
 
     // todo need to limit movement speed
-    // need to animate
     protected override void OnMove(Vector3 axis, float deltaTime)
     {
         // var configSpeed = _characterConfig.WalkSpeed;
@@ -25,12 +24,24 @@ public class PlayerMoveStrategy : MoveStrategyBase
         var verticalMove = new Vector3(0.0f, _verticalVelocity, 0.0f) * deltaTime;
         _controller.Move(horizontalMove + verticalMove);
 
-        if (axis != Vector3.zero)
-        {// rotation
-            var inputDirection = axis.normalized;
-            _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _cameraTransform.eulerAngles.y;
-            var rotation = Mathf.SmoothDampAngle(_transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _characterConfig.RotationSmoothTime);
-            _transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+        // rotation
+        if (!_characterModel.IsInAttackPhase)
+        {
+            if (_characterModel.Target != null)
+            {
+                var inputDirection = _characterModel.Target.position - _transform.position;
+                inputDirection.y = 0.0f;
+                var _targetRotation = Quaternion.LookRotation(inputDirection).eulerAngles.y;
+                var rotation = Mathf.SmoothDampAngle(_transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _characterConfig.RotationSmoothTime);
+                _transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+            }
+            else if (axis != Vector3.zero)
+            {
+                var inputDirection = axis.normalized;
+                _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _cameraTransform.eulerAngles.y;
+                var rotation = Mathf.SmoothDampAngle(_transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _characterConfig.RotationSmoothTime);
+                _transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+            }
         }
 
         _characterModel.MoveSpeed.Value = _velocity.magnitude;
