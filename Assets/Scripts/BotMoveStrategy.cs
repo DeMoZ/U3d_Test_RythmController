@@ -18,13 +18,6 @@ public class BotMoveStrategy : MoveStrategyBase
         var verticalMove = new Vector3(0.0f, _verticalVelocity, 0.0f) * deltaTime;
         _controller.Move(horizontalMove + verticalMove);
 
-        if (axis != Vector3.zero)
-        {// rotation
-            var _targetRotation = Quaternion.LookRotation(axis).eulerAngles.y;
-            var rotation = Mathf.SmoothDampAngle(_transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _characterConfig.RotationSmoothTime);
-            _transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-        }
-
         _characterModel.MoveSpeed.Value = _velocity.magnitude;
     }
 }

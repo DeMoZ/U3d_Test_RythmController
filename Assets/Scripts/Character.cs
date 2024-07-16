@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -15,6 +14,7 @@ public class Character : MonoBehaviour
     [SerializeField] private PathLine pathLine;
 
     private IInputStrategy _inputStrategy;
+    private IRotationStrategy _rotateStrategy;
     private IMoveStrategy _moveStrategy;
 
     private ICombatRepository _combatRepository;
@@ -41,7 +41,11 @@ public class Character : MonoBehaviour
         _gameBus = gameBus;
     }
 
-    public void Init(IInputStrategy inputStrategy, IMoveStrategy moveStrategy, CharacterConfig charConfig = null, Vector3? spawnPosition = null)
+    public void Init(IInputStrategy inputStrategy,
+        IRotationStrategy rotateStrategy,
+        IMoveStrategy moveStrategy,
+        CharacterConfig charConfig = null,
+        Vector3? spawnPosition = null)
     {
         Transform = transform;
 
@@ -52,6 +56,7 @@ public class Character : MonoBehaviour
             characterConfig = charConfig;
 
         _inputStrategy = inputStrategy;
+        _rotateStrategy = rotateStrategy;
         _moveStrategy = moveStrategy;
         botBehaviourUI.Init(_mainCamera);
 
@@ -61,6 +66,7 @@ public class Character : MonoBehaviour
         _characterAnimator = new CharacterAnimator(CharacterModel, animator, _combatRepository);
         _combatController = new CombatController(InputModel, CharacterModel, _combatRepository);
         _moveStrategy.Init(InputModel, CharacterModel, characterController, characterConfig);
+        _rotateStrategy.Init(InputModel, CharacterModel, characterController, characterConfig);
         _inputStrategy.Init(InputModel, this, _gameBus);
 
         DrawArea();
@@ -71,8 +77,10 @@ public class Character : MonoBehaviour
     private void Update()
     {
         float deltaTime = Time.deltaTime;
-        _moveStrategy?.OnUpdate(deltaTime);
+
         _inputStrategy?.OnUpdate(deltaTime);
+        _moveStrategy?.OnUpdate(deltaTime);
+        _rotateStrategy?.OnUpdate(deltaTime);
     }
 
     private void DrawArea()
@@ -94,6 +102,7 @@ public class Character : MonoBehaviour
         _characterAnimator?.Dispose();
         _combatController?.Dispose();
         _inputStrategy?.Dispose();
+        _rotateStrategy?.Dispose();
         _moveStrategy?.Dispose();
         InputModel?.Dispose();
 
