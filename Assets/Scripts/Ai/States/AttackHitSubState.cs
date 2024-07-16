@@ -21,21 +21,11 @@ public class AttackHitSubState : StateBase<AttackSubStates>
     // todo implement timer
     public override AttackSubStates Update(float deltaTime)
     {
-        var isAttacking = _character.IsInAttackPhase;
+        var isAttacking = _character.CharacterModel.IsInAttackPhase;
         if (!isAttacking && !IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.MeleAttackRange))
             return AttackSubStates.Idle;
 
         UpdateAttack(deltaTime);
-
-        if (!isAttacking)
-        {// rotation
-            var direction = _gameBus.Player.Transform.position - _character.Transform.position;
-            direction.y = 0;
-            var axis = direction.normalized;
-            var _targetRotation = Quaternion.LookRotation(axis).eulerAngles.y;
-            var rotation = Mathf.SmoothDampAngle(_character.Transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _character.CharacterConfig.RotationSmoothTime);
-            _character.Transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-        }
 
         return Type;
     }

@@ -49,11 +49,6 @@ public class GameInstaller : MonoInstaller
 
         SpawnPlayer();
         SpawnBots();
-
-        // todo test target remove
-        var player = GameObject.Find("Player").GetComponent<Character>();
-        var bot = GameObject.Find("Bot_0");
-        player.CharacterModel.Target = bot.transform;
     }
 
     private void SpawnPlayer()

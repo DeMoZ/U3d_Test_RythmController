@@ -7,7 +7,7 @@ using UnityEngine;
 public interface IRotationStrategy : IDisposable
 {
     void Init(InputModel inputModel, CharacterModel characterModel, CharacterController characterController,
-        CharacterConfig characterConfig);
+        CharacterConfig characterConfig, GameBus gameBus);
     void OnUpdate(float deltaTime);
 }
 
@@ -19,16 +19,19 @@ public abstract class RotateStrategyBase : IRotationStrategy
 
     protected CharacterController _controller;
     protected CharacterConfig _characterConfig;
+    protected GameBus _gameBus;
     protected InputModel _inputModel;
     protected CharacterModel _characterModel;
 
+    // todo remove gamebus from dependency
     public void Init(InputModel inputModel, CharacterModel characterModel, CharacterController characterController,
-        CharacterConfig characterConfig)
+        CharacterConfig characterConfig, GameBus gameBus)
     {
         _inputModel = inputModel;
         _characterModel = characterModel;
         _controller = characterController;
         _characterConfig = characterConfig;
+        _gameBus = gameBus;
 
         _transform = _controller.transform;
     }

@@ -35,7 +35,7 @@ public class BotFSM : FSMUpdateBase<States>
     protected override void OnStateChanged(States state)
     {
         _character.ShowLog(0, state.ToString());
-
+        _character.CharacterModel.State = state;
         // switch (state)
         // {
         //     case States.Idle:

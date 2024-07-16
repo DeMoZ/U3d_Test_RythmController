@@ -14,9 +14,9 @@ public class PlayerRotateStrategy : RotateStrategyBase
     {
         if (!_characterModel.IsInAttackPhase)
         {
-            if (_characterModel.Target != null)
+            if (TryGetTarget(out var target))
             {
-                var inputDirection = _characterModel.Target.position - _transform.position;
+                var inputDirection = target.position - _transform.position;
                 inputDirection.y = 0.0f;
                 var _targetRotation = Quaternion.LookRotation(inputDirection).eulerAngles.y;
                 var rotation = Mathf.SmoothDampAngle(_transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, _characterConfig.RotationSmoothTime);
@@ -30,5 +30,25 @@ public class PlayerRotateStrategy : RotateStrategyBase
                 _transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
         }
+    }
+
+    private bool TryGetTarget(out Transform target)
+    {
+        target = null;
+        var minDistanceSquared = float.MaxValue;
+        var chaseRangeSquared = _characterConfig.ChaseRange * _characterConfig.ChaseRange;
+
+        foreach (var bot in _gameBus.Bots)
+        {
+            float distanceSquared = (bot.Transform.position - _transform.position).sqrMagnitude;
+            if (distanceSquared < minDistanceSquared)
+            {
+                minDistanceSquared = distanceSquared;
+                target = bot.Transform;
+            }
+        }
+
+        _characterModel.Target = target;
+        return target != null && minDistanceSquared <= chaseRangeSquared;
     }
 }

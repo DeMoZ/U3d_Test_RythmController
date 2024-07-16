@@ -10,6 +10,7 @@ public class CharacterModel : IDisposable
     public readonly DMZState<(int, int)> CurrentSequenceKey = new((-1, -1));
     public Action<Vector3[]> OnMovePath;
     public Action<bool> OnMovePathEnable;
+    public States State;
 
     public Transform Target;
 

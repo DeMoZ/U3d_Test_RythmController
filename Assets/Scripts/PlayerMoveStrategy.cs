@@ -14,6 +14,8 @@ public class PlayerMoveStrategy : MoveStrategyBase
     // todo need to limit movement speed
     protected override void OnMove(Vector3 axis, float deltaTime)
     {
+        axis = _characterModel.IsInAttackPhase ? Vector3.zero : axis;
+
         // var configSpeed = _characterConfig.WalkSpeed;
         var configSpeed = _characterConfig.SprintSpeed;
         var targetDirection = Quaternion.Euler(0.0f, _cameraTransform.eulerAngles.y, 0.0f) * axis;

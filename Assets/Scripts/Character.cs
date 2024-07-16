@@ -66,7 +66,7 @@ public class Character : MonoBehaviour
         _characterAnimator = new CharacterAnimator(CharacterModel, animator, _combatRepository);
         _combatController = new CombatController(InputModel, CharacterModel, _combatRepository);
         _moveStrategy.Init(InputModel, CharacterModel, characterController, characterConfig);
-        _rotateStrategy.Init(InputModel, CharacterModel, characterController, characterConfig);
+        _rotateStrategy.Init(InputModel, CharacterModel, characterController, characterConfig, _gameBus);
         _inputStrategy.Init(InputModel, this, _gameBus);
 
         DrawArea();
@@ -110,8 +110,6 @@ public class Character : MonoBehaviour
         CharacterModel.OnMovePathEnable -= pathLine.Enable;
         CharacterModel?.Dispose();
     }
-
-    internal bool IsInAttackPhase => CharacterModel.IsInAttackPhase;
 
     public class Factory : PlaceholderFactory<ICombatRepository, Camera, GameBus, Character>
     {
