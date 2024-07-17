@@ -16,16 +16,15 @@ public class PlayerMoveStrategy : MoveStrategyBase
     {
         axis = _characterModel.IsInAttackPhase ? Vector3.zero : axis;
 
-        // var configSpeed = _characterConfig.WalkSpeed;
-        var configSpeed = _characterConfig.SprintSpeed;
+        // todo roman remove this speed hack
+        _configSpeed = _characterConfig.WalkSpeed;
+        
         var targetDirection = Quaternion.Euler(0.0f, _cameraTransform.eulerAngles.y, 0.0f) * axis;
-        _velocity += targetDirection.normalized * (configSpeed * _characterConfig.SpeedChangeRate * deltaTime);
+        _velocity += targetDirection.normalized * (_configSpeed * _characterConfig.SpeedChangeRate * deltaTime);
         _velocity += -_velocity * (_characterConfig.SpeedChangeRate * deltaTime); // friction/resistance
 
         var horizontalMove = _velocity * deltaTime;
         var verticalMove = new Vector3(0.0f, _verticalVelocity, 0.0f) * deltaTime;
         _controller.Move(horizontalMove + verticalMove);
-
-        _characterModel.MoveSpeed.Value = _velocity.magnitude;
     }
 }

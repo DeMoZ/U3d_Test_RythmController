@@ -6,7 +6,10 @@ public class MoveAnimator : IDisposable
 {
     private CharacterModel _characterModel;
     private Animator _animator;
-    private int _animIDSpeed;
+    private int _animIDIsMoving;
+    private int _animIDForwardSpeed;
+    private int _animIDRightSpeed;
+    // private int _animIDUpSpeed;
 
     public MoveAnimator(CharacterModel characterModel, Animator animator)
     {
@@ -14,7 +17,10 @@ public class MoveAnimator : IDisposable
         _animator = animator;
 
         _characterModel.MoveSpeed.Subscribe(OnMoveSpeedChanged);
-        _animIDSpeed = Animator.StringToHash(AnimatorConstants.MoveSpeed);
+        _animIDIsMoving = Animator.StringToHash(AnimatorConstants.IsMoving);
+        _animIDForwardSpeed = Animator.StringToHash(AnimatorConstants.MoveForward);
+        _animIDRightSpeed = Animator.StringToHash(AnimatorConstants.MoveRight);
+        // _animIDUpSpeed = Animator.StringToHash(AnimatorConstants.MoveUp);
     }
 
     public void Dispose()
@@ -22,8 +28,12 @@ public class MoveAnimator : IDisposable
         _characterModel.MoveSpeed.Unsubscribe(OnMoveSpeedChanged);
     }
 
-    private void OnMoveSpeedChanged(float value)
+    // todo roman separate move and run animations and change in animator controller
+    private void OnMoveSpeedChanged(Vector3 value)
     {
-        _animator.SetFloat(_animIDSpeed, value);
+        _animator.SetBool(_animIDIsMoving, value != Vector3.zero);
+        _animator.SetFloat(_animIDForwardSpeed, value.z);
+        _animator.SetFloat(_animIDRightSpeed, value.x);
+        //_animator.SetFloat(_animIDUpSpeed, value.y);
     }
 }

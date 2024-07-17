@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterModel : IDisposable
 {
-    public readonly DMZState<float> MoveSpeed = new();
+    public readonly DMZState<Vector3> MoveSpeed = new();
     public readonly DMZState<CombatPhase> AttackSequenceState = new(CombatPhase.Idle);
     public readonly DMZState<CombatProgressModel> AttackProgress = new();
     public readonly DMZState<(int, int)> CurrentSequenceKey = new((-1, -1));
