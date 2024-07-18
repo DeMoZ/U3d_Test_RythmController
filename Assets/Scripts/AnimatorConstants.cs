@@ -9,4 +9,5 @@ public class AnimatorConstants
     public static string MoveRight = "RightSpeed";
     public static string MoveUp = "SpeedUp";
     public static string IsMoving = "IsMoving";
+    public static string IsRunning = "IsRunning";
 }

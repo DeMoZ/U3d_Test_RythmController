@@ -8,7 +8,7 @@ public class BotMoveStrategy : MoveStrategyBase
     protected override void OnMove(Vector3 axis, float deltaTime)
     {
         var targetDirection = axis;
-        _velocity += targetDirection.normalized * (_configSpeed * _characterConfig.SpeedChangeRate * deltaTime);
+        _velocity += targetDirection.normalized * (ConfigSpeed * _characterConfig.SpeedChangeRate * deltaTime);
         _velocity += -_velocity * (_characterConfig.SpeedChangeRate * deltaTime); // friction/resistance
 
         var horizontalMove = _velocity * deltaTime;

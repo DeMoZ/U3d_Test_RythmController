@@ -14,13 +14,12 @@ public class PlayerMoveStrategy : MoveStrategyBase
     // todo need to limit movement speed
     protected override void OnMove(Vector3 axis, float deltaTime)
     {
+       _characterModel.IsRunning = true;  // todo roman remove this speed hack
+
         axis = _characterModel.IsInAttackPhase ? Vector3.zero : axis;
 
-        // todo roman remove this speed hack
-        _configSpeed = _characterConfig.WalkSpeed;
-        
         var targetDirection = Quaternion.Euler(0.0f, _cameraTransform.eulerAngles.y, 0.0f) * axis;
-        _velocity += targetDirection.normalized * (_configSpeed * _characterConfig.SpeedChangeRate * deltaTime);
+        _velocity += targetDirection.normalized * (ConfigSpeed * _characterConfig.SpeedChangeRate * deltaTime);
         _velocity += -_velocity * (_characterConfig.SpeedChangeRate * deltaTime); // friction/resistance
 
         var horizontalMove = _velocity * deltaTime;

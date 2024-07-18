@@ -22,7 +22,8 @@ public abstract class MoveStrategyBase : IMoveStrategy
     protected InputModel _inputModel;
     protected CharacterModel _characterModel;
 
-    protected float _configSpeed; // todo roman remove this speed hack
+    // todo roman remove this speed hack
+    protected float ConfigSpeed => _characterModel.IsRunning ? _characterConfig.SprintSpeed : _characterConfig.WalkSpeed;
 
     public void Dispose()
     {
@@ -37,9 +38,6 @@ public abstract class MoveStrategyBase : IMoveStrategy
         _characterConfig = characterConfig;
 
         _transform = _controller.transform;
-
-        _configSpeed = _characterConfig.WalkSpeed; // todo roman remove this speed hack
-        // var configSpeed = _characterConfig.SprintSpeed;
     }
 
     public void OnUpdate(float deltaTime)
@@ -50,7 +48,7 @@ public abstract class MoveStrategyBase : IMoveStrategy
         var axis = _inputModel.OnMove.Value;
         OnMove(axis, deltaTime);
 
-        var relativeVelocity = _velocity / _configSpeed;
+        var relativeVelocity = _velocity / ConfigSpeed;
         _characterModel.MoveSpeed.Value = _transform.InverseTransformDirection(relativeVelocity);
     }
 

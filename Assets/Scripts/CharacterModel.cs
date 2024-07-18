@@ -11,7 +11,8 @@ public class CharacterModel : IDisposable
     public Action<Vector3[]> OnMovePath;
     public Action<bool> OnMovePathEnable;
     public States State;
-
+    public bool IsRunning;
+    
     public Transform Target;
 
     /// <summary>
