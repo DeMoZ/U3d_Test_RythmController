@@ -10,7 +10,8 @@ public class CharacterConfig : SerializedScriptableObject
 
     [Tooltip("How fast the character turns to face movement direction")]
     //[Range(0.0f, 0.3f)]
-    [field: SerializeField] public float RotationSmoothTime { get; private set; } = 0.1f;
+    [field: SerializeField] public float RotationSmoothTime { get; private set; } = 0.2f;
+    [field: SerializeField] public float ActingRotationSmoothTime { get; private set; } = 0.1f;
 
     [Tooltip("Acceleration and deceleration")]
     [field: SerializeField] public float SpeedChangeRate { get; private set; } = 10.0f;

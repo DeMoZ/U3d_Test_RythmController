@@ -24,7 +24,8 @@ MonoBehaviour:
   <SpeedOffset>k__BackingField: 0.1
   <WalkSpeed>k__BackingField: 2
   <SprintSpeed>k__BackingField: 5.335
-  <RotationSmoothTime>k__BackingField: 0.1
+  <RotationSmoothTime>k__BackingField: 0.3
+  <ActingRotationSmoothTime>k__BackingField: 0.08
   <SpeedChangeRate>k__BackingField: 10
   <MeleAttackRange>k__BackingField: 2
   <ChaseRange>k__BackingField: 4
