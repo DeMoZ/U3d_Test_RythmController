@@ -1,3 +1,4 @@
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -13,6 +14,7 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private InputActionAsset inputActionAsset;
     [SerializeField] private CombatConfig combatConfig;
     [SerializeField] private Camera mainCamera;
+    [SerializeField] private CinemachineVirtualCamera cinemachineCamera;
     [SerializeField] private Character playerPrefab;
     [SerializeField] private Character botPrefab;
 
@@ -49,6 +51,7 @@ public class GameInstaller : MonoInstaller
 
         SpawnPlayer();
         SpawnBots();
+        SetupCinemachine();
     }
 
     private void SpawnPlayer()
@@ -62,7 +65,12 @@ public class GameInstaller : MonoInstaller
             gameBus);
 
         character.name = $"Player";
-        character.Init(new PlayerInputStrategy(inputActionAsset, uiJoyStick), new PlayerRotateStrategy(mainCamera), new PlayerMoveStrategy(mainCamera), playerConfig);
+        var cameraTranform = mainCamera.transform;
+        character.Init(
+            new PlayerInputStrategy(inputActionAsset, uiJoyStick),
+            new PlayerRotateStrategy(cameraTranform),
+            new PlayerMoveStrategy(cameraTranform),
+            playerConfig);
         character.Transform.SetPositionAndRotation(playerSpawnPoint.position, playerSpawnPoint.rotation);
         character.NavMeshAgent.enabled = false;
         gameBus.SetPlayer(character);
@@ -83,10 +91,21 @@ public class GameInstaller : MonoInstaller
 
             var character = botFactory.Create(combatRepository, camera, gameBus);
             character.name = $"Bot_{gameBus.Bots.Count}";
-            character.Init(new BotInputStrategy(), new BotRotateStrategy(), new BotMoveStrategy(), spawnPosition: spawnPoint.position);
+            character.Init(
+                new BotInputStrategy(),
+                new BotRotateStrategy(),
+                new BotMoveStrategy(),
+                spawnPosition: spawnPoint.position);
             character.Transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
             character.NavMeshAgent.enabled = false;
             gameBus.AddBot(character);
         }
+    }
+
+    private void SetupCinemachine()
+    {
+        var player = Container.Resolve<GameBus>().Player.Transform;
+        cinemachineCamera.Follow = player;
+        cinemachineCamera.LookAt = player;
     }
 }

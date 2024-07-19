@@ -23,7 +23,7 @@ MonoBehaviour:
     SerializationNodes: []
   <SpeedOffset>k__BackingField: 0.1
   <WalkSpeed>k__BackingField: 2
-  <SprintSpeed>k__BackingField: 5.335
+  <SprintSpeed>k__BackingField: 3.5
   <RotationSmoothTime>k__BackingField: 0.3
   <ActingRotationSmoothTime>k__BackingField: 0.08
   <SpeedChangeRate>k__BackingField: 10

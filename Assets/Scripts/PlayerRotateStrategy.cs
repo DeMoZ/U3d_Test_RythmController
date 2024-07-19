@@ -1,12 +1,13 @@
+using Cinemachine;
 using UnityEngine;
 
 public class PlayerRotateStrategy : RotateStrategyBase
 {
     private Transform _cameraTransform;
 
-    public PlayerRotateStrategy(Camera mainCamera)
+    public PlayerRotateStrategy(Transform cameraTransform)
     {
-        _cameraTransform = mainCamera.transform;
+        _cameraTransform = cameraTransform;
     }
 
     // todo implement FSM for targeting

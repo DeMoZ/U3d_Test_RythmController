@@ -6,9 +6,9 @@ public class PlayerMoveStrategy : MoveStrategyBase
 {
     private Transform _cameraTransform;
 
-    public PlayerMoveStrategy(Camera mainCamera)
+    public PlayerMoveStrategy(Transform cameraTransform)
     {
-        _cameraTransform = mainCamera.transform;
+        _cameraTransform = cameraTransform.transform;
     }
 
     // todo need to limit movement speed
