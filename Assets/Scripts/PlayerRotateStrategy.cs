@@ -51,7 +51,7 @@ public class PlayerRotateStrategy : RotateStrategyBase
             }
         }
 
-        _characterModel.Target = target;
+        _characterModel.Target.Value = target;
         return target != null && minDistanceSquared <= chaseRangeSquared;
     }
 }

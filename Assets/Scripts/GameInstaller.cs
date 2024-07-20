@@ -1,4 +1,3 @@
-using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -13,8 +12,9 @@ public class GameInstaller : MonoInstaller
 {
     [SerializeField] private InputActionAsset inputActionAsset;
     [SerializeField] private CombatConfig combatConfig;
-    [SerializeField] private Camera mainCamera;
-    [SerializeField] private CinemachineVirtualCamera cinemachineCamera;
+    // [SerializeField] private Camera mainCamera;
+    // [SerializeField] private CinemachineVirtualCamera cinemachineCamera;
+    [SerializeField] private CameraController cameraController;
     [SerializeField] private Character playerPrefab;
     [SerializeField] private Character botPrefab;
 
@@ -33,7 +33,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<ICombatRepository>().FromInstance(combatRepository).AsSingle();
 
         Container.Bind<GameBus>().AsSingle();
-        Container.Bind<Camera>().FromInstance(mainCamera).AsSingle();
+        Container.Bind<Camera>().FromInstance(cameraController.MainCamera).AsSingle();
 
         Container.BindFactory<ICombatRepository, Camera, GameBus, Character, Character.Factory>()
             .WithId(InstallerConstants.PlayerFactoryId)
@@ -65,7 +65,7 @@ public class GameInstaller : MonoInstaller
             gameBus);
 
         character.name = $"Player";
-        var cameraTranform = mainCamera.transform;
+        var cameraTranform = cameraController.MainCamera.transform;
         character.Init(
             new PlayerInputStrategy(inputActionAsset, uiJoyStick),
             new PlayerRotateStrategy(cameraTranform),
@@ -104,8 +104,7 @@ public class GameInstaller : MonoInstaller
 
     private void SetupCinemachine()
     {
-        var player = Container.Resolve<GameBus>().Player.Transform;
-        cinemachineCamera.Follow = player;
-        cinemachineCamera.LookAt = player;
+        var player = Container.Resolve<GameBus>().Player;
+        cameraController.Init(player.Transform, player.CharacterModel.Target);
     }
 }
