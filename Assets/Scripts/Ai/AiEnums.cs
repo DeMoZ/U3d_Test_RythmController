@@ -8,7 +8,7 @@ public enum States
 
 public enum AttackSubStates
 {
-    Idle,
+    Countdown,
     Hit,
     Block,
     Reposition,

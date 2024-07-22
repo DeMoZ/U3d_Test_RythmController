@@ -32,7 +32,7 @@ public abstract class StateBase<T> : IState<T> where T : Enum
         return Vector3.Distance(_character.Transform.position, point) <= distance;
     }
 
-    protected float GetRandomTime(float min, float max)
+    protected float GetRandomInRange(float min, float max)
     {
         return UnityEngine.Random.Range(min, max);
     }

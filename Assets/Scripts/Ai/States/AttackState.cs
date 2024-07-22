@@ -25,7 +25,7 @@ public class AttackState : StateBase<States>
     {
         var substateType = _substateMachine.Update(deltaTime);
 
-        if (substateType == AttackSubStates.Idle && !IsInAttackRange())
+        if (substateType == AttackSubStates.Countdown && !IsInAttackRange())
         {
             return States.Chase;
         }

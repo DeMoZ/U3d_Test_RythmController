@@ -16,6 +16,10 @@ public class CombatRepository : ICombatRepository
     private readonly CombatConfig _config;
     private readonly Dictionary<(int, int), AttackElement> _attacks;
 
+    /// <summary>
+    /// Config of timings transform to indexes (0,0), (0,1), (1,0), (1,1).
+    /// By this codes as suffix the attack is found in the animator
+    /// </summary>
     public CombatRepository(CombatConfig config)
     {
         _config = config;

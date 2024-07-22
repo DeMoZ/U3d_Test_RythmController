@@ -17,12 +17,12 @@ public class Character : MonoBehaviour
     private IRotationStrategy _rotateStrategy;
     private IMoveStrategy _moveStrategy;
 
-    private ICombatRepository _combatRepository;
     private Camera _mainCamera;
     private GameBus _gameBus;
     private CharacterAnimator _characterAnimator;
     private CombatController _combatController;
 
+    public ICombatRepository CombatRepository { get; private set; }
     public Transform Transform { get; private set; }
     public Vector3 SpawnPosition { get; private set; }
     public CharacterConfig CharacterConfig => characterConfig;
@@ -36,7 +36,7 @@ public class Character : MonoBehaviour
             Camera mainCamera,
             GameBus gameBus)
     {
-        _combatRepository = combatRepository;
+        CombatRepository = combatRepository;
         _mainCamera = mainCamera;
         _gameBus = gameBus;
     }
@@ -63,8 +63,8 @@ public class Character : MonoBehaviour
         CharacterModel = new CharacterModel();
         InputModel = new InputModel();
 
-        _characterAnimator = new CharacterAnimator(CharacterModel, animator, _combatRepository);
-        _combatController = new CombatController(InputModel, CharacterModel, _combatRepository);
+        _characterAnimator = new CharacterAnimator(CharacterModel, animator, CombatRepository);
+        _combatController = new CombatController(InputModel, CharacterModel, CombatRepository);
         _moveStrategy.Init(InputModel, CharacterModel, characterController, characterConfig);
         _rotateStrategy.Init(InputModel, CharacterModel, characterController, characterConfig, _gameBus);
         _inputStrategy.Init(InputModel, this, _gameBus);
