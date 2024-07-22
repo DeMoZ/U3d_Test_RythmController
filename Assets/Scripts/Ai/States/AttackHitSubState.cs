@@ -57,9 +57,6 @@ public class AttackHitSubState : StateBase<AttackSubStates>
     {
         var isAttacking = _character.CharacterModel.IsInAttackPhase;
 
-        if (_queue == null)
-            return AttackSubStates.Countdown;
-
         if (!isAttacking && !IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.MeleAttackRange))
             return AttackSubStates.Countdown;
 
