@@ -1,13 +1,14 @@
 using UnityEngine;
 
-// todo implement FSM for targeting in future
+// todo roman implement FSM if more states
 public class BotRotateStrategy : RotateStrategyBase
 {
     protected override void OnRotate(Vector3 axis, float deltaTime)
     {
-        if (IsOnTarget && !_characterModel.IsInAttackPhase)
+        var target = _characterModel.Target.Value;
+        if (target != null && IsOnTarget && !_characterModel.IsInAttackPhase)
         {
-            var direction = _gameBus.Player.Transform.position - _transform.position;
+            var direction = target.position - _transform.position;
             direction.y = 0;
 
             var _targetRotation = Quaternion.LookRotation(direction.normalized).eulerAngles.y;

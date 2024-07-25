@@ -17,7 +17,7 @@ public class AttackHitSubState : StateBase<AttackSubStates>
 
     public override AttackSubStates Type { get; } = AttackSubStates.Hit;
 
-    public AttackHitSubState(Character character, GameBus gameBus) : base(character, gameBus)
+    public AttackHitSubState(Character character) : base(character)
     {
         _inputModel = character.InputModel;
         _combatRepository = character.CombatRepository;
@@ -55,10 +55,14 @@ public class AttackHitSubState : StateBase<AttackSubStates>
 
     public override AttackSubStates Update(float deltaTime)
     {
-        var isAttacking = _character.CharacterModel.IsInAttackPhase;
+        var isAttacking = _characterModel.IsInAttackPhase;
 
-        if (!isAttacking && !IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.MeleAttackRange))
-            return AttackSubStates.Countdown;
+        if (!isAttacking)
+        {
+            var target = _characterModel.Target.Value;
+            if (target != null && !IsInRange(target.position, _characterConfig.MeleAttackRange))
+                return AttackSubStates.Countdown;
+        }
 
         return UpdateAttack(deltaTime);
     }
@@ -119,11 +123,15 @@ public class AttackHitSubState : StateBase<AttackSubStates>
 
     private bool CanAttackAngle()
     {
-        var direction = _gameBus.Player.Transform.position - _character.Transform.position;
-        var forward = _character.Transform.forward;
+        var target = _characterModel.Target.Value;
+        if (target == null)
+            return false;
+
+        var direction = target.position - _characterModel.Transform.position;
+        var forward = _characterModel.Transform.forward;
         direction.y = 0;
         forward.y = 0;
         var angleDegrees = Vector3.Angle(direction, forward);
-        return angleDegrees <= _character.CharacterConfig.AttackRotationAngle;
+        return angleDegrees <= _characterConfig.AttackRotationAngle;
     }
 }

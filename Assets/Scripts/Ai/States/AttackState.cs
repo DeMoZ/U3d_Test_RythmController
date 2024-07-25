@@ -6,9 +6,9 @@ public class AttackState : StateBase<States>
 
     public override States Type { get; } = States.Attack;
 
-    public AttackState(Character character, GameBus gameBus) : base(character, gameBus)
+    public AttackState(Character character) : base(character)
     {
-        _substateMachine = new AttackSubFSM(character, gameBus);
+        _substateMachine = new AttackSubFSM(character);
     }
 
     public override void Enter()
@@ -32,6 +32,12 @@ public class AttackState : StateBase<States>
 
         return Type;
 
-        bool IsInAttackRange() => IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.MeleAttackRange);
+        bool IsInAttackRange()
+        {
+            if (_characterModel.Target.Value == null)
+                return false;
+
+            return IsInRange(_characterModel.Target.Value.position, _characterConfig.MeleAttackRange);
+        }
     }
 }

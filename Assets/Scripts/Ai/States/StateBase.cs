@@ -5,16 +5,18 @@ using Debug = DMZ.DebugSystem.DMZLogger;
 public abstract class StateBase<T> : IState<T> where T : Enum
 {
     protected readonly Character _character;
-    protected readonly GameBus _gameBus;
+    protected readonly CharacterModel _characterModel;
+    protected readonly CharacterConfig _characterConfig;
 
     public virtual T Type { get; }
 
     public virtual T Update(float deltaTime = 0) => Type;
 
-    public StateBase(Character character, GameBus gameBus)
+    public StateBase(Character character)
     {
         _character = character;
-        _gameBus = gameBus;
+        _characterModel = character.CharacterModel;
+        _characterConfig = character.CharacterConfig;
     }
 
     public virtual void Enter()
@@ -29,7 +31,7 @@ public abstract class StateBase<T> : IState<T> where T : Enum
 
     protected bool IsInRange(Vector3 point, float distance)
     {
-        return Vector3.Distance(_character.Transform.position, point) <= distance;
+        return Vector3.Distance(_characterModel.Transform.position, point) <= distance;
     }
 
     protected float GetRandomInRange(float min, float max)

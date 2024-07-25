@@ -1,4 +1,3 @@
-using Cinemachine;
 using UnityEngine;
 
 public class PlayerRotateStrategy : RotateStrategyBase
@@ -10,14 +9,14 @@ public class PlayerRotateStrategy : RotateStrategyBase
         _cameraTransform = cameraTransform;
     }
 
-    // todo implement FSM for targeting
+    // todo roman implement FSM if more states
     protected override void OnRotate(Vector3 axis, float deltaTime)
     {
         if (!_characterModel.IsInAttackPhase)
         {
-            if (TryGetTarget(out var target))
+            if (_characterModel.Target.Value != null)
             {
-                var inputDirection = target.position - _transform.position;
+                var inputDirection = _characterModel.Target.Value.position - _transform.position;
                 inputDirection.y = 0.0f;
                 var _targetRotation = Quaternion.LookRotation(inputDirection).eulerAngles.y;
                 var rotation = Mathf.SmoothDampAngle(
@@ -33,25 +32,5 @@ public class PlayerRotateStrategy : RotateStrategyBase
                 _transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
         }
-    }
-
-    private bool TryGetTarget(out Transform target)
-    {
-        target = null;
-        var minDistanceSquared = float.MaxValue;
-        var chaseRangeSquared = _characterConfig.ChaseRange * _characterConfig.ChaseRange;
-
-        foreach (var bot in _gameBus.Bots)
-        {
-            float distanceSquared = (bot.Transform.position - _transform.position).sqrMagnitude;
-            if (distanceSquared < minDistanceSquared)
-            {
-                minDistanceSquared = distanceSquared;
-                target = bot.Transform;
-            }
-        }
-
-        _characterModel.Target.Value = target;
-        return target != null && minDistanceSquared <= chaseRangeSquared;
     }
 }

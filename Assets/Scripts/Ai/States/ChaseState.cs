@@ -1,20 +1,21 @@
-public class ChaseState : NavMeshState
+public class ChaseState : NavMeshState<States>
 {
     public override States Type { get; } = States.Chase;
 
-    public ChaseState(Character character, GameBus gameBus) : base(character, gameBus)
+    public ChaseState(Character character) : base(character)
     {
     }
 
     public override States Update(float deltaTime)
     {
-        if (IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.MeleAttackRange))
-            return States.Attack;
-
-        if (!IsInRange(_gameBus.Player.Transform.position, _character.CharacterConfig.ChaseStopRange))
+        var target = _characterModel.Target.Value;
+        if (target == null || !IsInRange(target.position, _characterConfig.ChaseStopRange))
             return States.Return;
 
-        CalculateInput(_gameBus.Player.Transform.position);
+        if (IsInRange(target.position, _characterConfig.MeleAttackRange))
+            return States.Attack;
+
+        CalculateInput(target.position);
         return Type;
     }
 }

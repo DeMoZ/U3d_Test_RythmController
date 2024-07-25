@@ -1,14 +1,15 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 using Debug = DMZ.DebugSystem.DMZLogger;
 
-public class NavMeshState : StateBase<States>
+public class NavMeshState<T> : StateBase<T> where T : Enum
 {
     protected readonly InputModel _inputModel;
     protected readonly NavMeshAgent _navMeshAgent;
     protected NavMeshPath _navMeshPath;
 
-    public NavMeshState(Character character, GameBus gameBus) : base(character, gameBus)
+    public NavMeshState(Character character) : base(character)
     {
         _inputModel = character.InputModel;
         _navMeshAgent = _character.NavMeshAgent;
@@ -18,7 +19,7 @@ public class NavMeshState : StateBase<States>
     {
         base.Enter();
         _navMeshPath = new NavMeshPath();
-        _character.CharacterModel.OnMovePathEnable?.Invoke(true);
+        _characterModel.OnMovePathEnable?.Invoke(true);
         // todo nav mesh is not enabled on the first update on spawn. Why?
         _navMeshAgent.enabled = true;
     }
@@ -28,7 +29,7 @@ public class NavMeshState : StateBase<States>
         base.Exit();
         _navMeshAgent.enabled = false;
         _inputModel.OnMove.Value = Vector3.zero;
-        _character.CharacterModel.OnMovePathEnable?.Invoke(false);
+        _characterModel.OnMovePathEnable?.Invoke(false);
     }
 
     protected void CalculateInput(Vector3 toPoint)
@@ -42,7 +43,7 @@ public class NavMeshState : StateBase<States>
 
         if (_navMeshAgent.CalculatePath(toPoint, _navMeshPath))
         {
-            _character.CharacterModel.OnMovePath?.Invoke(_navMeshPath.corners);
+            _characterModel.OnMovePath?.Invoke(_navMeshPath.corners);
             var navMeshInput = CalculateDesiredVelocity(_navMeshAgent, _navMeshPath.corners);
             var clampedInput = new Vector3(Mathf.Clamp(navMeshInput.x, -1f, 1f), 0, Mathf.Clamp(navMeshInput.z, -1f, 1f));
             _inputModel.OnMove.Value = clampedInput;

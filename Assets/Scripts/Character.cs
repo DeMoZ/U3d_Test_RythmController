@@ -21,9 +21,11 @@ public class Character : MonoBehaviour
     private GameBus _gameBus;
     private CharacterAnimator _characterAnimator;
     private CombatController _combatController;
+    private TargetSearcher _targetSearcher;
 
     public ICombatRepository CombatRepository { get; private set; }
-    public Transform Transform { get; private set; }
+
+    public Transform Transform { get; private set; } // todo roman move into CharacterModel
     public Vector3 SpawnPosition { get; private set; }
     public CharacterConfig CharacterConfig => characterConfig;
     public NavMeshAgent NavMeshAgent => navMeshAgent;
@@ -61,12 +63,13 @@ public class Character : MonoBehaviour
         botBehaviourUI.Init(_mainCamera);
 
         CharacterModel = new CharacterModel();
+        CharacterModel.Transform = Transform;
         InputModel = new InputModel();
 
         _characterAnimator = new CharacterAnimator(CharacterModel, animator, CombatRepository);
         _combatController = new CombatController(InputModel, CharacterModel, CombatRepository);
         _moveStrategy.Init(InputModel, CharacterModel, characterController, characterConfig);
-        _rotateStrategy.Init(InputModel, CharacterModel, characterController, characterConfig, _gameBus);
+        _rotateStrategy.Init(InputModel, CharacterModel, characterController, characterConfig);
         _inputStrategy.Init(InputModel, this, _gameBus);
 
         DrawArea();
@@ -74,10 +77,16 @@ public class Character : MonoBehaviour
         CharacterModel.OnMovePathEnable += pathLine.Enable;
     }
 
+    public void SetTargets(List<Transform> targets)
+    {
+        _targetSearcher = new TargetSearcher(CharacterModel, CharacterConfig, targets);
+    }
+
     private void Update()
     {
         float deltaTime = Time.deltaTime;
 
+        _targetSearcher?.OnUpdate();
         _inputStrategy?.OnUpdate(deltaTime);
         _moveStrategy?.OnUpdate(deltaTime);
         _rotateStrategy?.OnUpdate(deltaTime);
@@ -105,6 +114,7 @@ public class Character : MonoBehaviour
         _rotateStrategy?.Dispose();
         _moveStrategy?.Dispose();
         InputModel?.Dispose();
+        _targetSearcher?.Dispose();
 
         CharacterModel.OnMovePath -= pathLine.Draw;
         CharacterModel.OnMovePathEnable -= pathLine.Enable;

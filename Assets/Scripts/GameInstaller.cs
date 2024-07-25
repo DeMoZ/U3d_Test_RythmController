@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -12,12 +14,9 @@ public class GameInstaller : MonoInstaller
 {
     [SerializeField] private InputActionAsset inputActionAsset;
     [SerializeField] private CombatConfig combatConfig;
-    // [SerializeField] private Camera mainCamera;
-    // [SerializeField] private CinemachineVirtualCamera cinemachineCamera;
     [SerializeField] private CameraController cameraController;
     [SerializeField] private Character playerPrefab;
     [SerializeField] private Character botPrefab;
-
 
     [SerializeField] private CharacterConfig playerConfig;
     [SerializeField] private Transform playerSpawnPoint;
@@ -52,6 +51,7 @@ public class GameInstaller : MonoInstaller
         SpawnPlayer();
         SpawnBots();
         SetupCinemachine();
+        SetTargets();
     }
 
     private void SpawnPlayer()
@@ -106,5 +106,12 @@ public class GameInstaller : MonoInstaller
     {
         var player = Container.Resolve<GameBus>().Player;
         cameraController.Init(player.Transform, player.CharacterModel.Target);
+    }
+
+    private void SetTargets()
+    {
+        var gameBus = Container.Resolve<GameBus>();
+        gameBus.Player.SetTargets(gameBus.Bots.Select(b => b.Transform).ToList());
+        gameBus.Bots.ForEach(b => b.SetTargets(new List<Transform> { gameBus.Player.Transform }));
     }
 }

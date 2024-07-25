@@ -1,16 +1,13 @@
-using System;
 using System.Collections.Generic;
 
 public class AttackSubFSM : FSMUpdateBase<AttackSubStates>
 {
-    private readonly GameBus _gameBus;
     private readonly Character _character;
 
     private AttackSubStates _defaultState => AttackSubStates.Countdown;
 
-    public AttackSubFSM(Character character, GameBus gameBus)
+    public AttackSubFSM(Character character)
     {
-        _gameBus = gameBus;
         _character = character;
         Init();
     }
@@ -19,10 +16,10 @@ public class AttackSubFSM : FSMUpdateBase<AttackSubStates>
     {
         _states = new Dictionary<AttackSubStates, IState<AttackSubStates>>
         {
-            { AttackSubStates.Countdown, new AttackCountdownSubState(_character, _gameBus ) },
-            { AttackSubStates.Hit, new AttackHitSubState(_character, _gameBus ) },
-            // { BotAttackSubStates.Block, new BlockState(_character, _gameBus ) },
-            // { BotAttackSubStates.Reposition, new ChaseState(_character, _gameBus ) },
+            { AttackSubStates.Countdown, new AttackCountdownSubState(_character ) },
+            { AttackSubStates.Hit, new AttackHitSubState(_character) },
+            // { AttackSubStates.Block, new BlockState(_character) },
+            { AttackSubStates.Reposition, new AttackRepositionSubState(_character ) },
         };
 
         _currentState.Value = _states[_defaultState];

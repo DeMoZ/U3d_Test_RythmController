@@ -7,18 +7,6 @@ using Debug = DMZ.DebugSystem.DMZLogger;
 /// </summary>
 public class AttackCountdownSubState : StateBase<AttackSubStates>
 {
-    private class AttackIdleDice
-    {
-        public readonly AttackSubStates state;
-        public readonly float chance;
-
-        public AttackIdleDice(AttackSubStates state, float chance)
-        {
-            this.state = state;
-            this.chance = chance;
-        }
-    }
-
     public override AttackSubStates Type { get; } = AttackSubStates.Countdown;
 
     private float _timer = 0f;
@@ -26,71 +14,126 @@ public class AttackCountdownSubState : StateBase<AttackSubStates>
     /// <summary>
     /// decisiton to do something elese, not only counting for next hit - block, reposition, etc.
     /// </summary>
-    private bool _isDecisionDone;
-    private List<AttackIdleDice> _decisionRanges = new List<AttackIdleDice>{
-        new(AttackSubStates.Countdown, 0.3f),
-        // new(AttackSubStates.Hit, 0.5f),
-        // new(AttackSubStates.Block, 0.8f),
-        new(AttackSubStates.Reposition, 1f),
+    private bool _shouldExit;
+    private AttackSubStates _nextState;
+    // private float _decisionSumm;
+    // private float _hitSumm;
+    // private float _hardHitSumm;
+
+    /// <summary>
+    /// random behaviour decision on enter state
+    /// </summary>
+    private Dictionary<AttackSubStates, float> _decisionRanges = new()
+    {
+        {AttackSubStates.Countdown, 0.3f},
+        {AttackSubStates.Hit, 0.5f},
+        // (AttackSubStates.Block, 0.8f),
+        {AttackSubStates.Reposition, 1f},
     };
 
-    public AttackCountdownSubState(Character character, GameBus gameBus) : base(character, gameBus)
+    /// <summary>
+    /// same as _decisionRanges but countDown chance will be reduced every repeat on ReEnter
+    /// </summary>
+    private Dictionary<AttackSubStates, float> _decisionRangesTemp = new()
+    {
+        {AttackSubStates.Countdown, 0.3f },
+        {AttackSubStates.Hit, 0.5f},
+        // {AttackSubStates.Block, 0.8f},
+        {AttackSubStates.Reposition, 1f},
+    };
+
+    /// <summary>
+    /// random behaviour decision on player attack
+    /// </summary>
+    private Dictionary<AttackSubStates, float> _hitRanges = new()
+    {
+        {AttackSubStates.Countdown, 0.5f},
+        {AttackSubStates.Hit, 0.2f},
+        // {AttackSubStates.Block, 1f},
+        {AttackSubStates.Reposition, 0.5f},
+    };
+
+    /// <summary>
+    /// random behaviour decision on player hard attack
+    /// </summary>
+    private Dictionary<AttackSubStates, float> _hardHitRanges = new()
+    {
+        {AttackSubStates.Countdown, 0.3f},
+        // {AttackSubStates.Hit, 0.5f},
+        // {AttackSubStates.Block, 0.8f},
+        {AttackSubStates.Reposition, 1f},
+    };
+
+    public AttackCountdownSubState(Character character) : base(character)
     {
     }
 
     public override void Enter()
     {
         base.Enter();
-        _isDecisionDone = false;
-        _timer = GetRandomInRange(0.01f, 0.4f);
+        _decisionRangesTemp = new Dictionary<AttackSubStates, float>(_decisionRanges);
+        _decisionRangesTemp[AttackSubStates.Countdown] += 0.1f; // to reduce first minus in reenter method;
+        ReEnter();
     }
 
-
-    // todo roman consider what to do if player attack
-    // todo roman consider what to do if player attack ME !!!
-    // if CombatPhase.Pre - block or fast attack or nothing. Need to add percentage for every action type
+    // todo roman consider what to do if target attack ME !!!
     // todo roman add more states to check and implement for "smart bot" if CombatPhase...
-    void A() { }
-
-
     public override AttackSubStates Update(float deltaTime)
     {
-        if (!_isDecisionDone)
-        {
-            if (_gameBus.Player.CharacterModel.IsInAttackPhase)
-            {
-                _isDecisionDone = true;
-                if (_gameBus.Player.CharacterModel.AttackSequenceState.Value == CombatPhase.Pre)
-                {
-                    var nextReactiveState = GetReactiveDecision();
+        if (_shouldExit)
+            return _nextState;
 
-                    if (nextReactiveState != AttackSubStates.Countdown)
-                    {
-                        Debug.Warning($"Behavour reaction. Next {nextReactiveState}");
-                        return nextReactiveState;
-                    }
-                }
+        var target = _characterModel.Target.Value;
+        if (target && _characterModel.Target.Value.TryGetComponent<Character>(out var targetCharacter))
+        {
+            if (targetCharacter.CharacterModel.IsInAttackPhase)
+            {// random chance of blocking or repositioning
+                var ranges = targetCharacter.CharacterModel.IsInHardAttack ? _hitRanges : _hardHitRanges;
+                var reactionState = GetRandom(ranges);
+                if (reactionState != AttackSubStates.Countdown)
+                    return reactionState;
             }
         }
 
         _timer -= deltaTime;
 
         if (_timer <= 0)
-            return AttackSubStates.Hit;
+            ReEnter();
 
         return Type;
     }
 
-    /// <summary>
-    /// Next behavour sate if player attack
-    /// </summary>
-    /// <returns></returns>
-    private AttackSubStates GetReactiveDecision()
+    private void ReEnter()
     {
-        var random = GetRandomInRange(0, 1);
-        var sortedRanges = _decisionRanges.OrderBy(r => r.chance).ToList();
-        var highestChanceBelowRandom = sortedRanges.FirstOrDefault(r => r.chance >= random);
+        var coundDownChance = _decisionRangesTemp[AttackSubStates.Countdown];
+        _decisionRangesTemp[AttackSubStates.Countdown] = coundDownChance <= 0 ? 0 : coundDownChance - 0.1f; // reduce countdown to avoid passive loop
 
-        return highestChanceBelowRandom.state;
+        _timer = GetRandomInRange(0.001f, 1f);
+        _nextState = GetRandom(_decisionRangesTemp);
+        _shouldExit = _nextState != AttackSubStates.Countdown;
+        Debug.LogError($"ReEnter should exit = {_shouldExit} ; Next is {_nextState}");
+    }
+
+    /// <summary>
+    /// Next behavour sate get randomly from ranges list
+    /// </summary>
+    private AttackSubStates GetRandom(Dictionary<AttackSubStates, float> ranges)
+    {
+        var summ = ranges.Sum(x => x.Value);
+        var random = GetRandomInRange(0, summ);
+        var currentSum = 0f;
+
+        foreach (var pair in ranges)
+        {
+            currentSum += pair.Value;
+
+            if (random <= currentSum)
+            {
+                Debug.LogError($"CountDawn got random state: {pair.Key}");
+                return pair.Key;
+            }
+        }
+
+        return AttackSubStates.Countdown;
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DMZ.Events;
 using UnityEngine;
 
@@ -14,12 +15,15 @@ public class CharacterModel : IDisposable
     public Action<bool> OnMovePathEnable;
     public States State;
     public bool IsRunning;
+    public Transform Transform;
     
     /// <summary>
     /// The character is in attack phase CombatPhase.Attack, CombatPhase.PreAttack, CombatPhase.AfterAttack
     /// </summary>
     /// <returns></returns>
     public bool IsInAttackPhase => AttackSequenceState.Value is CombatPhase.Attack or CombatPhase.Pre or CombatPhase.After;
+
+    public bool IsInHardAttack => CurrentSequenceKey.Value.Item1 == 1;
 
     public void Dispose()
     {
