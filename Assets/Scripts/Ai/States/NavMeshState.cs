@@ -44,7 +44,7 @@ public class NavMeshState<T> : StateBase<T> where T : Enum
         if (_navMeshAgent.CalculatePath(toPoint, _navMeshPath))
         {
             _characterModel.OnMovePath?.Invoke(_navMeshPath.corners);
-            var navMeshInput = CalculateDesiredVelocity(_navMeshAgent, _navMeshPath.corners);
+            var navMeshInput = CalculateDesiredVelocity(_navMeshPath.corners);
             var clampedInput = new Vector3(Mathf.Clamp(navMeshInput.x, -1f, 1f), 0, Mathf.Clamp(navMeshInput.z, -1f, 1f));
             _inputModel.OnMove.Value = clampedInput;
             _character.ShowLog(1, $"{navMeshInput}");
@@ -52,12 +52,12 @@ public class NavMeshState<T> : StateBase<T> where T : Enum
         }
     }
 
-    private Vector3 CalculateDesiredVelocity(NavMeshAgent agent, Vector3[] corners)
+    protected Vector3 CalculateDesiredVelocity(Vector3[] corners)
     {
         if (corners.Length < 2)
             return Vector3.zero;
 
-        var direction = (corners[1] - agent.transform.position).normalized;
+        var direction = (corners[1] - _navMeshAgent.transform.position).normalized;
 
         // var desiredVelocity = direction * agent.speed;
         // return desiredVelocity;

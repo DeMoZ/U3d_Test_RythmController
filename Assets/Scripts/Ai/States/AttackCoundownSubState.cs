@@ -16,9 +16,6 @@ public class AttackCountdownSubState : StateBase<AttackSubStates>
     /// </summary>
     private bool _shouldExit;
     private AttackSubStates _nextState;
-    // private float _decisionSumm;
-    // private float _hitSumm;
-    // private float _hardHitSumm;
 
     /// <summary>
     /// random behaviour decision on enter state
@@ -59,7 +56,7 @@ public class AttackCountdownSubState : StateBase<AttackSubStates>
     private Dictionary<AttackSubStates, float> _hardHitRanges = new()
     {
         {AttackSubStates.Countdown, 0.3f},
-        // {AttackSubStates.Hit, 0.5f},
+        {AttackSubStates.Hit, 0.1f},
         // {AttackSubStates.Block, 0.8f},
         {AttackSubStates.Reposition, 1f},
     };
@@ -111,7 +108,6 @@ public class AttackCountdownSubState : StateBase<AttackSubStates>
         _timer = GetRandomInRange(0.001f, 1f);
         _nextState = GetRandom(_decisionRangesTemp);
         _shouldExit = _nextState != AttackSubStates.Countdown;
-        Debug.LogError($"ReEnter should exit = {_shouldExit} ; Next is {_nextState}");
     }
 
     /// <summary>
@@ -128,10 +124,7 @@ public class AttackCountdownSubState : StateBase<AttackSubStates>
             currentSum += pair.Value;
 
             if (random <= currentSum)
-            {
-                Debug.LogError($"CountDawn got random state: {pair.Key}");
                 return pair.Key;
-            }
         }
 
         return AttackSubStates.Countdown;
