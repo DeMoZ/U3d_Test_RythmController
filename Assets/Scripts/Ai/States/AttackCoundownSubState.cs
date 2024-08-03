@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Debug = DMZ.DebugSystem.DMZLogger;
@@ -18,48 +19,12 @@ public class AttackCountdownSubState : StateBase<AttackSubStates>
     private AttackSubStates _nextState;
 
     /// <summary>
-    /// random behaviour decision on enter state
+    /// Same as default decision ranges but countDown chance will be reduced every repeat on ReEnter
     /// </summary>
-    private Dictionary<AttackSubStates, float> _decisionRanges = new()
-    {
-        {AttackSubStates.Countdown, 0.3f},
-        {AttackSubStates.Hit, 0.5f},
-        // (AttackSubStates.Block, 0.8f),
-        {AttackSubStates.Reposition, 1f},
-    };
+    private Dictionary<AttackSubStates, float> _decisionRangesTemp;
 
-    /// <summary>
-    /// same as _decisionRanges but countDown chance will be reduced every repeat on ReEnter
-    /// </summary>
-    private Dictionary<AttackSubStates, float> _decisionRangesTemp = new()
-    {
-        {AttackSubStates.Countdown, 0.3f },
-        {AttackSubStates.Hit, 0.5f},
-        // {AttackSubStates.Block, 0.8f},
-        {AttackSubStates.Reposition, 1f},
-    };
-
-    /// <summary>
-    /// random behaviour decision on player attack
-    /// </summary>
-    private Dictionary<AttackSubStates, float> _hitRanges = new()
-    {
-        {AttackSubStates.Countdown, 0.5f},
-        {AttackSubStates.Hit, 0.2f},
-        // {AttackSubStates.Block, 1f},
-        {AttackSubStates.Reposition, 0.5f},
-    };
-
-    /// <summary>
-    /// random behaviour decision on player hard attack
-    /// </summary>
-    private Dictionary<AttackSubStates, float> _hardHitRanges = new()
-    {
-        {AttackSubStates.Countdown, 0.3f},
-        {AttackSubStates.Hit, 0.1f},
-        // {AttackSubStates.Block, 0.8f},
-        {AttackSubStates.Reposition, 1f},
-    };
+    // todo roman implement and initialize from config
+    private AttackCountdownDecisionRanges _decisionRanges = new();
 
     public AttackCountdownSubState(Character character) : base(character)
     {
@@ -68,7 +33,7 @@ public class AttackCountdownSubState : StateBase<AttackSubStates>
     public override void Enter()
     {
         base.Enter();
-        _decisionRangesTemp = new Dictionary<AttackSubStates, float>(_decisionRanges);
+        _decisionRangesTemp = new Dictionary<AttackSubStates, float>(_decisionRanges.Countdown);
         _decisionRangesTemp[AttackSubStates.Countdown] += 0.1f; // to reduce first minus in reenter method;
         ReEnter();
     }
@@ -85,8 +50,8 @@ public class AttackCountdownSubState : StateBase<AttackSubStates>
         {
             if (targetCharacter.CharacterModel.IsInAttackPhase)
             {// random chance of blocking or repositioning
-                var ranges = targetCharacter.CharacterModel.IsInHardAttack ? _hitRanges : _hardHitRanges;
-                var reactionState = GetRandom(ranges);
+                var ranges = targetCharacter.CharacterModel.IsInHardAttack ? _decisionRanges.Hit : _decisionRanges.HardHit;
+                var reactionState = GetRandomReaction(ranges);
                 if (reactionState != AttackSubStates.Countdown)
                     return reactionState;
             }
@@ -106,14 +71,14 @@ public class AttackCountdownSubState : StateBase<AttackSubStates>
         _decisionRangesTemp[AttackSubStates.Countdown] = coundDownChance <= 0 ? 0 : coundDownChance - 0.1f; // reduce countdown to avoid passive loop
 
         _timer = GetRandomInRange(0.001f, 1f);
-        _nextState = GetRandom(_decisionRangesTemp);
+        _nextState = GetRandomReaction(_decisionRangesTemp);
         _shouldExit = _nextState != AttackSubStates.Countdown;
     }
 
     /// <summary>
     /// Next behavour sate get randomly from ranges list
     /// </summary>
-    private AttackSubStates GetRandom(Dictionary<AttackSubStates, float> ranges)
+    private AttackSubStates GetRandomReaction(Dictionary<AttackSubStates, float> ranges)
     {
         var summ = ranges.Sum(x => x.Value);
         var random = GetRandomInRange(0, summ);
@@ -128,5 +93,46 @@ public class AttackCountdownSubState : StateBase<AttackSubStates>
         }
 
         return AttackSubStates.Countdown;
+    }
+
+    [Serializable]
+    private class AttackCountdownDecisionRanges
+    {
+        /// <summary>
+        /// random behaviour decision on enter state
+        /// </summary>
+        private Dictionary<AttackSubStates, float> _countdown = new()
+        {
+            {AttackSubStates.Countdown, 0.3f},
+            {AttackSubStates.Hit, 0.6f},
+            // (AttackSubStates.Block, 0.4f),
+            {AttackSubStates.Reposition, 0.3f},
+        };
+
+        /// <summary>
+        /// random behaviour decision on player attack
+        /// </summary>
+        private Dictionary<AttackSubStates, float> _hit = new()
+        {
+            {AttackSubStates.Countdown, 0.5f},
+            {AttackSubStates.Hit, 0.2f},
+            // {AttackSubStates.Block, 1f},
+            {AttackSubStates.Reposition, 0.5f},
+        };
+
+        /// <summary>
+        /// random behaviour decision on player hard attack
+        /// </summary>
+        private Dictionary<AttackSubStates, float> _hardHit = new()
+        {
+            {AttackSubStates.Countdown, 0.2f},
+            {AttackSubStates.Hit, 0.4f},
+            // {AttackSubStates.Block, 0.5f},
+            {AttackSubStates.Reposition, 1f},
+        };
+
+        public Dictionary<AttackSubStates, float> Countdown => _countdown;
+        public Dictionary<AttackSubStates, float> Hit => _hit;
+        public Dictionary<AttackSubStates, float> HardHit => _hardHit;
     }
 }
