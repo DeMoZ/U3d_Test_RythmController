@@ -34,7 +34,7 @@ public class NavMeshState<T> : StateBase<T> where T : Enum
 
     protected void CalculateInput(Vector3 toPoint)
     {
-        // todo nav mesh is not enabled on the first update on spawn. Why?
+        // todo roman nav mesh is not enabled on the first update on spawn. Why?
         if (!_navMeshAgent.isActiveAndEnabled)
         {
             _navMeshAgent.enabled = true;

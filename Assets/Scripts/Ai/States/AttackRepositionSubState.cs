@@ -1,20 +1,20 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Debug = DMZ.DebugSystem.DMZLogger;
 
-// todo roman show full path, not only one segment
 // todo roman need to avoid moving to not movable points
 public class AttackRepositionSubState : NavMeshState<AttackSubStates>
 {
     // todo roman move to config
-    private const float REPOSITION_TIME = 2f;
+    private const float REPOSITION_TIME = 3f;
     private const float DEGREE_STEP = 20f;
 
     private (float min, float max) ANGLE_RANGE = (DEGREE_STEP, 180f);
     private float _timer;
     private bool _isMoving;
     private float _angle;
-    private Queue<Vector3> _localPath;
+    private Queue<Vector3> _targetLocalPath;
     private Vector3 _nextPoint;
 
     public override AttackSubStates Type { get; } = AttackSubStates.Reposition;
@@ -32,35 +32,51 @@ public class AttackRepositionSubState : NavMeshState<AttackSubStates>
         CreatePath();
     }
 
+    public override AttackSubStates Update(float deltaTime)
+    {
+        _timer -= deltaTime;
+        if (_timer <= 0 || _characterModel.Target.Value == null)
+            return AttackSubStates.Countdown;
+
+        return IsFollowingPath() ? Type : AttackSubStates.Countdown;
+    }
+
+    private bool IsFollowingPath()
+    {
+        if (_isMoving)
+        {
+            CheckNextPointDistance();
+            return CalculateInput(_nextPoint + _characterModel.Target.Value.position);
+        }
+        else if (_targetLocalPath.Count > 0)
+        {
+            _nextPoint = _targetLocalPath.Dequeue();
+            _isMoving = CalculateInput(_nextPoint + _characterModel.Target.Value.position);
+            return _isMoving;
+        }
+
+        _isMoving = false;
+        return false;
+    }
+    
+    /// <summary>
+    /// Calculate random point and path around the target
+    /// </summary>
     private void CreatePath()
     {
-        // todo calculate random point and path around target
         var target = _characterModel.Target.Value;
         if (target != null)
         {
             _angle = GetRandomInRange(ANGLE_RANGE.min, ANGLE_RANGE.max);
-            _localPath = GetLocalPath(_angle, target);
+            _targetLocalPath = GetLocalPath(_angle, target);
 
             var worldPath = new List<Vector3>();
-            foreach (var point in _localPath)
+            foreach (var point in _targetLocalPath)
                 worldPath.Add(point + target.position);
 
             _characterModel.OnMovePath?.Invoke(worldPath.ToArray());
-            // TempDrawPath(target, worldPath);
         }
     }
-
-    // // todo roman remove test method
-    // private static void TempDrawPath(Transform target, List<Vector3> worldPath)
-    // {
-    //     var go = new GameObject("RepositionObject");
-    //     go.transform.position = target.position;
-    //     var line = go.AddComponent<LineRenderer>();
-    //     line.widthMultiplier = 0.01f;
-    //     line.useWorldSpace = true;
-    //     line.positionCount = worldPath.Count;
-    //     line.SetPositions(worldPath.ToArray());
-    // }
 
     private Queue<Vector3> GetLocalPath(float angle, Transform target)
     {
@@ -80,57 +96,64 @@ public class AttackRepositionSubState : NavMeshState<AttackSubStates>
 
         Quaternion rotation = Quaternion.Euler(0, DEGREE_STEP * sign, 0);
 
+        var isSkipped = false;
         for (float currentAngle = 0; currentAngle < totalAngleRadians; currentAngle += stepRadians)
         {
             Vector3 rotatedPoint = rotation * startPoint;
-            result.Enqueue(rotatedPoint.normalized * distance);
+
+            if (isSkipped)
+                result.Enqueue(rotatedPoint.normalized * distance);
+
             startPoint = rotatedPoint;
+            isSkipped = true;
         }
 
         return result;
     }
 
-    public override AttackSubStates Update(float deltaTime)
+    /// <summary>
+    /// Avoid going back when target moves in opposite direction
+    /// </summary>
+    private void CheckNextPointDistance()
     {
-        _timer -= deltaTime;
-        if (_timer <= 0 || _characterModel.Target.Value == null)
-            return AttackSubStates.Countdown;
+        if (_targetLocalPath.Count > 0)
+        {
+            var currentPosition = _navMeshAgent.transform.position;
+            var targetPosition = _characterModel.Target.Value.position;
 
-        var isFollowingPath = IsFollowingPath();
+            var nextPointPosition = _targetLocalPath.Peek() + targetPosition;
+            var nextDistance = Vector3.SqrMagnitude(currentPosition - nextPointPosition);
 
-        return isFollowingPath ? Type : AttackSubStates.Countdown;
+            var nextPoint = _nextPoint + targetPosition;
+            var curDistance = Vector3.SqrMagnitude(currentPosition - nextPoint);
+
+            if (nextDistance < curDistance)
+                _nextPoint = _targetLocalPath.Dequeue();
+        }
     }
 
-    private bool IsFollowingPath()
+    protected new bool CalculateInput(Vector3 toPoint)
     {
-        if (_isMoving)
+        // todo nav mesh is not enabled on the first update on spawn. Why?
+        if (!_navMeshAgent.isActiveAndEnabled)
         {
-            var distance = Vector3.Distance(_nextPoint, _characterModel.Transform.position);
-            if (distance < 0.1f)
-                _isMoving = false;
-
-            return true;
-        }
-        else
-        {
-            if (_localPath.Count > 0)
-            {
-                var target = _characterModel.Target.Value;
-                if (target != null)
-                {
-                    _isMoving = true;
-                    _nextPoint = _localPath.Dequeue() + target.position;
-                    CalculateInput(_nextPoint);
-                    return true;
-                }
-                else
-                {
-                    _isMoving = false;
-                    _localPath.Clear();
-                }
-            }
+            _navMeshAgent.enabled = true;
+            return true; // skip calculation due to nav mesh not enabled but retunrning true to not break the state machine
         }
 
-        return false;
+        if (!_navMeshAgent.CalculatePath(toPoint, _navMeshPath) || Vector3.Distance(_navMeshAgent.transform.position, toPoint) < 0.3f)
+            return false;
+
+        var drowablePath = _navMeshPath.corners.ToList();
+        drowablePath.AddRange(_targetLocalPath.Select(x => x + _characterModel.Target.Value.position));
+        _characterModel.OnMovePath?.Invoke(drowablePath.ToArray());
+
+        var navMeshInput = CalculateDesiredVelocity(_navMeshPath.corners);
+        var clampedInput = new Vector3(Mathf.Clamp(navMeshInput.x, -1f, 1f), 0, Mathf.Clamp(navMeshInput.z, -1f, 1f));
+        _inputModel.OnMove.Value = clampedInput;
+        _character.ShowLog(1, $"{navMeshInput}");
+        _character.ShowLog(2, $"{clampedInput}");
+
+        return clampedInput != Vector3.zero;
     }
 }
