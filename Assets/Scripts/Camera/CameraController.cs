@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using Cinemachine;
 using DMZ.Events;
 using UnityEngine;
@@ -6,21 +6,27 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
 
-    [field: SerializeField] public Camera MainCamera { get; private set; }
-    [field: SerializeField] public CinemachineVirtualCamera VirtualCamera { get; private set; }
-    [field: SerializeField] public Transform TrackedDolly { get; private set; }
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private Transform trackedDolly;
+    [SerializeField] private CinemachineVirtualCamera[] virtualCameras;
 
     private Transform _target;
     private Transform _player;
     private DMZState<Transform> _onSetTarget;
+    private Queue<CinemachineVirtualCamera> _cameraQueue;
+    private CinemachineVirtualCamera _curCamera;
+    private CinemachineBrain _cinemachineBrain;
+
+    public Camera MainCamera => mainCamera;
 
     public void Init(Transform player, DMZState<Transform> onSetTarget)
     {
+        _cinemachineBrain = mainCamera.GetComponent<CinemachineBrain>();
+        _cameraQueue = new Queue<CinemachineVirtualCamera>(virtualCameras);
+
         _player = player;
         _onSetTarget = onSetTarget;
         _onSetTarget.Subscribe(OnSetTarget);
-
-        VirtualCamera.Follow = _player;
     }
 
     private void OnDestroy()
@@ -31,14 +37,26 @@ public class CameraController : MonoBehaviour
 
     public void OnSetTarget(Transform target)
     {
+        if (_curCamera != null)
+        {
+            _curCamera.LookAt = null;
+            _curCamera.gameObject.SetActive(false);
+            _cameraQueue.Enqueue(_curCamera);
+        }
+
+        _curCamera = _cameraQueue.Dequeue();
+        _curCamera.LookAt = _player;
+        _curCamera.Follow = target;
+        _curCamera.gameObject.SetActive(true);
+
         _target = target;
     }
 
     void Update()
     {
         if (_target == null)
-            TrackedDolly.position = _player.position;
+            trackedDolly.position = _player.position;
         else
-            TrackedDolly.position = _target.position;
+            trackedDolly.position = _target.position;
     }
 }
