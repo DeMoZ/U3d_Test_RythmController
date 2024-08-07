@@ -359,7 +359,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 915895221}
-  trackedDolly: {fileID: 834401865}
   virtualCameras:
   - {fileID: 915320756}
   - {fileID: 1824917755}
@@ -588,7 +587,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &834401864
 MonoBehaviour:
   m_ObjectHideFlags: 0
