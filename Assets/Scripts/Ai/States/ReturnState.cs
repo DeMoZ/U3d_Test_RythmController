@@ -15,7 +15,7 @@ public class ReturnState : NavMeshState<States>
             return States.Idle;
 
         var target = _characterModel.Target.Value;
-        if (target != null && IsInRange(target.position, _characterConfig.ChaseStopRange))
+        if (target != null && IsInRange(target.Transform.position, _characterConfig.ChaseStopRange))
             return States.Chase;
 
         CalculateInput(_character.SpawnPosition);

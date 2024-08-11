@@ -60,7 +60,7 @@ public class AttackHitSubState : StateBase<AttackSubStates>
         if (!isAttacking)
         {
             var target = _characterModel.Target.Value;
-            if (target != null && !IsInRange(target.position, _characterConfig.MeleAttackRange))
+            if (target != null && !IsInRange(target.Transform.position, _characterConfig.MeleAttackRange))
                 return AttackSubStates.Countdown;
         }
 
@@ -127,7 +127,7 @@ public class AttackHitSubState : StateBase<AttackSubStates>
         if (target == null)
             return false;
 
-        var direction = target.position - _characterModel.Transform.position;
+        var direction = target.Transform.position - _characterModel.Transform.position;
         var forward = _characterModel.Transform.forward;
         direction.y = 0;
         forward.y = 0;

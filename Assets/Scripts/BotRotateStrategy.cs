@@ -8,7 +8,7 @@ public class BotRotateStrategy : RotateStrategyBase
         var target = _characterModel.Target.Value;
         if (target != null && IsOnTarget && !_characterModel.IsInAttackPhase)
         {
-            var direction = target.position - _transform.position;
+            var direction = target.Transform.position - _transform.position;
             direction.y = 0;
 
             var _targetRotation = Quaternion.LookRotation(direction.normalized).eulerAngles.y;

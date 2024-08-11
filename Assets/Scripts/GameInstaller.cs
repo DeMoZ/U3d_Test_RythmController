@@ -39,9 +39,14 @@ public class GameInstaller : MonoInstaller
             .FromComponentInNewPrefab(playerPrefab);
 
         Container.BindFactory<ICombatRepository, Camera, GameBus, Character, Character.Factory>()
-            .WithId(InstallerConstants.BotFactoryId)
-            .FromComponentInNewPrefab(botPrefab)
-            .UnderTransformGroup("Bots");
+                    .WithId(InstallerConstants.BotFactoryId)
+                    .FromComponentInNewPrefab(botPrefab)
+#if UNITY_EDITOR  // flat ierarchy in build
+
+                    .UnderTransformGroup("Bots");
+#else
+        ;
+#endif
     }
 
     public override void Start()
@@ -104,14 +109,20 @@ public class GameInstaller : MonoInstaller
 
     private void SetupCinemachine()
     {
-        var player = Container.Resolve<GameBus>().Player;
+        var player = Container.Resolve<GameBus>().Player as Character;
         cameraController.Init(player.Transform, player.CharacterModel.Target);
     }
 
     private void SetTargets()
     {
         var gameBus = Container.Resolve<GameBus>();
-        gameBus.Player.SetTargets(gameBus.Bots.Select(b => b.Transform).ToList());
-        gameBus.Bots.ForEach(b => b.SetTargets(new List<Transform> { gameBus.Player.Transform }));
+        var player = gameBus.Player as Character;
+        player.SetTargets(gameBus.Bots);
+
+        foreach (var bot in gameBus.Bots)
+        {
+            var botCharacter = bot as Character;
+            botCharacter.SetTargets(new List<ITargetable> { player });
+        }
     }
 }

@@ -358,6 +358,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61cc7b25bdafa4394b09cd5851916ab8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetOffset: 0.2
+  defaultFollowOffset: {x: 0, y: 4, z: -5}
+  cameraFovSoftLerpSpeed: 0.2
+  cameraFovHardLerpSpeed: 2.5
   mainCamera: {fileID: 915895221}
   virtualCameras:
   - {fileID: 915320756}

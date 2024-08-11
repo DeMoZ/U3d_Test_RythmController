@@ -3,12 +3,13 @@ using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
 
-public class Character : MonoBehaviour
+public class Character : MonoBehaviour, ITargetable
 {
     [SerializeField] private BotBehaviourUI botBehaviourUI;
     [SerializeField] private Animator animator;
     [SerializeField] private CharacterController characterController;
     [SerializeField] private NavMeshAgent navMeshAgent;
+    [SerializeField] private new Renderer renderer;
     [SerializeField] private CharacterConfig characterConfig;
     [SerializeField] private List<AreaDrawerBase> areaDrawers;
     [SerializeField] private PathLine pathLine;
@@ -25,7 +26,9 @@ public class Character : MonoBehaviour
 
     public ICombatRepository CombatRepository { get; private set; }
 
-    public Transform Transform { get; private set; } // todo roman move into CharacterModel
+
+    public Renderer Renderer => renderer;
+    public Transform Transform { get; private set; }
     public Vector3 SpawnPosition { get; private set; }
     public CharacterConfig CharacterConfig => characterConfig;
     public NavMeshAgent NavMeshAgent => navMeshAgent;
@@ -77,7 +80,7 @@ public class Character : MonoBehaviour
         CharacterModel.OnMovePathEnable += pathLine.Enable;
     }
 
-    public void SetTargets(List<Transform> targets)
+    public void SetTargets(List<ITargetable> targets)
     {
         _targetSearcher = new TargetSearcher(CharacterModel, CharacterConfig, targets);
     }

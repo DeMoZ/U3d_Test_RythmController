@@ -37,7 +37,7 @@ public class AttackState : StateBase<States>
             if (_characterModel.Target.Value == null)
                 return false;
 
-            return IsInRange(_characterModel.Target.Value.position, _characterConfig.MeleAttackRange);
+            return IsInRange(_characterModel.Target.Value.Transform.position, _characterConfig.MeleAttackRange);
         }
     }
 }

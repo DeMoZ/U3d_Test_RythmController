@@ -46,12 +46,12 @@ public class AttackRepositionSubState : NavMeshState<AttackSubStates>
         if (_isMoving)
         {
             CheckNextPointDistance();
-            return CalculateInput(_nextPoint + _characterModel.Target.Value.position);
+            return CalculateInput(_nextPoint + _characterModel.Target.Value.Transform.position);
         }
         else if (_targetLocalPath.Count > 0)
         {
             _nextPoint = _targetLocalPath.Dequeue();
-            _isMoving = CalculateInput(_nextPoint + _characterModel.Target.Value.position);
+            _isMoving = CalculateInput(_nextPoint + _characterModel.Target.Value.Transform.position);
             return _isMoving;
         }
 
@@ -64,7 +64,7 @@ public class AttackRepositionSubState : NavMeshState<AttackSubStates>
     /// </summary>
     private void CreatePath()
     {
-        var target = _characterModel.Target.Value;
+        var target = _characterModel.Target.Value.Transform;
         if (target != null)
         {
             _angle = GetRandomInRange(ANGLE_RANGE.min, ANGLE_RANGE.max);
@@ -119,7 +119,7 @@ public class AttackRepositionSubState : NavMeshState<AttackSubStates>
         if (_targetLocalPath.Count > 0)
         {
             var currentPosition = _navMeshAgent.transform.position;
-            var targetPosition = _characterModel.Target.Value.position;
+            var targetPosition = _characterModel.Target.Value.Transform.position;
 
             var nextPointPosition = _targetLocalPath.Peek() + targetPosition;
             var nextDistance = Vector3.SqrMagnitude(currentPosition - nextPointPosition);
@@ -145,7 +145,7 @@ public class AttackRepositionSubState : NavMeshState<AttackSubStates>
             return false;
 
         var drowablePath = _navMeshPath.corners.ToList();
-        drowablePath.AddRange(_targetLocalPath.Select(x => x + _characterModel.Target.Value.position));
+        drowablePath.AddRange(_targetLocalPath.Select(x => x + _characterModel.Target.Value.Transform.position));
         _characterModel.OnMovePath?.Invoke(drowablePath.ToArray());
 
         var navMeshInput = CalculateDesiredVelocity(_navMeshPath.corners);

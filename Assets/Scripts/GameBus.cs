@@ -2,15 +2,15 @@ using System.Collections.Generic;
 
 public class GameBus
 {
-    public Character Player { get; private set; }
-    public List<Character> Bots { get; private set; } = new List<Character>();
+    public ITargetable Player { get; private set; }
+    public List<ITargetable> Bots { get; private set; } = new();
 
-    public void SetPlayer(Character character)
+    public void SetPlayer(ITargetable character)
     {
         Player = character;
     }
 
-    public void AddBot(Character character)
+    public void AddBot(ITargetable character)
     {
         Bots.Add(character);
     }

@@ -9,7 +9,7 @@ public class IdleState : StateBase<States>
     public override States Update(float deltaTime)
     {
         var target = _characterModel.Target.Value;
-        if (target != null && IsInRange(target.position, _characterConfig.ChaseRange))
+        if (target != null && IsInRange(target.Transform.position, _characterConfig.ChaseRange))
             return States.Chase;
 
         return Type;

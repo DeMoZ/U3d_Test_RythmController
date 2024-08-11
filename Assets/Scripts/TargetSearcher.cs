@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TargetSearcher : IDisposable
 {
     private readonly CharacterModel _characterModel;
     private readonly CharacterConfig _characterConfig;
-    private readonly List<Transform> _targets;
+    private readonly List<ITargetable> _targets;
 
-    public TargetSearcher(CharacterModel characterModel, CharacterConfig characterConfig, List<Transform> targets)
+    public TargetSearcher(CharacterModel characterModel, CharacterConfig characterConfig, List<ITargetable> targets)
     {
         _characterModel = characterModel;
         _characterConfig = characterConfig;
@@ -22,13 +23,13 @@ public class TargetSearcher : IDisposable
 
     public void OnUpdate()
     {
-        Transform target = null;
+        ITargetable target = null;
         var minDistanceSquared = float.MaxValue;
         var chaseRangeSquared = _characterConfig.ChaseRange * _characterConfig.ChaseRange;
 
-        foreach (var sceneTarget in _targets)
+        foreach (var sceneTarget in _targets.Where(t => t.Transform != null))
         {
-            float distanceSquared = (sceneTarget.position - _characterModel.Transform.position).sqrMagnitude;
+            float distanceSquared = (sceneTarget.Transform.position - _characterModel.Transform.position).sqrMagnitude;
             if (distanceSquared < minDistanceSquared)
             {
                 minDistanceSquared = distanceSquared;

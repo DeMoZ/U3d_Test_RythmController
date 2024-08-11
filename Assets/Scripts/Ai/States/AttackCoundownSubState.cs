@@ -46,7 +46,7 @@ public class AttackCountdownSubState : StateBase<AttackSubStates>
             return _nextState;
 
         var target = _characterModel.Target.Value;
-        if (target && _characterModel.Target.Value.TryGetComponent<Character>(out var targetCharacter))
+        if (target != null && _characterModel.Target.Value is Character targetCharacter)
         {
             if (targetCharacter.CharacterModel.IsInAttackPhase)
             {// random chance of blocking or repositioning

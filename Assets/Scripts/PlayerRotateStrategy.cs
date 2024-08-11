@@ -16,7 +16,7 @@ public class PlayerRotateStrategy : RotateStrategyBase
         {
             if (_characterModel.Target.Value != null)
             {
-                var inputDirection = _characterModel.Target.Value.position - _transform.position;
+                var inputDirection = _characterModel.Target.Value.Transform.position - _transform.position;
                 inputDirection.y = 0.0f;
                 var _targetRotation = Quaternion.LookRotation(inputDirection).eulerAngles.y;
                 var rotation = Mathf.SmoothDampAngle(

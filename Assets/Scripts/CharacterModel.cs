@@ -9,7 +9,7 @@ public class CharacterModel : IDisposable
     public readonly DMZState<CombatPhase> AttackSequenceState = new(CombatPhase.Idle);
     public readonly DMZState<CombatProgressModel> AttackProgress = new();
     public readonly DMZState<(int, int)> CurrentSequenceKey = new((-1, -1));
-    public readonly DMZState<Transform> Target = new();
+    public readonly DMZState<ITargetable> Target = new();
 
     public Action<Vector3[]> OnMovePath;
     public Action<bool> OnMovePathEnable;

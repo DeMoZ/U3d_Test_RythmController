@@ -754,6 +754,7 @@ MonoBehaviour:
   animator: {fileID: 5960582447729682095}
   characterController: {fileID: 676892165376205030}
   navMeshAgent: {fileID: 9064779731601359677}
+  renderer: {fileID: 8325446937608053123}
   characterConfig: {fileID: 11400000, guid: 5ee85d356886e48d0934c38ba5738c70, type: 2}
   areaDrawers:
   - {fileID: 5295987121477804881}
@@ -1256,5 +1257,10 @@ Transform:
 --- !u!95 &5960582447729682095 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 5fdd015af01c74c028d4f944ecc17245, type: 3}
+  m_PrefabInstance: {fileID: 275471154143796030}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &8325446937608053123 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -1127229838887322947, guid: 5fdd015af01c74c028d4f944ecc17245, type: 3}
   m_PrefabInstance: {fileID: 275471154143796030}
   m_PrefabAsset: {fileID: 0}

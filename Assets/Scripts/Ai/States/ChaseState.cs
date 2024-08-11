@@ -9,13 +9,13 @@ public class ChaseState : NavMeshState<States>
     public override States Update(float deltaTime)
     {
         var target = _characterModel.Target.Value;
-        if (target == null || !IsInRange(target.position, _characterConfig.ChaseStopRange))
+        if (target == null || !IsInRange(target.Transform.position, _characterConfig.ChaseStopRange))
             return States.Return;
 
-        if (IsInRange(target.position, _characterConfig.MeleAttackRange))
+        if (IsInRange(target.Transform.position, _characterConfig.MeleAttackRange))
             return States.Attack;
 
-        CalculateInput(target.position);
+        CalculateInput(target.Transform.position);
         return Type;
     }
 }
