@@ -49,6 +49,42 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "SBlock0",
+                    "type": "Button",
+                    "id": "3083259a-e8fb-4c2d-87c9-71519df2a0c3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "WBlock0",
+                    "type": "Button",
+                    "id": "39928865-4308-4127-a22f-3cfb35439082",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "WBlock1",
+                    "type": "Button",
+                    "id": "5b953a16-2bfd-4086-ab94-1dd3bacedbe9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "WBlock2",
+                    "type": "Button",
+                    "id": "e1e2d0d2-6cdb-4c69-9db2-5b5dc7bdccd3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -194,6 +230,50 @@
                     "action": "MoveDigital",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "9068be2c-ae8f-4f11-831c-93344af5c4ba",
+                    "path": "<Keyboard>/7",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SBlock0",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a381220d-fa4a-42ba-b5e9-36876135ea05",
+                    "path": "<Keyboard>/8",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "WBlock0",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a900402b-ff7e-4e96-9f54-39dceb9b50ed",
+                    "path": "<Keyboard>/9",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "WBlock1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1baece88-b98b-4b6d-95d7-d5f97ce0db23",
+                    "path": "<Keyboard>/0",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "WBlock2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

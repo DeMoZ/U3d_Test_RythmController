@@ -231,4 +231,8 @@ MonoBehaviour:
   PreAttackTime: 0.4
   AttackTime: 0.3
   PostAttackTime: 0.4
-  FailTime: 1
+  AttackFailTime: 1
+  PreBlockTime: 0.4
+  BlockTime: 1
+  PostBlockTime: 0.4
+  BlockFailTime: 1

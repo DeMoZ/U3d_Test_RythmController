@@ -33,10 +33,6 @@ public class CameraController : MonoBehaviour
 
     public Camera MainCamera => mainCamera;
 
-    // private void Awake(){
-    //     OnSetTarget(null);
-    // }
-
     public void Init(Transform player, DMZState<ITargetable> onSetTarget)
     {
         _cameraQueue = new Queue<CinemachineVirtualCamera>(virtualCameras);
