@@ -251,17 +251,33 @@ public class CombatController
 
     #region Block
 
-    private void OnBlock(bool isStarged, BlockNames blockName)
+    private async void OnBlock(bool isStarged, BlockNames blockName)
     {
         if (isStarged)
         {
             _characterModel.BlockPhaseState.SetAndForceNotify(BlockPhase.Pre, blockName);
 
-            // todo roman implement BlockPhase.Block routine after BlockPhase.Pre time
-            // this should be stopable in case that the character receives a damage
+            try
+            {
+                if (_attackTokenSource != null)
+                {
+                    _attackTokenSource.Cancel();
+                }
 
-           // await Task.Yield(_combatRepository.GetPreBlockTime());
+                _attackTokenSource = new CancellationTokenSource();
+                await TimerProcessAsync(_combatRepository.GetPreBlockTime(), _attackTokenSource.Token, null);
+                
+                if (_attackTokenSource.IsCancellationRequested)
+                {
+                    return;
+                }
 
+                _characterModel.BlockPhaseState.SetAndForceNotify(BlockPhase.Block, blockName);
+            }
+            catch (TaskCanceledException)
+            {
+                // todo roman. If got hard hit on pre block
+            }
         }
         else
         {

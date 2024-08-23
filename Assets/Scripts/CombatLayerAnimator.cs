@@ -25,33 +25,25 @@ public class CombatLayerAnimator : IDisposable
     private const string CombatStatePrefix = "Attack"; // pre attack state
     private const string AttackSuffix = "A"; // attack state
     private const string PostAttackSuffix = "P"; // post attack state
-
-    private const string AttackTrigger = "Attack"; // Attack trigger
-    private const string PostAttackTrigger = "PostAttack";
     // --- Combat
 
     // Block
     private const string SBlockStatePrefix = "SBlock";
     private const string WBlockStatePrefix = "WBlock";
-    private const string BlockSuffix = "A"; // block state
+    private const string BlockSuffix = "B"; // block state
     private const string PostBlockSuffix = "P"; // post block state
-
-    private const string BlockTrigger = "Block"; // Block trigger
-    private const string PostBlockTrigger = "PostBlock";
     // --- Block
 
     private readonly int _layerIndex;
     private Dictionary<string, AnimInfo> _animationsCash;
 
-    protected virtual string Layer => "CombatLayer";
-    protected virtual string PreActionSpeed => "PreActionSpeed";
-    protected virtual string ActionSpeed => "ActionSpeed";
-    protected virtual string PostActionSpeed => "PostActionSpeed";
-
-    // todo roman make decision by the Test of time enstead of speed
-    protected virtual string PreActionTime => "PreActionTime";
-    protected virtual string ActionTime => "ActionSpeedTime";
-    protected virtual string PostActionTime => "PostActionTime";
+    protected virtual string Layer => AnimatorConstants.CombatLayer;
+    protected virtual string PreActionSpeed => AnimatorConstants.PreActionSpeed;
+    protected virtual string ActionSpeed => AnimatorConstants.ActionSpeed;
+    protected virtual string PostActionSpeed => AnimatorConstants.PostActionSpeed;
+    protected virtual string PreActionTime => AnimatorConstants.PreActionTime;
+    protected virtual string ActionTime => AnimatorConstants.ActionSpeedTime;
+    protected virtual string PostActionTime => AnimatorConstants.PostActionTime;
     // --- Test
 
     private static string TupleToString((int, int) tuple) => $"{tuple.Item1}{tuple.Item2}";
@@ -60,11 +52,11 @@ public class CombatLayerAnimator : IDisposable
     private readonly Animator _animator;
     private readonly ICombatRepository _combatRepository;
 
-    private static readonly int PostAttackTriggerCashed = Animator.StringToHash(PostAttackTrigger);
-    private static readonly int AttackTriggerCashed = Animator.StringToHash(AttackTrigger);
+    private static readonly int PostAttackTriggerCashed = Animator.StringToHash(AnimatorConstants.PostAttackTrigger);
+    private static readonly int AttackTriggerCashed = Animator.StringToHash(AnimatorConstants.AttackTrigger);
 
-    private static readonly int PostBlockTriggerCashed = Animator.StringToHash(PostBlockTrigger);
-    private static readonly int BlockTriggerCashed = Animator.StringToHash(BlockTrigger);
+    private static readonly int PostBlockTriggerCashed = Animator.StringToHash(AnimatorConstants.PostBlockTrigger);
+    private static readonly int BlockTriggerCashed = Animator.StringToHash(AnimatorConstants.BlockTrigger);
 
     public CombatLayerAnimator(CharacterModel characterModel, Animator animator, ICombatRepository combatRepository)
     {

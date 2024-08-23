@@ -67,12 +67,12 @@ public class CharacterAnimator : IDisposable
         }
     }
 
-    private void OnBlockPhaseStateChanged(BlockPhase blockPhase)
+    private void _OnBlockPhaseStateChanged(BlockPhase blockPhase)
     {
 #if LOGGER_ON
-        Debug.Log($"{nameof(OnBlockPhaseStateChanged)}".Yellow());
+        Debug.Log($"{nameof(_OnBlockPhaseStateChanged)}".Yellow());
 #endif
- switch (blockPhase)
+        switch (blockPhase)
         {
             case BlockPhase.None:
                 break;
@@ -93,5 +93,12 @@ public class CharacterAnimator : IDisposable
             default:
                 throw new ArgumentOutOfRangeException(nameof(blockPhase), blockPhase, null);
         }
+    }
+
+    private void OnBlockPhaseStateChanged(BlockPhase phase, BlockNames names)
+    {
+#if LOGGER_ON
+        Debug.LogError($"{nameof(OnBlockPhaseStateChanged)} but two params in method; name {names}".Yellow());
+#endif
     }
 }
