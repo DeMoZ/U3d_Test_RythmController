@@ -173,9 +173,9 @@ public class CombatLayerAnimator : IDisposable
     #region Block
 
     // todo reoman now only for shield block animation and then for weapon block too
-    public void TriggerPreBlockAnimation()
+    public void TriggerPreBlockAnimation(BlockNames blockName)
     {
-        var stateName = $"{SBlockStatePrefix}00";
+        var stateName = $"{GetBlockPrefix(blockName)}";
 #if LOGGER_ON
         Debug.Log("TriggerPreBlockAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
 #endif
@@ -185,9 +185,9 @@ public class CombatLayerAnimator : IDisposable
         _animator.SetTrigger(stateName);
     }
 
-    public void TriggerBlockAnimation()
+    public void TriggerBlockAnimation(BlockNames blockName)
     {
-        var stateName = $"{SBlockStatePrefix}00{BlockSuffix}";
+        var stateName = $"{GetBlockPrefix(blockName)}{BlockSuffix}";
 #if LOGGER_ON        
         Debug.Log("TriggerBlockAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
 #endif        
@@ -197,9 +197,9 @@ public class CombatLayerAnimator : IDisposable
         _animator.SetTrigger(BlockTriggerCashed);
     }
 
-    public void TriggerPostBlockAnimation()
+    public void TriggerPostBlockAnimation(BlockNames blockName)
     {
-        var stateName = $"{SBlockStatePrefix}00{PostBlockSuffix}";
+        var stateName = $"{GetBlockPrefix(blockName)}{PostBlockSuffix}";
 #if LOGGER_ON        
         Debug.Log("TriggerPostBlockAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
 #endif        
@@ -207,6 +207,23 @@ public class CombatLayerAnimator : IDisposable
         var time = _combatRepository.GetPostBlockTime();
         _animator.SetFloat(PostActionSpeed, length / time);
         _animator.SetTrigger(PostBlockTriggerCashed);
+    }
+
+    private string GetBlockPrefix(BlockNames blockNmae)
+    {
+        switch (blockNmae)
+        {
+            case BlockNames.SBlock0:
+                return $"{SBlockStatePrefix}00";
+            case BlockNames.WBlock0:
+                return $"{WBlockStatePrefix}00";
+            case BlockNames.WBlock1:
+                return $"{WBlockStatePrefix}01";
+            case BlockNames.WBlock2:
+                return $"{WBlockStatePrefix}02";
+            default:
+                throw new ArgumentOutOfRangeException(nameof(blockNmae), blockNmae, null);
+        }
     }
 
     #endregion //Block

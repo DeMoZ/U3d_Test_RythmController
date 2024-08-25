@@ -67,38 +67,28 @@ public class CharacterAnimator : IDisposable
         }
     }
 
-    private void _OnBlockPhaseStateChanged(BlockPhase blockPhase)
+    private void OnBlockPhaseStateChanged(BlockPhase blockPhase, BlockNames blockName)
     {
-#if LOGGER_ON
-        Debug.Log($"{nameof(_OnBlockPhaseStateChanged)}".Yellow());
-#endif
         switch (blockPhase)
         {
             case BlockPhase.None:
                 break;
             case BlockPhase.Pre:
-                _combatLayerAnimator.TriggerPreBlockAnimation();
-                _legsLayerAnimator.TriggerPreBlockAnimation();
+                _combatLayerAnimator.TriggerPreBlockAnimation(blockName);
+                _legsLayerAnimator.TriggerPreBlockAnimation(blockName);
                 break;
             case BlockPhase.Block:
-                _combatLayerAnimator.TriggerBlockAnimation();
-                _legsLayerAnimator.TriggerBlockAnimation();
+                _combatLayerAnimator.TriggerBlockAnimation(blockName);
+                _legsLayerAnimator.TriggerBlockAnimation(blockName);
                 break;
             case BlockPhase.After:
-                _combatLayerAnimator.TriggerPostBlockAnimation();
-                _legsLayerAnimator.TriggerPostBlockAnimation();
+                _combatLayerAnimator.TriggerPostBlockAnimation(blockName);
+                _legsLayerAnimator.TriggerPostBlockAnimation(blockName);
                 break;
             case BlockPhase.Fail:
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(blockPhase), blockPhase, null);
         }
-    }
-
-    private void OnBlockPhaseStateChanged(BlockPhase phase, BlockNames names)
-    {
-#if LOGGER_ON
-        Debug.LogError($"{nameof(OnBlockPhaseStateChanged)} but two params in method; name {names}".Yellow());
-#endif
     }
 }
