@@ -1,4 +1,4 @@
-#define LOGGER_ON 
+#define LOGGER_ON
 using System;
 using System.Collections.Generic;
 using DMZ.Extensions;
@@ -19,19 +19,21 @@ public class CombatLayerAnimator : IDisposable
         }
     }
 
-    private const string DefaultState = "Default";
+    private static string DefaultState = "Default";
 
     //Combat
-    private const string CombatStatePrefix = "Attack"; // pre attack state
-    private const string AttackSuffix = "A"; // attack state
-    private const string PostAttackSuffix = "P"; // post attack state
+    private static string CombatStatePrefix = "Attack"; // pre attack state
+    private static string AttackSuffix = "A"; // attack state
+    private static string PostAttackSuffix = "P"; // post attack state
     // --- Combat
 
     // Block
-    private const string SBlockStatePrefix = "SBlock";
-    private const string WBlockStatePrefix = "WBlock";
-    private const string BlockSuffix = "B"; // block state
-    private const string PostBlockSuffix = "P"; // post block state
+    private static string BlockState = "Block";
+    private static string StartBlockState = "Start"; // block state
+    private static string PostBlockState = "Post"; // post block state
+    
+    private static readonly int StartBlockHash = Animator.StringToHash("StartBlock");
+    private static readonly int BlockValHash = Animator.StringToHash("BlockIndex");
     // --- Block
 
     private readonly int _layerIndex;
@@ -104,15 +106,13 @@ public class CombatLayerAnimator : IDisposable
 
     private void CashBlockAnimations()
     {
-        CashAnimation($"{SBlockStatePrefix}00");
-        CashAnimation($"{SBlockStatePrefix}00{BlockSuffix}");
-        CashAnimation($"{SBlockStatePrefix}00{PostBlockSuffix}");
-
-        for (var i = 0; i < 3; i++)
+        // todo roman here should be enum length
+        for (var i = 1; i < 5; i++)
         {
-            CashAnimation($"{WBlockStatePrefix}0{i}");
-            CashAnimation($"{WBlockStatePrefix}0{i}{BlockSuffix}");
-            CashAnimation($"{WBlockStatePrefix}0{i}{PostBlockSuffix}");
+            var blockState = $"{BlockState}{i}";
+            CashAnimation($"{StartBlockState}{blockState}");
+            CashAnimation(blockState);
+            CashAnimation($"{PostBlockState}{blockState}");
         }
     }
 
@@ -135,7 +135,7 @@ public class CombatLayerAnimator : IDisposable
     public void TriggerPreAttackAnimation()
     {
         var stateName = $"{CombatStatePrefix}{TupleToString(_characterModel.CurrentSequenceKey.Value)}";
-#if LOGGER_ON        
+#if LOGGER_ON
         Debug.Log("TriggerPreAttackAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
 #endif
         var length = _animationsCash[stateName].Length;
@@ -147,9 +147,9 @@ public class CombatLayerAnimator : IDisposable
     public void TriggerAttackAnimation()
     {
         var stateName = $"{CombatStatePrefix}{TupleToString(_characterModel.CurrentSequenceKey.Value)}{AttackSuffix}";
-#if LOGGER_ON        
+#if LOGGER_ON
         Debug.Log("TriggerAttackAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
-#endif        
+#endif
         var length = _animationsCash[stateName].Length;
         var time = _combatRepository.GetAttackTime(_characterModel.CurrentSequenceKey.Value);
         _animator.SetFloat(ActionSpeed, length / time);
@@ -158,10 +158,11 @@ public class CombatLayerAnimator : IDisposable
 
     public void TriggerPostAttackAnimation()
     {
-        var stateName = $"{CombatStatePrefix}{TupleToString(_characterModel.CurrentSequenceKey.Value)}{PostAttackSuffix}";
-#if LOGGER_ON        
+        var stateName =
+            $"{CombatStatePrefix}{TupleToString(_characterModel.CurrentSequenceKey.Value)}{PostAttackSuffix}";
+#if LOGGER_ON
         Debug.Log("TriggerPostAttackAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
-#endif        
+#endif
         var length = _animationsCash[stateName].Length;
         var time = _combatRepository.GetPostAttackTime(_characterModel.CurrentSequenceKey.Value);
         _animator.SetFloat(PostActionSpeed, length / time);
@@ -172,25 +173,27 @@ public class CombatLayerAnimator : IDisposable
 
     #region Block
 
-    // todo reoman now only for shield block animation and then for weapon block too
-    public void TriggerPreBlockAnimation(BlockNames blockName)
+    // todo roman now only for shield block animation and then for weapon block too
+    public void TriggerStartBlockAnimation(BlockNames blockName)
     {
-        var stateName = $"{GetBlockPrefix(blockName)}";
+        var stateName = $"{StartBlockState}{blockName}";
 #if LOGGER_ON
         Debug.Log("TriggerPreBlockAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
 #endif
         var length = _animationsCash[stateName].Length;
         var time = _combatRepository.GetPreBlockTime();
         _animator.SetFloat(PreActionSpeed, length / time);
-        _animator.SetTrigger(stateName);
+
+        _animator.SetInteger(BlockValHash, (int)blockName);
+        _animator.SetTrigger(StartBlockHash);
     }
 
     public void TriggerBlockAnimation(BlockNames blockName)
     {
-        var stateName = $"{GetBlockPrefix(blockName)}{BlockSuffix}";
-#if LOGGER_ON        
+        var stateName = $"{blockName}";
+#if LOGGER_ON
         Debug.Log("TriggerBlockAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
-#endif        
+#endif
         var length = _animationsCash[stateName].Length;
         var time = _combatRepository.GetBlockTime();
         _animator.SetFloat(ActionSpeed, length / time);
@@ -199,31 +202,14 @@ public class CombatLayerAnimator : IDisposable
 
     public void TriggerPostBlockAnimation(BlockNames blockName)
     {
-        var stateName = $"{GetBlockPrefix(blockName)}{PostBlockSuffix}";
-#if LOGGER_ON        
+        var stateName = $"{PostBlockState}{blockName}";
+#if LOGGER_ON
         Debug.Log("TriggerPostBlockAnimation".Yellow() + $" {_animationsCash[stateName].Name}");
-#endif        
+#endif
         var length = _animationsCash[stateName].Length;
         var time = _combatRepository.GetPostBlockTime();
         _animator.SetFloat(PostActionSpeed, length / time);
         _animator.SetTrigger(PostBlockTriggerCashed);
-    }
-
-    private string GetBlockPrefix(BlockNames blockNmae)
-    {
-        switch (blockNmae)
-        {
-            case BlockNames.SBlock0:
-                return $"{SBlockStatePrefix}00";
-            case BlockNames.WBlock0:
-                return $"{WBlockStatePrefix}00";
-            case BlockNames.WBlock1:
-                return $"{WBlockStatePrefix}01";
-            case BlockNames.WBlock2:
-                return $"{WBlockStatePrefix}02";
-            default:
-                throw new ArgumentOutOfRangeException(nameof(blockNmae), blockNmae, null);
-        }
     }
 
     #endregion //Block

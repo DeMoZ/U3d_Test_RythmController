@@ -51,7 +51,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "SBlock0",
+                    "name": "Block1",
                     "type": "Button",
                     "id": "3083259a-e8fb-4c2d-87c9-71519df2a0c3",
                     "expectedControlType": "Button",
@@ -60,7 +60,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "WBlock0",
+                    "name": "Block2",
                     "type": "Button",
                     "id": "39928865-4308-4127-a22f-3cfb35439082",
                     "expectedControlType": "Button",
@@ -69,7 +69,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "WBlock1",
+                    "name": "Block3",
                     "type": "Button",
                     "id": "5b953a16-2bfd-4086-ab94-1dd3bacedbe9",
                     "expectedControlType": "Button",
@@ -78,7 +78,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "WBlock2",
+                    "name": "Block4",
                     "type": "Button",
                     "id": "e1e2d0d2-6cdb-4c69-9db2-5b5dc7bdccd3",
                     "expectedControlType": "Button",
@@ -238,7 +238,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SBlock0",
+                    "action": "Block1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -249,7 +249,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "WBlock0",
+                    "action": "Block2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -260,7 +260,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "WBlock1",
+                    "action": "Block3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -271,7 +271,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "WBlock2",
+                    "action": "Block4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -1,4 +1,6 @@
 //#define LOGGER_ON
+
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -10,22 +12,18 @@ public class PlayerInputStrategy : IInputStrategy
     private const string ACTION_NAME_AttackL = "AttackL";
     private const string ACTION_NAME_MoveDigital = "MoveDigital";
 
-    private const string ACTION_NAME_SBlock0 = "SBlock0";
-    private const string ACTION_NAME_WBlock0 = "WBlock0";
-    private const string ACTION_NAME_WBlock1 = "WBlock1";
-    private const string ACTION_NAME_WBlock2 = "WBlock2";
+    private const string ACTION_NAME_Block1 = "Block1";
+    private const string ACTION_NAME_Block2 = "Block2";
+    private const string ACTION_NAME_Block3 = "Block3";
+    private const string ACTION_NAME_Block4 = "Block4";
 
     private readonly InputActionAsset _inputAsset;
     private readonly UiJoyStick _uiJoyStick;
 
     private InputModel _inputModel;
-    private InputAction _attackLAction;
     private InputAction _moveDigitalAction;
 
-    private InputAction _sBlockAction;
-    private InputAction _wBlock0Action;
-    private InputAction _wBlock1Action;
-    private InputAction _wBlock2Action;
+    private List<InputAction> _buttonActions;
 
     private CancellationTokenSource _moveCancellationTokenSource;
 
@@ -33,33 +31,27 @@ public class PlayerInputStrategy : IInputStrategy
     {
         _inputAsset = inputAsset;
         _uiJoyStick = uiJoyStick;
-        _attackLAction = _inputAsset.FindAction(ACTION_NAME_AttackL);
         _moveDigitalAction = _inputAsset.FindAction(ACTION_NAME_MoveDigital);
-
-        _sBlockAction = _inputAsset.FindAction(ACTION_NAME_SBlock0);
-        _wBlock0Action = _inputAsset.FindAction(ACTION_NAME_WBlock0);
-        _wBlock1Action = _inputAsset.FindAction(ACTION_NAME_WBlock1);
-        _wBlock2Action = _inputAsset.FindAction(ACTION_NAME_WBlock2);
+        
+        _buttonActions = new List<InputAction>()
+        {
+            _inputAsset.FindAction(ACTION_NAME_AttackL),
+            _inputAsset.FindAction(ACTION_NAME_Block1),
+            _inputAsset.FindAction(ACTION_NAME_Block2),
+            _inputAsset.FindAction(ACTION_NAME_Block3),
+            _inputAsset.FindAction(ACTION_NAME_Block4)
+        };
     }
 
     public void Init(InputModel inputModel, Character character, GameBus gameBus)
     {
         _inputModel = inputModel;
 
-        _attackLAction.started += OnButtonStarted; // touch started
-        _attackLAction.canceled += OnButtonCanceled; // touch ended
-
-
-        _sBlockAction.started += OnButtonStarted;
-        _wBlock0Action.started += OnButtonStarted;
-        _wBlock1Action.started += OnButtonStarted;
-        _wBlock2Action.started += OnButtonStarted;
-
-        _sBlockAction.canceled += OnButtonCanceled;
-        _wBlock0Action.canceled += OnButtonCanceled;
-        _wBlock1Action.canceled += OnButtonCanceled;
-        _wBlock2Action.canceled += OnButtonCanceled;
-
+        foreach (var inputAction in _buttonActions)
+        {
+            inputAction.started += OnButtonStarted; // touch started
+            inputAction.canceled += OnButtonCanceled; // touch ended
+        }
 
         _moveDigitalAction.started += OnMoveDigitalStarted;
         _moveDigitalAction.canceled += OnMoveDigitalStopped;
@@ -69,19 +61,12 @@ public class PlayerInputStrategy : IInputStrategy
 
     public void Dispose()
     {
-        _attackLAction.started -= OnButtonStarted;
-        _attackLAction.canceled -= OnButtonCanceled;
-
-        _sBlockAction.started -= OnButtonStarted;
-        _wBlock0Action.started -= OnButtonStarted;
-        _wBlock1Action.started -= OnButtonStarted;
-        _wBlock2Action.started -= OnButtonStarted;
-
-        _sBlockAction.canceled -= OnButtonCanceled;
-        _wBlock0Action.canceled -= OnButtonCanceled;
-        _wBlock1Action.canceled -= OnButtonCanceled;
-        _wBlock2Action.canceled -= OnButtonCanceled;
-
+        foreach (var inputAction in _buttonActions)
+        {
+            inputAction.started -= OnButtonStarted;
+            inputAction.canceled -= OnButtonCanceled;
+        }
+        
         _moveDigitalAction.started -= OnMoveDigitalStarted;
         _moveDigitalAction.canceled -= OnMoveDigitalStopped;
 
@@ -109,17 +94,17 @@ public class PlayerInputStrategy : IInputStrategy
             case ACTION_NAME_AttackL:
                 _inputModel.OnAttack?.Invoke(started);
                 break;
-            case ACTION_NAME_SBlock0:
-                _inputModel.OnBlock?.Invoke(started, BlockNames.SBlock0);
+            case ACTION_NAME_Block1:
+                _inputModel.OnBlock?.Invoke(started, BlockNames.Block1);
                 break;
-            case ACTION_NAME_WBlock0:
-                _inputModel.OnBlock?.Invoke(started, BlockNames.WBlock0);
+            case ACTION_NAME_Block2:
+                _inputModel.OnBlock?.Invoke(started, BlockNames.Block2);
                 break;
-            case ACTION_NAME_WBlock1:
-                _inputModel.OnBlock?.Invoke(started, BlockNames.WBlock1);
+            case ACTION_NAME_Block3:
+                _inputModel.OnBlock?.Invoke(started, BlockNames.Block3);
                 break;
-            case ACTION_NAME_WBlock2:
-                _inputModel.OnBlock?.Invoke(started, BlockNames.WBlock2);
+            case ACTION_NAME_Block4:
+                _inputModel.OnBlock?.Invoke(started, BlockNames.Block4);
                 break;
             default:
                 Debug.LogError($"Unknown action {obj.action.name}");
@@ -151,7 +136,6 @@ public class PlayerInputStrategy : IInputStrategy
         }
         catch (TaskCanceledException)
         {
-
         }
     }
 

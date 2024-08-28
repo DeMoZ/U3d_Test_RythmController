@@ -74,8 +74,8 @@ public class CharacterAnimator : IDisposable
             case BlockPhase.None:
                 break;
             case BlockPhase.Pre:
-                _combatLayerAnimator.TriggerPreBlockAnimation(blockName);
-                _legsLayerAnimator.TriggerPreBlockAnimation(blockName);
+                _combatLayerAnimator.TriggerStartBlockAnimation(blockName);
+                _legsLayerAnimator.TriggerStartBlockAnimation(blockName);
                 break;
             case BlockPhase.Block:
                 _combatLayerAnimator.TriggerBlockAnimation(blockName);
