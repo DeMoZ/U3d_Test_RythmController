@@ -131,7 +131,7 @@ public class CombatLayerAnimator : IDisposable
 
     #region Combat
 
-    public void TriggerStartAttackAnimation(AttackNames attackName)
+    public void TriggerStartAttackAnimation()
     {
         var stateName = $"{StartAttackState}{AttackState}{TupleToString(_characterModel.CurrentSequenceKey.Value)}";
 #if LOGGER_ON
@@ -144,7 +144,7 @@ public class CombatLayerAnimator : IDisposable
         _animator.SetTrigger(StartAttackHash);
     }
 
-    public void TriggerAttackAnimation(AttackNames attackName)
+    public void TriggerAttackAnimation()
     {
         var stateName = $"{AttackState}{TupleToString(_characterModel.CurrentSequenceKey.Value)}";
 #if LOGGER_ON
@@ -156,7 +156,7 @@ public class CombatLayerAnimator : IDisposable
         _animator.SetTrigger(AttackHash);
     }
 
-    public void TriggerPostAttackAnimation(AttackNames attackName)
+    public void TriggerPostAttackAnimation()
     {
         var stateName =
             $"{PostAttackState}{AttackState}{TupleToString(_characterModel.CurrentSequenceKey.Value)}";
@@ -172,8 +172,6 @@ public class CombatLayerAnimator : IDisposable
     #endregion //Combat
 
     #region Block
-
-    // todo roman now only for shield block animation and then for weapon block too
     public void TriggerStartBlockAnimation(BlockNames blockName)
     {
         var stateName = $"{StartBlockState}{blockName}";

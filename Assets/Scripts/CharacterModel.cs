@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharacterModel : IDisposable
 {
     public readonly DMZState<Vector3> MoveSpeed = new();
-    public readonly DMZState<CombatPhase, AttackNames> CombatPhaseState = new(CombatPhase.Idle, AttackNames.Attack1);
+    public readonly DMZState<CombatPhase> CombatPhaseState = new(CombatPhase.Idle);
     public readonly DMZState<BlockPhase, BlockNames> BlockPhaseState = new(BlockPhase.None, BlockNames.None);
     public readonly DMZState<CombatProgressModel> AttackProgress = new();
     public readonly DMZState<(int, int)> CurrentSequenceKey = new((-1, -1));
