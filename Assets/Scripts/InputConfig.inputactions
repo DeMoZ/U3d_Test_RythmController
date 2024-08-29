@@ -15,7 +15,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AttackL",
+                    "name": "Attack1",
                     "type": "Button",
                     "id": "0b6788ac-f836-4e2e-8513-826a3eb52884",
                     "expectedControlType": "Button",
@@ -24,7 +24,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AttackR",
+                    "name": "Attack2",
                     "type": "Button",
                     "id": "b9f81d14-6f56-42ce-9564-2b1b62878aba",
                     "expectedControlType": "Button",
@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AttackU",
+                    "name": "Attack3",
                     "type": "Button",
                     "id": "05f50f7d-4245-4c55-902e-d381f1b0a83b",
                     "expectedControlType": "Button",
@@ -42,9 +42,45 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AttackD",
+                    "name": "Attack4",
                     "type": "Button",
                     "id": "4bb9780e-a249-4b41-96fa-d52c374db5d4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Block1",
+                    "type": "Button",
+                    "id": "3083259a-e8fb-4c2d-87c9-71519df2a0c3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Block2",
+                    "type": "Button",
+                    "id": "39928865-4308-4127-a22f-3cfb35439082",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Block3",
+                    "type": "Button",
+                    "id": "5b953a16-2bfd-4086-ab94-1dd3bacedbe9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Block4",
+                    "type": "Button",
+                    "id": "e1e2d0d2-6cdb-4c69-9db2-5b5dc7bdccd3",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -59,7 +95,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AttackR",
+                    "action": "Attack2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -70,7 +106,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AttackU",
+                    "action": "Attack3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -81,7 +117,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AttackD",
+                    "action": "Attack4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -92,7 +128,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AttackL",
+                    "action": "Attack1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -194,6 +230,50 @@
                     "action": "MoveDigital",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "9068be2c-ae8f-4f11-831c-93344af5c4ba",
+                    "path": "<Keyboard>/7",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Block1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a381220d-fa4a-42ba-b5e9-36876135ea05",
+                    "path": "<Keyboard>/8",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Block2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a900402b-ff7e-4e96-9f54-39dceb9b50ed",
+                    "path": "<Keyboard>/9",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Block3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1baece88-b98b-4b6d-95d7-d5f97ce0db23",
+                    "path": "<Keyboard>/0",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Block4",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

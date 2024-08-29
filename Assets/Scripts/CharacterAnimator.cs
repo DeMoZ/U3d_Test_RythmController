@@ -1,4 +1,4 @@
-//#define LOGGER_ON
+#define LOGGER_ON
 using System;
 using DMZ.Extensions;
 using UnityEngine;
@@ -7,11 +7,10 @@ using Debug = DMZ.DebugSystem.DMZLogger;
 public class CharacterAnimator : IDisposable
 {
     private readonly CharacterModel _characterModel;
-    private int _baseLayerId;
-
     private readonly CombatLayerAnimator _combatLayerAnimator;
     private readonly CombatLayerAnimator _legsLayerAnimator;
     private readonly MoveAnimator _moveAnimator;
+    private readonly int _baseLayerId;
 
     public CharacterAnimator(CharacterModel characterModel, Animator animator, ICombatRepository combatRepository)
     {
@@ -19,7 +18,8 @@ public class CharacterAnimator : IDisposable
 
         _combatLayerAnimator = new CombatLayerAnimator(characterModel, animator, combatRepository);
         _legsLayerAnimator = new CombatLegsLayerAnimator(characterModel, animator, combatRepository);
-        _characterModel.AttackSequenceState.Subscribe(OnCombatSequenceStateChanged);
+        _characterModel.CombatPhaseState.Subscribe(OnCombatPhaseStateChanged);
+        _characterModel.BlockPhaseState.Subscribe(OnBlockPhaseStateChanged);
 
         _moveAnimator = new MoveAnimator(characterModel, animator);
 
@@ -29,36 +29,66 @@ public class CharacterAnimator : IDisposable
 
     public void Dispose()
     {
-        _characterModel.AttackSequenceState.Unsubscribe(OnCombatSequenceStateChanged);
+        _characterModel.CombatPhaseState.Unsubscribe(OnCombatPhaseStateChanged);
+        _characterModel.BlockPhaseState.Unsubscribe(OnBlockPhaseStateChanged);
+
+        _combatLayerAnimator.Dispose();
+        _legsLayerAnimator.Dispose();
+        _moveAnimator.Dispose();
     }
 
-    private void OnCombatSequenceStateChanged(CombatPhase attackState)
+    private void OnCombatPhaseStateChanged(CombatPhase combatPhase, AttackNames attackName)
     {
 #if LOGGER_ON
-        Debug.Log("OnAttackSequenceStateChanged".Yellow());
+        Debug.Log($"{nameof(OnCombatPhaseStateChanged)}".Yellow());
 #endif
-        switch (attackState)
+        switch (combatPhase)
         {
             case CombatPhase.None:
                 break;
             case CombatPhase.Idle:
                 break;
             case CombatPhase.Pre:
-                _combatLayerAnimator.TriggerPreAttackAnimation();
-                _legsLayerAnimator.TriggerPreAttackAnimation();
+                _combatLayerAnimator.TriggerStartAttackAnimation(attackName);
+                _legsLayerAnimator.TriggerStartAttackAnimation(attackName);
                 break;
             case CombatPhase.Attack:
-                _combatLayerAnimator.TriggerAttackAnimation();
-                _legsLayerAnimator.TriggerAttackAnimation();
+                _combatLayerAnimator.TriggerAttackAnimation(attackName);
+                _legsLayerAnimator.TriggerAttackAnimation(attackName);
                 break;
             case CombatPhase.After:
-                _combatLayerAnimator.TriggerPostAttackAnimation();
-                _legsLayerAnimator.TriggerPostAttackAnimation();
+                _combatLayerAnimator.TriggerPostAttackAnimation(attackName);
+                _legsLayerAnimator.TriggerPostAttackAnimation(attackName);
                 break;
             case CombatPhase.Fail:
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(attackState), attackState, null);
+                throw new ArgumentOutOfRangeException(nameof(combatPhase), combatPhase, null);
+        }
+    }
+
+    private void OnBlockPhaseStateChanged(BlockPhase blockPhase, BlockNames blockName)
+    {
+        switch (blockPhase)
+        {
+            case BlockPhase.None:
+                break;
+            case BlockPhase.Pre:
+                _combatLayerAnimator.TriggerStartBlockAnimation(blockName);
+                _legsLayerAnimator.TriggerStartBlockAnimation(blockName);
+                break;
+            case BlockPhase.Block:
+                _combatLayerAnimator.TriggerBlockAnimation(blockName);
+                _legsLayerAnimator.TriggerBlockAnimation(blockName);
+                break;
+            case BlockPhase.After:
+                _combatLayerAnimator.TriggerPostBlockAnimation(blockName);
+                _legsLayerAnimator.TriggerPostBlockAnimation(blockName);
+                break;
+            case BlockPhase.Fail:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(blockPhase), blockPhase, null);
         }
     }
 }

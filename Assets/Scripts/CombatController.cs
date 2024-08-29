@@ -2,7 +2,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DMZ.Extensions;
 using UnityEngine;
 using Debug = DMZ.DebugSystem.DMZLogger;
 
@@ -25,16 +24,18 @@ public class CombatController
         _combatRepository = combatRepository;
 
         _inputModel.OnAttack += OnAttack;
+        _inputModel.OnBlock += OnBlock;
     }
 
     public void Dispose()
     {
         _inputModel.OnAttack -= OnAttack;
+        _inputModel.OnBlock -= OnBlock;
         _horizontalTokenSource?.Cancel();
         _attackTokenSource?.Cancel();
     }
 
-    private void OnAttack(bool isStarted)
+    private void OnAttack(bool isStarted, AttackNames attackName)
     {
         if (isStarted)
             OnTouchStarted();
@@ -49,7 +50,7 @@ public class CombatController
 #endif
         _isTouching = true;
 
-        switch (_characterModel.AttackSequenceState.Value)
+        switch (_characterModel.CombatPhaseState.Value)
         {
             case CombatPhase.None:
             case CombatPhase.Fail:
@@ -87,7 +88,7 @@ public class CombatController
 #if LOGGER_ON
         Debug.Log($"player fightSequenceState is {_characterModel.AttackSequenceState.Value}");
 #endif
-        if (_characterModel.AttackSequenceState.Value is not CombatPhase.Pre)
+        if (_characterModel.CombatPhaseState.Value is not CombatPhase.Pre)
             return;
 
         _attackTokenSource = new CancellationTokenSource();
@@ -103,7 +104,7 @@ public class CombatController
         Debug.Log($"HorizontalSequencing ({newCode.Item1},{newCode.Item2})");
 #endif        
         _characterModel.CurrentSequenceKey.Value = newCode;
-        _characterModel.AttackSequenceState.SetAndForceNotify(CombatPhase.Pre);
+        _characterModel.CombatPhaseState.SetAndForceNotify(CombatPhase.Pre);
 
         await TimerProcessAsync(_combatRepository.GetPreAttackTime(newCode), token, null);
         if (token.IsCancellationRequested)
@@ -169,7 +170,7 @@ public class CombatController
         if (token.IsCancellationRequested)
             return;
 
-        _characterModel.AttackSequenceState.Value = state;
+        _characterModel.CombatPhaseState.Value = state;
 
         try
         {
@@ -200,7 +201,7 @@ public class CombatController
 
     private void SetIdle()
     {
-        _characterModel.AttackSequenceState.Value = CombatPhase.Idle;
+        _characterModel.CombatPhaseState.Value = CombatPhase.Idle;
         _characterModel.CurrentSequenceKey.Value = (-1, -1);
     }
 
@@ -247,4 +248,42 @@ public class CombatController
 #endif
         }
     }
+
+    #region Block
+
+    private async void OnBlock(bool isStarted, BlockNames blockName)
+    {
+        if (isStarted)
+        {
+            _characterModel.BlockPhaseState.SetAndForceNotify(BlockPhase.Pre, blockName);
+
+            try
+            {
+                if (_attackTokenSource != null)
+                {
+                    _attackTokenSource.Cancel();
+                }
+
+                _attackTokenSource = new CancellationTokenSource();
+                await TimerProcessAsync(_combatRepository.GetPreBlockTime(), _attackTokenSource.Token, null);
+                
+                if (_attackTokenSource.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                _characterModel.BlockPhaseState.SetAndForceNotify(BlockPhase.Block, blockName);
+            }
+            catch (TaskCanceledException)
+            {
+                // todo roman. If got hard hit on pre block
+            }
+        }
+        else
+        {
+            _characterModel.BlockPhaseState.SetAndForceNotify(BlockPhase.After, blockName);
+        }
+    }
+
+    #endregion Block
 }

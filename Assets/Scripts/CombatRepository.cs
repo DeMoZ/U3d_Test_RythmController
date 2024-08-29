@@ -4,11 +4,17 @@ using System.Linq;
 public interface ICombatRepository
 {
     List<(int, int)> GetSequencesKeys();
+    bool IsSequenceExists((int, int) code);
+
     float GetPreAttackTime((int, int) code);
     float GetAttackTime((int, int) code);
     float GetPostAttackTime((int, int) code);
     float GetFailTime((int, int) code);
-    bool IsSequenceExists((int, int) code);
+
+    float GetPreBlockTime();
+    float GetBlockTime();
+    float GetPostBlockTime();
+    float GetBlockFailTime();
 }
 
 public class CombatRepository : ICombatRepository
@@ -40,7 +46,12 @@ public class CombatRepository : ICombatRepository
     private float GetDefaultPreAttackTime() => _config.PreAttackTime;
     private float GetDefaultAttackTime() => _config.AttackTime;
     private float GetDefaultPostAttackTime() => _config.PostAttackTime;
-    private float GetDefaultFailTime() => _config.FailTime;
+    private float GetDefaultAttackFailTime() => _config.AttackFailTime;
+
+    private float GetDefaultPreBlockTime() => _config.PreBlockTime;
+    private float GetDefaultBlockTime() => _config.BlockTime;
+    private float GetDefaultPostBlockTime() => _config.PostBlockTime;
+    private float GetDefaultBlockFailTime() => _config.BlockFailTime;
 
     public bool IsSequenceExists((int, int) code)
     {
@@ -79,8 +90,13 @@ public class CombatRepository : ICombatRepository
     public float GetFailTime((int, int) code)
     {
         if (TryGetSequence(code, out var element))
-            return element.FailTime ?? GetDefaultFailTime();
+            return element.FailTime ?? GetDefaultAttackFailTime();
 
         throw new System.ArgumentOutOfRangeException();
     }
+
+    public float GetPreBlockTime() => GetDefaultPreBlockTime();
+    public float GetBlockTime() => GetDefaultBlockTime();
+    public float GetPostBlockTime() => GetDefaultPostBlockTime();
+    public float GetBlockFailTime() => GetDefaultBlockFailTime();
 }

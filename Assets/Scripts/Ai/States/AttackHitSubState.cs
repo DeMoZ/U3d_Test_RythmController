@@ -84,7 +84,7 @@ public class AttackHitSubState : StateBase<AttackSubStates>
                         _sequenceTimer = _curHitKey.Item2 == 0
                         ? _combatRepository.GetPreAttackTime(_curHitKey)
                         : _combatRepository.GetPreAttackTime((_curHitKey.Item1, 0)) + _combatRepository.GetPreAttackTime((_curHitKey.Item1, 1));
-                        _inputModel.OnAttack?.Invoke(true);
+                        _inputModel.OnAttack?.Invoke(true, AttackNames.Attack1);
                         _sequenceStep = 1;
                     }
                     else
@@ -97,7 +97,7 @@ public class AttackHitSubState : StateBase<AttackSubStates>
                     { // perform hit by release button and random await for new hit
                         _holdButton = false;
                         _sequenceTimer = _combatRepository.GetAttackTime(_curHitKey);
-                        _inputModel.OnAttack?.Invoke(false);
+                        _inputModel.OnAttack?.Invoke(false, AttackNames.Attack1);
                         _sequenceStep = 2;
                     }
                     break;
@@ -116,7 +116,6 @@ public class AttackHitSubState : StateBase<AttackSubStates>
                 case 3:
                     return AttackSubStates.Countdown;
             }
-
         }
         return Type;
     }
