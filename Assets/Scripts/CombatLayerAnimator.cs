@@ -22,25 +22,25 @@ public class CombatLayerAnimator : IDisposable
     private static string DefaultState = "Default";
 
     //Attack
-    // private static string CombatStatePrefix = "Attack"; // pre attack state
-    // private static string AttackSuffix = "A"; // attack state
-    // private static string PostAttackSuffix = "P"; // post attack state
-
     private static string StartAttackState = "Start"; // start attack state
     private static string AttackState = "Attack";
     private static string PostAttackState = "Post"; // post attack state
 
-    private static readonly int StartAttackHash = Animator.StringToHash("StartAttack");
-    private static readonly int AttackIndexHash = Animator.StringToHash("AttackIndex");
+    private static readonly int AttackIndexHash = Animator.StringToHash(AnimatorConstants.AttackIndex);
+    private static readonly int StartAttackHash = Animator.StringToHash(AnimatorConstants.StartAttackTrigger);
+    private static readonly int AttackHash = Animator.StringToHash(AnimatorConstants.AttackTrigger);
+    private static readonly int PostAttackHash = Animator.StringToHash(AnimatorConstants.PostAttackTrigger);
     // --- Attack
-
+    
     // Block
     private static string StartBlockState = "Start"; // block state
     private static string BlockState = "Block";
     private static string PostBlockState = "Post"; // post block state
 
-    private static readonly int StartBlockHash = Animator.StringToHash("StartBlock");
-    private static readonly int BlockIndexHash = Animator.StringToHash("BlockIndex");
+    private static readonly int BlockIndexHash = Animator.StringToHash(AnimatorConstants. BlockIndex);
+    private static readonly int StartBlockHash = Animator.StringToHash(AnimatorConstants.StartBlockTrigger);
+    private static readonly int BlockHash = Animator.StringToHash(AnimatorConstants.BlockTrigger);
+    private static readonly int PostBlockHash = Animator.StringToHash(AnimatorConstants.PostBlockTrigger);
     // --- Block
 
     private readonly int _layerIndex;
@@ -52,16 +52,11 @@ public class CombatLayerAnimator : IDisposable
     protected virtual string PostActionSpeed => AnimatorConstants.PostActionSpeed;
 
     private static string TupleToString((int, int) tuple) => $"{(tuple.Item1 == 0 ? "" : tuple.Item1)}{tuple.Item2}";
+    private static int TupleToInt((int, int) tuple) => tuple.Item1 * 10 + tuple.Item2;
 
     private readonly CharacterModel _characterModel;
     private readonly Animator _animator;
     private readonly ICombatRepository _combatRepository;
-
-    private static readonly int PostAttackTriggerCashed = Animator.StringToHash(AnimatorConstants.PostAttackTrigger);
-    private static readonly int AttackTriggerCashed = Animator.StringToHash(AnimatorConstants.AttackTrigger);
-
-    private static readonly int PostBlockTriggerCashed = Animator.StringToHash(AnimatorConstants.PostBlockTrigger);
-    private static readonly int BlockTriggerCashed = Animator.StringToHash(AnimatorConstants.BlockTrigger);
 
     public CombatLayerAnimator(CharacterModel characterModel, Animator animator, ICombatRepository combatRepository)
     {
@@ -110,7 +105,7 @@ public class CombatLayerAnimator : IDisposable
 
     private void CashBlockAnimations()
     {
-        // todo roman here should be enum length
+        // todo roman here should be enum length or config
         for (var i = 1; i < 5; i++)
         {
             var state = $"{BlockState}{i}";
@@ -145,9 +140,8 @@ public class CombatLayerAnimator : IDisposable
         var length = _animationsCash[stateName].Length;
         var time = _combatRepository.GetPreAttackTime(_characterModel.CurrentSequenceKey.Value);
         _animator.SetFloat(StartActionSpeed, length / time);
+        _animator.SetInteger(AttackIndexHash, TupleToInt(_characterModel.CurrentSequenceKey.Value));
         _animator.SetTrigger(StartAttackHash);
-        _animator.SetInteger(AttackIndexHash, (int)attackName);
-        _animator.SetTrigger(StartBlockHash);
     }
 
     public void TriggerAttackAnimation(AttackNames attackName)
@@ -159,7 +153,7 @@ public class CombatLayerAnimator : IDisposable
         var length = _animationsCash[stateName].Length;
         var time = _combatRepository.GetAttackTime(_characterModel.CurrentSequenceKey.Value);
         _animator.SetFloat(ActionSpeed, length / time);
-        _animator.SetTrigger(AttackTriggerCashed);
+        _animator.SetTrigger(AttackHash);
     }
 
     public void TriggerPostAttackAnimation(AttackNames attackName)
@@ -172,7 +166,7 @@ public class CombatLayerAnimator : IDisposable
         var length = _animationsCash[stateName].Length;
         var time = _combatRepository.GetPostAttackTime(_characterModel.CurrentSequenceKey.Value);
         _animator.SetFloat(PostActionSpeed, length / time);
-        _animator.SetTrigger(PostAttackTriggerCashed);
+        _animator.SetTrigger(PostAttackHash);
     }
 
     #endregion //Combat
@@ -203,7 +197,7 @@ public class CombatLayerAnimator : IDisposable
         var length = _animationsCash[stateName].Length;
         var time = _combatRepository.GetBlockTime();
         _animator.SetFloat(ActionSpeed, length / time);
-        _animator.SetTrigger(BlockTriggerCashed);
+        _animator.SetTrigger(BlockHash);
     }
 
     public void TriggerPostBlockAnimation(BlockNames blockName)
@@ -215,7 +209,7 @@ public class CombatLayerAnimator : IDisposable
         var length = _animationsCash[stateName].Length;
         var time = _combatRepository.GetPostBlockTime();
         _animator.SetFloat(PostActionSpeed, length / time);
-        _animator.SetTrigger(PostBlockTriggerCashed);
+        _animator.SetTrigger(PostBlockHash);
     }
 
     #endregion //Block

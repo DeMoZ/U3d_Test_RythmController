@@ -11,8 +11,13 @@ public class AnimatorConstants
     public const string IsMoving = "IsMoving";
     public const string IsRunning = "IsRunning";
 
+    public const string AttackIndex = "AttackIndex";
+    public const string StartAttackTrigger = "StartAttack";
     public const string AttackTrigger = "Attack"; // Attack trigger
     public const string PostAttackTrigger = "PostAttack"; // PostAttack trigger
+    
+    public const string BlockIndex = "BlockIndex";
+    public const string StartBlockTrigger = "StartBlock";
     public const string BlockTrigger = "Block"; // Block trigger
     public const string PostBlockTrigger = "PostBlock"; // PostBlock trigger
 
