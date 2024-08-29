@@ -8,6 +8,15 @@ public enum CombatPhase
     Fail,
 }
 
+public enum AttackNames
+{
+    None = 0,
+    Attack1,
+    Attack2,
+    Attack3,
+    Attack4,
+}
+
 public enum BlockPhase
 {
     None,

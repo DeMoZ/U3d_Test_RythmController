@@ -3,7 +3,7 @@ using UnityEngine;
 public class CombatLegsLayerAnimator : CombatLayerAnimator
 {
     protected override string Layer => AnimatorConstants.LegsCombatLayer;
-    protected override string PreActionSpeed => AnimatorConstants.LegsPreActionSpeed;
+    protected override string StartActionSpeed => AnimatorConstants.LegsStartActionSpeed;
     protected override string ActionSpeed => AnimatorConstants.LegsActionSpeed;
     protected override string PostActionSpeed => AnimatorConstants.LegsPostActionSpeed;
 

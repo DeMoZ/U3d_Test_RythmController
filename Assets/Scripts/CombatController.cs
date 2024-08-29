@@ -35,7 +35,7 @@ public class CombatController
         _attackTokenSource?.Cancel();
     }
 
-    private void OnAttack(bool isStarted)
+    private void OnAttack(bool isStarted, AttackNames attackName)
     {
         if (isStarted)
             OnTouchStarted();
@@ -251,9 +251,9 @@ public class CombatController
 
     #region Block
 
-    private async void OnBlock(bool isStarged, BlockNames blockName)
+    private async void OnBlock(bool isStarted, BlockNames blockName)
     {
-        if (isStarged)
+        if (isStarted)
         {
             _characterModel.BlockPhaseState.SetAndForceNotify(BlockPhase.Pre, blockName);
 

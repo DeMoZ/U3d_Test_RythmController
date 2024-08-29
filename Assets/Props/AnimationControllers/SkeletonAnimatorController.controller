@@ -110,7 +110,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack01
+  m_Name: StartAttack1
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -126,7 +126,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 9067093048684652814, guid: 988bfe14e7cc5b34faac0e002f512108, type: 3}
   m_Tag: 
-  m_SpeedParameter: PreActionSpeed
+  m_SpeedParameter: StartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -189,7 +189,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack11P
+  m_Name: PostAttack11
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -218,8 +218,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Attack10
+    m_ConditionEvent: StartAttack
     m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: AttackIndex
+    m_EventTreshold: 10
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 6260090716161001390}
   m_Solo: 0
@@ -288,7 +291,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack11P
+  m_Name: PostAttack11
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -342,7 +345,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack01P
+  m_Name: PostAttack1
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -571,7 +574,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack11
+  m_Name: StartAttack11
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -587,7 +590,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 644589263403131068, guid: 988bfe14e7cc5b34faac0e002f512108, type: 3}
   m_Tag: 
-  m_SpeedParameter: PreActionSpeed
+  m_SpeedParameter: StartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -648,7 +651,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack00P
+  m_Name: PostAttack0
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -750,7 +753,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack10A
+  m_Name: Attack10
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -821,7 +824,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack01A
+  m_Name: Attack1
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -922,7 +925,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack01
+  m_Name: StartAttack1
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -938,7 +941,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 1465369574596688972, guid: d8f201af1a5a0b448aab2b52bf5c57de, type: 3}
   m_Tag: 
-  m_SpeedParameter: LegsPreActionSpeed
+  m_SpeedParameter: LegsStartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -1106,7 +1109,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack00P
+  m_Name: PostAttack0
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1207,7 +1210,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack11A
+  m_Name: Attack11
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1349,7 +1352,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: -203655887218126122, guid: 06d6d45f095cc47708fc3345f8097949, type: 3}
   m_Tag: 
-  m_SpeedParameter: PreActionSpeed
+  m_SpeedParameter: StartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: PreActionTime
@@ -1513,8 +1516,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Attack01
+    m_ConditionEvent: StartAttack
     m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: AttackIndex
+    m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8837823509022350218}
   m_Solo: 0
@@ -1586,7 +1592,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack00
+  m_Name: StartAttack0
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1602,7 +1608,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 1465369574596688972, guid: d8f201af1a5a0b448aab2b52bf5c57de, type: 3}
   m_Tag: 
-  m_SpeedParameter: LegsPreActionSpeed
+  m_SpeedParameter: LegsStartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -1613,7 +1619,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack11
+  m_Name: StartAttack11
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1629,7 +1635,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 8069544894991528799, guid: d8f201af1a5a0b448aab2b52bf5c57de, type: 3}
   m_Tag: 
-  m_SpeedParameter: LegsPreActionSpeed
+  m_SpeedParameter: LegsStartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -1667,8 +1673,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Attack11
+    m_ConditionEvent: StartAttack
     m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: AttackIndex
+    m_EventTreshold: 11
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6701605158726825917}
   m_Solo: 0
@@ -1945,7 +1954,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack01A
+  m_Name: Attack1
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -2089,7 +2098,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 644589263403131068, guid: d8a698a22eea23c49b48135cbcac97c1, type: 3}
   m_Tag: 
-  m_SpeedParameter: PreActionSpeed
+  m_SpeedParameter: StartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: PreActionTime
@@ -2203,7 +2212,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack00
+  m_Name: StartAttack0
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -2219,7 +2228,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 1465369574596688972, guid: d8f201af1a5a0b448aab2b52bf5c57de, type: 3}
   m_Tag: 
-  m_SpeedParameter: PreActionSpeed
+  m_SpeedParameter: StartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -2232,8 +2241,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Attack10
+    m_ConditionEvent: StartAttack
     m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: AttackIndex
+    m_EventTreshold: 10
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -616873097202912584}
   m_Solo: 0
@@ -2280,7 +2292,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack10
+  m_Name: StartAttack10
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -2296,7 +2308,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 8069544894991528799, guid: d8f201af1a5a0b448aab2b52bf5c57de, type: 3}
   m_Tag: 
-  m_SpeedParameter: PreActionSpeed
+  m_SpeedParameter: StartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -2459,26 +2471,8 @@ AnimatorController:
   m_Name: SkeletonAnimatorController
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: MoveSpeed
-    m_Type: 1
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: Jump
-    m_Type: 4
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: Grounded
-    m_Type: 4
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: FreeFall
-    m_Type: 4
+  - m_Name: ---Move
+    m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
@@ -2489,39 +2483,9 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: PreActionSpeed
+  - m_Name: MoveSpeed
     m_Type: 1
-    m_DefaultFloat: 1
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: ActionSpeed
-    m_Type: 1
-    m_DefaultFloat: 1
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: PostActionSpeed
-    m_Type: 1
-    m_DefaultFloat: 1
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: LegsActionSpeed
-    m_Type: 1
-    m_DefaultFloat: 1
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: LegsPreActionSpeed
-    m_Type: 1
-    m_DefaultFloat: 1
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: LegsPostActionSpeed
-    m_Type: 1
-    m_DefaultFloat: 1
+    m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
@@ -2549,6 +2513,90 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
+  - m_Name: Jump
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: Grounded
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: FreeFall
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: ---Action
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: StartActionSpeed
+    m_Type: 1
+    m_DefaultFloat: 1
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: ActionSpeed
+    m_Type: 1
+    m_DefaultFloat: 1
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: PostActionSpeed
+    m_Type: 1
+    m_DefaultFloat: 1
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: ---LegsAction
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: LegsActionSpeed
+    m_Type: 1
+    m_DefaultFloat: 1
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: LegsStartActionSpeed
+    m_Type: 1
+    m_DefaultFloat: 1
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: LegsPostActionSpeed
+    m_Type: 1
+    m_DefaultFloat: 1
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: ---Combat
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: AttackIndex
+    m_Type: 3
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: StartAttack
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
   - m_Name: Attack
     m_Type: 9
     m_DefaultFloat: 0
@@ -2561,31 +2609,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: Attack00
-    m_Type: 9
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: Attack01
-    m_Type: 9
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: Attack10
-    m_Type: 9
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: Attack11
-    m_Type: 9
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: StartBlock
+  - m_Name: ---Block
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -2593,6 +2617,12 @@ AnimatorController:
     m_Controller: {fileID: 9100000}
   - m_Name: BlockIndex
     m_Type: 3
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: StartBlock
+    m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
@@ -2609,7 +2639,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: SkipAction
+  - m_Name: ---Rest
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -2641,7 +2671,7 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: LegsCombatLayer
+    m_Name: CombatLegsLayer
     m_StateMachine: {fileID: 4091442712578213668}
     m_Mask: {fileID: 31900000, guid: 401c2abbeb1334fa6a74546dfaae30cf, type: 2}
     m_Motions: []
@@ -2784,7 +2814,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: -203655887218126122, guid: 06d6d45f095cc47708fc3345f8097949, type: 3}
   m_Tag: 
-  m_SpeedParameter: PreActionSpeed
+  m_SpeedParameter: StartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: PreActionTime
@@ -2797,8 +2827,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Attack11
+    m_ConditionEvent: StartAttack
     m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: AttackIndex
+    m_EventTreshold: 11
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -3555739091642901737}
   m_Solo: 0
@@ -2925,8 +2958,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Attack01
+    m_ConditionEvent: StartAttack
     m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: AttackIndex
+    m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6042452540407375522}
   m_Solo: 0
@@ -2975,7 +3011,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack10P
+  m_Name: PostAttack10
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -3224,7 +3260,10 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Attack00
+    m_ConditionEvent: StartAttack
+    m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: AttackIndex
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1088318321504493883}
@@ -3328,7 +3367,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack10P
+  m_Name: PostAttack10
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -3427,7 +3466,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack00A
+  m_Name: Attack0
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -3479,7 +3518,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack00A
+  m_Name: Attack0
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -3688,7 +3727,7 @@ AnimatorStateMachine:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LegsCombatLayer
+  m_Name: CombatLegsLayer
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -6042452540407375522}
@@ -3901,7 +3940,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 9067093048684652814, guid: 787f663a7c954b243809b5c9ecd8c9c4, type: 3}
   m_Tag: 
-  m_SpeedParameter: PreActionSpeed
+  m_SpeedParameter: StartActionSpeed
   m_MirrorParameter: Jump
   m_CycleOffsetParameter: 
   m_TimeParameter: PreActionTime
@@ -3934,7 +3973,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack01P
+  m_Name: PostAttack1
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -4278,7 +4317,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack11A
+  m_Name: Attack11
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -4305,7 +4344,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack10
+  m_Name: StartAttack10
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -4321,7 +4360,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 8069544894991528799, guid: d8f201af1a5a0b448aab2b52bf5c57de, type: 3}
   m_Tag: 
-  m_SpeedParameter: LegsPreActionSpeed
+  m_SpeedParameter: LegsStartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -4392,7 +4431,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 644589263403131068, guid: d8a698a22eea23c49b48135cbcac97c1, type: 3}
   m_Tag: 
-  m_SpeedParameter: PreActionSpeed
+  m_SpeedParameter: StartActionSpeed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: PreActionTime
@@ -4441,7 +4480,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 9067093048684652814, guid: 787f663a7c954b243809b5c9ecd8c9c4, type: 3}
   m_Tag: 
-  m_SpeedParameter: PreActionSpeed
+  m_SpeedParameter: StartActionSpeed
   m_MirrorParameter: Jump
   m_CycleOffsetParameter: 
   m_TimeParameter: PreActionTime
@@ -4580,7 +4619,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack10A
+  m_Name: Attack10
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -4686,7 +4725,10 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Attack00
+    m_ConditionEvent: StartAttack
+    m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: AttackIndex
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -3635523397057219177}

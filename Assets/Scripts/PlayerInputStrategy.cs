@@ -9,8 +9,9 @@ using Debug = DMZ.DebugSystem.DMZLogger;
 
 public class PlayerInputStrategy : IInputStrategy
 {
-    private const string ACTION_NAME_AttackL = "AttackL";
     private const string ACTION_NAME_MoveDigital = "MoveDigital";
+
+    private const string ACTION_NAME_Attack1 = "Attack1";
 
     private const string ACTION_NAME_Block1 = "Block1";
     private const string ACTION_NAME_Block2 = "Block2";
@@ -35,7 +36,8 @@ public class PlayerInputStrategy : IInputStrategy
         
         _buttonActions = new List<InputAction>()
         {
-            _inputAsset.FindAction(ACTION_NAME_AttackL),
+            _inputAsset.FindAction(ACTION_NAME_Attack1),
+            
             _inputAsset.FindAction(ACTION_NAME_Block1),
             _inputAsset.FindAction(ACTION_NAME_Block2),
             _inputAsset.FindAction(ACTION_NAME_Block3),
@@ -91,9 +93,10 @@ public class PlayerInputStrategy : IInputStrategy
     {
         switch (obj.action.name)
         {
-            case ACTION_NAME_AttackL:
-                _inputModel.OnAttack?.Invoke(started);
+            case ACTION_NAME_Attack1:
+                _inputModel.OnAttack?.Invoke(started, AttackNames.Attack1);
                 break;
+            
             case ACTION_NAME_Block1:
                 _inputModel.OnBlock?.Invoke(started, BlockNames.Block1);
                 break;
@@ -106,6 +109,7 @@ public class PlayerInputStrategy : IInputStrategy
             case ACTION_NAME_Block4:
                 _inputModel.OnBlock?.Invoke(started, BlockNames.Block4);
                 break;
+            
             default:
                 Debug.LogError($"Unknown action {obj.action.name}");
                 break;

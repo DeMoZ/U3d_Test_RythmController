@@ -15,7 +15,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AttackL",
+                    "name": "Attack1",
                     "type": "Button",
                     "id": "0b6788ac-f836-4e2e-8513-826a3eb52884",
                     "expectedControlType": "Button",
@@ -24,7 +24,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AttackR",
+                    "name": "Attack2",
                     "type": "Button",
                     "id": "b9f81d14-6f56-42ce-9564-2b1b62878aba",
                     "expectedControlType": "Button",
@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AttackU",
+                    "name": "Attack3",
                     "type": "Button",
                     "id": "05f50f7d-4245-4c55-902e-d381f1b0a83b",
                     "expectedControlType": "Button",
@@ -42,7 +42,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AttackD",
+                    "name": "Attack4",
                     "type": "Button",
                     "id": "4bb9780e-a249-4b41-96fa-d52c374db5d4",
                     "expectedControlType": "Button",
@@ -95,7 +95,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AttackR",
+                    "action": "Attack2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -106,7 +106,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AttackU",
+                    "action": "Attack3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -117,7 +117,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AttackD",
+                    "action": "Attack4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -128,7 +128,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AttackL",
+                    "action": "Attack1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

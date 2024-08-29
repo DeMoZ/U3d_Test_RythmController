@@ -17,15 +17,12 @@ public class AnimatorConstants
     public const string PostBlockTrigger = "PostBlock"; // PostBlock trigger
 
     public const string CombatLayer = "CombatLayer";
-    public const string PreActionSpeed = "PreActionSpeed";
+    public const string StartActionSpeed = "StartActionSpeed";
     public const string ActionSpeed = "ActionSpeed";
     public const string PostActionSpeed = "PostActionSpeed";
-    public const string PreActionTime = "PreActionTime";
-    public const string ActionSpeedTime = "ActionSpeedTime";
-    public const string PostActionTime = "PostActionTime";
 
-    public const string LegsCombatLayer = "LegsCombatLayer";
-    public const string LegsPreActionSpeed = "LegsPreActionSpeed";
+    public const string LegsCombatLayer = "CombatLegsLayer";
+    public const string LegsStartActionSpeed = "LegsStartActionSpeed";
     public const string LegsActionSpeed = "LegsActionSpeed";
     public const string LegsPostActionSpeed = "LegsPostActionSpeed";
 }

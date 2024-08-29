@@ -37,7 +37,7 @@ public class CharacterAnimator : IDisposable
         _moveAnimator.Dispose();
     }
 
-    private void OnCombatPhaseStateChanged(CombatPhase combatPhase)
+    private void OnCombatPhaseStateChanged(CombatPhase combatPhase, AttackNames attackName)
     {
 #if LOGGER_ON
         Debug.Log($"{nameof(OnCombatPhaseStateChanged)}".Yellow());
@@ -49,16 +49,16 @@ public class CharacterAnimator : IDisposable
             case CombatPhase.Idle:
                 break;
             case CombatPhase.Pre:
-                _combatLayerAnimator.TriggerPreAttackAnimation();
-                _legsLayerAnimator.TriggerPreAttackAnimation();
+                _combatLayerAnimator.TriggerStartAttackAnimation(attackName);
+                _legsLayerAnimator.TriggerStartAttackAnimation(attackName);
                 break;
             case CombatPhase.Attack:
-                _combatLayerAnimator.TriggerAttackAnimation();
-                _legsLayerAnimator.TriggerAttackAnimation();
+                _combatLayerAnimator.TriggerAttackAnimation(attackName);
+                _legsLayerAnimator.TriggerAttackAnimation(attackName);
                 break;
             case CombatPhase.After:
-                _combatLayerAnimator.TriggerPostAttackAnimation();
-                _legsLayerAnimator.TriggerPostAttackAnimation();
+                _combatLayerAnimator.TriggerPostAttackAnimation(attackName);
+                _legsLayerAnimator.TriggerPostAttackAnimation(attackName);
                 break;
             case CombatPhase.Fail:
                 break;

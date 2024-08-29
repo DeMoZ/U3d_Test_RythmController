@@ -24,7 +24,7 @@ namespace Attack3x3
         private static string StateAttackPrefix = "Attack"; // pre attack state
         private static string AttackSuffix = "A"; // attack state
         private static string PostAttackSuffix = "P"; // post attack state
-        private static string PreAttackSpeed = "PreSpeed";
+        private static string StartAttackSpeed = "StartSpeed";
         private static string AttackSpeed = "AttackSpeed";
         private static string PostAttackSpeed = "PostSpeed";
 
@@ -141,7 +141,7 @@ namespace Attack3x3
                 ? PreAttackTransitionTime
                 : PreAttackTransitionTimeSequence;
             _character.Animator.CrossFade(stateName, transitionTime);
-            _character.Animator.SetFloat(PreAttackSpeed, time);
+            _character.Animator.SetFloat(StartAttackSpeed, time);
             // _character.Animator.Play(stateName);
         }
 
